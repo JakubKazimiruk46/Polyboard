@@ -1,0 +1,96 @@
+[gd_scene load_steps=4 format=3 uid="uid://oysiwns4yqyq"]
+
+[ext_resource type="Texture2D" uid="uid://e56daf0rtn6l" path="res://assets/images/background.jpg" id="1_03hre"]
+[ext_resource type="Script" path="res://scenes/login/login.gd" id="1_coxyq"]
+[ext_resource type="Texture2D" uid="uid://dw4jaa57o58m5" path="res://assets/images/logo.png" id="2_dck8g"]
+
+[node name="login" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_coxyq")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_03hre")
+
+[node name="TextureRect2" type="TextureRect" parent="."]
+layout_mode = 2
+offset_left = 356.0
+offset_top = 100.0
+offset_right = 796.0
+offset_bottom = 283.0
+grow_horizontal = 2
+texture = ExtResource("2_dck8g")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+metadata/_edit_use_anchors_ = true
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 2
+
+[node name="nickname_input" type="TextEdit" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(300, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 20
+placeholder_text = "Nickname"
+
+[node name="password_input" type="TextEdit" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(300, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 20
+placeholder_text = "Password"
+
+[node name="Separator" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="login_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "LOG IN"
+
+[node name="register_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "REGISTER"
+
+[node name="back_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "BACK"
+
+[node name="Separator2" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
