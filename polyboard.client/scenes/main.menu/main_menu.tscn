@@ -1,0 +1,138 @@
+[gd_scene load_steps=10 format=3 uid="uid://bggyt1jlrmlak"]
+
+[ext_resource type="Script" path="res://scenes/main.menu/main_menu.gd" id="1_gmssk"]
+[ext_resource type="Texture2D" uid="uid://e56daf0rtn6l" path="res://assets/images/background.jpg" id="1_rlbls"]
+[ext_resource type="Texture2D" uid="uid://dw4jaa57o58m5" path="res://assets/images/logo.png" id="2_rf33w"]
+[ext_resource type="PackedScene" uid="uid://oysiwns4yqyq" path="res://scenes/login/login.tscn" id="4_yflvy"]
+
+[sub_resource type="SystemFont" id="SystemFont_0607m"]
+font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_m6x2i"]
+
+[sub_resource type="SystemFont" id="SystemFont_erfkp"]
+font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
+
+[sub_resource type="SystemFont" id="SystemFont_r545u"]
+font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
+
+[sub_resource type="SystemFont" id="SystemFont_s36qm"]
+font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
+
+[node name="main_menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_gmssk")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -174.0
+offset_top = -176.0
+offset_right = 174.0
+offset_bottom = 176.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.988963, 1)
+texture = ExtResource("1_rlbls")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 30
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 60
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("2_rf33w")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 2
+
+[node name="login_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+modulate = Color(0.293333, 1, 0.2, 1)
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_0607m")
+theme_override_font_sizes/font_size = 20
+text = "LOGIN"
+
+[node name="Separator2" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="new_game_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+modulate = Color(0.293333, 1, 0.2, 1)
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_0607m")
+theme_override_font_sizes/font_size = 20
+text = "NEW GAME"
+
+[node name="Control" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="join_game_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+modulate = Color(0.293333, 1, 0.2, 1)
+material = SubResource("CanvasItemMaterial_m6x2i")
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_erfkp")
+theme_override_font_sizes/font_size = 20
+text = "JOIN GAME"
+
+[node name="Control2" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="settings_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+modulate = Color(0.293333, 1, 0.2, 1)
+material = SubResource("CanvasItemMaterial_m6x2i")
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_r545u")
+theme_override_font_sizes/font_size = 20
+text = "SETTINGS
+"
+
+[node name="Control3" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="exit_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+modulate = Color(0.293333, 1, 0.2, 1)
+material = SubResource("CanvasItemMaterial_m6x2i")
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_s36qm")
+theme_override_font_sizes/font_size = 20
+text = "EXIT
+"
+
+[node name="login" parent="." instance=ExtResource("4_yflvy")]
+visible = false
+layout_mode = 1
