@@ -19,10 +19,6 @@ config/icon="res://icon.svg"
 
 BackgroundMusic="*res://scenes/background_music.tscn"
 
-[display]
-
-window/size/mode=3
-
 [dotnet]
 
 project/assembly_name="PolyBoard.Client"

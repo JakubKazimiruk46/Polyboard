@@ -10,6 +10,5 @@ func _ready():
 	set_process(false)
 	
 func on_back_button_pressed() -> void:
-	print("cos")
 	exit_joingame_menu.emit()
 	set_process(false)

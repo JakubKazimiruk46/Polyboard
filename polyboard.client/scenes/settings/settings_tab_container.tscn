@@ -1,8 +1,30 @@
-[gd_scene load_steps=4 format=3 uid="uid://cdxn460y08ix4"]
+[gd_scene load_steps=8 format=3 uid="uid://cdxn460y08ix4"]
 
 [ext_resource type="PackedScene" uid="uid://der60ol1i53qe" path="res://scenes/settings/window_mode_button.tscn" id="1_e6w65"]
+[ext_resource type="Script" path="res://scenes/settings/settings_tab_container.gd" id="1_xg30q"]
 [ext_resource type="PackedScene" uid="uid://bf00kvcmyn1kd" path="res://scenes/settings/resolution_mode_button.tscn" id="2_a8gya"]
 [ext_resource type="PackedScene" uid="uid://bpo21kdos0y8s" path="res://scenes/settings/audio_slider_settings.tscn" id="2_nuf8m"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_whk2b"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d6foo"]
+content_margin_left = 2.0
+content_margin_right = 2.0
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 1
+expand_margin_left = 2.0
+expand_margin_right = 2.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gbj24"]
+content_margin_left = 6.0
+content_margin_right = 6.0
 
 [node name="settings_tab_container" type="Control"]
 layout_mode = 3
@@ -11,6 +33,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_xg30q")
 
 [node name="TabContainer" type="TabContainer" parent="."]
 layout_mode = 1
@@ -23,11 +46,13 @@ offset_right = -100.0
 offset_bottom = -100.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_whk2b")
+theme_override_styles/tab_selected = SubResource("StyleBoxFlat_d6foo")
+theme_override_styles/tab_unselected = SubResource("StyleBoxEmpty_gbj24")
 tab_alignment = 1
-current_tab = 1
+current_tab = 0
 
 [node name="Graphics" type="TabBar" parent="TabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -59,6 +84,7 @@ size_flags_horizontal = 4
 layout_mode = 2
 
 [node name="Sound" type="TabBar" parent="TabContainer"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 

@@ -5,7 +5,9 @@
 [ext_resource type="Texture2D" uid="uid://cr20hx020sdy3" path="res://assets/images/back_button.png" id="2_1h3es"]
 
 [sub_resource type="SystemFont" id="SystemFont_iwxe6"]
-font_names = PackedStringArray("Cursive")
+font_names = PackedStringArray("Monospace")
+font_weight = 999
+subpixel_positioning = 0
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -49,6 +51,7 @@ texture_pressed = ExtResource("2_1h3es")
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
+theme_override_constants/outline_size = 20
 theme_override_fonts/font = SubResource("SystemFont_iwxe6")
 theme_override_font_sizes/font_size = 75
 text = "LOBBY LIST"

@@ -43,12 +43,14 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_constants/outline_size = 20
 theme_override_fonts/font = SubResource("SystemFont_48ca0")
 theme_override_font_sizes/font_size = 100
 text = "SETTINGS"
 horizontal_alignment = 1
 
 [node name="settings_tab_container" parent="MarginContainer/VBoxContainer" instance=ExtResource("3_aia0k")]
+custom_minimum_size = Vector2(0, 500)
 layout_mode = 2
 size_flags_vertical = 3
 
