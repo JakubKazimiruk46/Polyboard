@@ -2,20 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://e56daf0rtn6l" path="res://assets/images/background.jpg" id="1_ra2kx"]
 [ext_resource type="Script" path="res://scenes/new.game/new_game.gd" id="1_twkho"]
-
-[sub_resource type="GDScript" id="GDScript_1mc1u"]
-script/source = "extends TextureRect
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-"
+[ext_resource type="ButtonGroup" uid="uid://gwoggf1vldhe" path="res://scenes/new.game/lobby_mode.tres" id="3_foa5h"]
 
 [sub_resource type="SystemFont" id="SystemFont_cdubw"]
 font_names = PackedStringArray("Cursive")
@@ -38,7 +25,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("1_ra2kx")
-script = SubResource("GDScript_1mc1u")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -59,6 +45,7 @@ alignment = 1
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 20
+alignment = 1
 
 [node name="Label" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
@@ -66,7 +53,7 @@ theme_override_fonts/font = SubResource("SystemFont_cdubw")
 theme_override_font_sizes/font_size = 75
 text = "CREATE LOBBY"
 
-[node name="Control" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Separator" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
@@ -77,6 +64,8 @@ alignment = 1
 [node name="public_checkbox" type="CheckBox" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
+mouse_default_cursor_shape = 2
+button_group = ExtResource("3_foa5h")
 text = "Public"
 icon_alignment = 1
 
@@ -84,20 +73,47 @@ icon_alignment = 1
 use_parent_material = true
 layout_mode = 2
 size_flags_horizontal = 0
+mouse_default_cursor_shape = 2
+button_group = ExtResource("3_foa5h")
 text = "Private"
 icon_alignment = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
+size_flags_horizontal = 4
 
-[node name="TextEdit" type="TextEdit" parent="MarginContainer/HBoxContainer/VBoxContainer/VBoxContainer"]
+[node name="lobby_name" type="TextEdit" parent="MarginContainer/HBoxContainer/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_vertical = 0
 placeholder_text = "Lobby name"
 
-[node name="TextEdit2" type="TextEdit" parent="MarginContainer/HBoxContainer/VBoxContainer/VBoxContainer"]
+[node name="password" type="TextEdit" parent="MarginContainer/HBoxContainer/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_vertical = 4
 placeholder_text = "Password"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer/VBoxContainer2"]
+modulate = Color(0.294118, 1, 0.2, 1)
+custom_minimum_size = Vector2(100, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_default_cursor_shape = 2
+text = "CREATE "
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/HBoxContainer/VBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(150, 30)
+layout_mode = 2
+
+[node name="back_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(100, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_default_cursor_shape = 2
+text = "BACK"
