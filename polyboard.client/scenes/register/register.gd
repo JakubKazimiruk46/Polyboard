@@ -2,6 +2,7 @@ class_name Register
 extends Control
 
 @onready var back_button = $MarginContainer/HBoxContainer/VBoxContainer/back_button as Button
+@onready var register_button = $MarginContainer/HBoxContainer/VBoxContainer/register_button as Button
 
 signal exit_register_menu
 

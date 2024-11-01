@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bggyt1jlrmlak"]
+[gd_scene load_steps=14 format=3 uid="uid://bggyt1jlrmlak"]
 
 [ext_resource type="Script" path="res://scenes/main.menu/main_menu.gd" id="1_gmssk"]
 [ext_resource type="Texture2D" uid="uid://e56daf0rtn6l" path="res://assets/images/background.jpg" id="1_rlbls"]
@@ -11,6 +11,14 @@
 [sub_resource type="SystemFont" id="SystemFont_0607m"]
 font_names = PackedStringArray("Impact")
 subpixel_positioning = 0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pyhlo"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.294118, 1, 0.2, 1)
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_m6x2i"]
 
@@ -96,6 +104,7 @@ size_flags_vertical = 4
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = SubResource("SystemFont_0607m")
 theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
 text = "LOGIN"
 
 [node name="Separator2" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
@@ -109,6 +118,7 @@ size_flags_vertical = 4
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = SubResource("SystemFont_0607m")
 theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
 text = "NEW GAME"
 
 [node name="Control" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
@@ -122,6 +132,7 @@ size_flags_vertical = 4
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = SubResource("SystemFont_erfkp")
 theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
 text = "JOIN GAME"
 
 [node name="Control2" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
@@ -135,6 +146,7 @@ size_flags_vertical = 4
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = SubResource("SystemFont_r545u")
 theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
 text = "SETTINGS
 "
 
@@ -149,6 +161,7 @@ size_flags_vertical = 4
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = SubResource("SystemFont_s36qm")
 theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
 text = "EXIT
 "
 

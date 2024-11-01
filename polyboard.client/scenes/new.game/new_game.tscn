@@ -1,12 +1,21 @@
-[gd_scene load_steps=5 format=3 uid="uid://csa6usilxq2w1"]
+[gd_scene load_steps=6 format=3 uid="uid://csa6usilxq2w1"]
 
 [ext_resource type="Texture2D" uid="uid://e56daf0rtn6l" path="res://assets/images/background.jpg" id="1_ra2kx"]
 [ext_resource type="Script" path="res://scenes/new.game/new_game.gd" id="1_twkho"]
 [ext_resource type="ButtonGroup" uid="uid://gwoggf1vldhe" path="res://scenes/new.game/lobby_mode.tres" id="3_foa5h"]
 
 [sub_resource type="SystemFont" id="SystemFont_cdubw"]
-font_names = PackedStringArray("Cursive")
+font_names = PackedStringArray("Monospace")
+font_weight = 999
 subpixel_positioning = 0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_shcr8"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.294118, 1, 0.2, 1)
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -49,6 +58,7 @@ alignment = 1
 
 [node name="Label" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_constants/outline_size = 20
 theme_override_fonts/font = SubResource("SystemFont_cdubw")
 theme_override_font_sizes/font_size = 75
 text = "CREATE LOBBY"
@@ -83,17 +93,16 @@ custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="lobby_name" type="TextEdit" parent="MarginContainer/HBoxContainer/VBoxContainer/VBoxContainer"]
+[node name="lobby_name" type="LineEdit" parent="MarginContainer/HBoxContainer/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
-size_flags_vertical = 0
 placeholder_text = "Lobby name"
 
-[node name="password" type="TextEdit" parent="MarginContainer/HBoxContainer/VBoxContainer/VBoxContainer"]
+[node name="password" type="LineEdit" parent="MarginContainer/HBoxContainer/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
-size_flags_vertical = 4
 placeholder_text = "Password"
+secret = true
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
@@ -105,6 +114,7 @@ custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
 size_flags_horizontal = 4
 mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_shcr8")
 text = "CREATE "
 
 [node name="HSeparator" type="HSeparator" parent="MarginContainer/HBoxContainer/VBoxContainer/VBoxContainer2"]
