@@ -1,0 +1,54 @@
+[gd_scene load_steps=5 format=3 uid="uid://bilcswbdfpvbx"]
+
+[ext_resource type="Script" path="res://scenes/join.game/join_game.gd" id="1_1buva"]
+[ext_resource type="Texture2D" uid="uid://e56daf0rtn6l" path="res://assets/images/background.jpg" id="1_gaq8n"]
+[ext_resource type="Texture2D" uid="uid://cr20hx020sdy3" path="res://assets/images/back_button.png" id="2_1h3es"]
+
+[sub_resource type="SystemFont" id="SystemFont_iwxe6"]
+font_names = PackedStringArray("Cursive")
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_1buva")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_gaq8n")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="back_button" type="TextureButton" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("2_1h3es")
+texture_pressed = ExtResource("2_1h3es")
+
+[node name="Label" type="Label" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_fonts/font = SubResource("SystemFont_iwxe6")
+theme_override_font_sizes/font_size = 75
+text = "LOBBY LIST"
