@@ -6,6 +6,7 @@ namespace PolyBoard.Server.Core.Entities.GameEvents
 {
     //Case jak z kartami, move, buy, bankrupt, jail etc Transaction chyba tez bedzie konkretna implementacja tego,
     //zalozymy ze zaakceptowac oferte/wysłać mozna w swojej turze np bo nwm jak to inaczej logicznie rozwiazac narazie xd
+    [NotMapped]
     public abstract class GameEvent : IEntity, IEventSource
     {
         public Guid Id { get; set; }

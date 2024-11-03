@@ -1,10 +1,12 @@
-﻿using PolyBoard.Server.Core.Entities.GameEvents;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using PolyBoard.Server.Core.Entities.GameEvents;
 using PolyBoard.Server.Core.Entities.GameEvents.Auction;
 using PolyBoard.Server.Core.Enums;
 using PolyBoard.Server.Core.Interfaces;
 
 namespace PolyBoard.Server.Core.Entities
 {
+    [NotMapped]
     public sealed class Game : IEntity
     {
         public Guid Id { get; set; }

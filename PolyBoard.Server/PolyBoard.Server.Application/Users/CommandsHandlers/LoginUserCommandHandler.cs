@@ -16,7 +16,7 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, bool>
 
     public async Task<bool> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByNameAsync(request.Username);
+        var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null) return false;
 
         return await _userManager.CheckPasswordAsync(user, request.Password);

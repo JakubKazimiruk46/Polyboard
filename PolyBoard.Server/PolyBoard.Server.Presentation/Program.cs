@@ -1,3 +1,6 @@
+using Microsoft.OpenApi.Models;
+using PolyBoard.Server.Application;
+using PolyBoard.Server.Infrastructure;
 using PolyBoard.Server.Presentation.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,10 +8,38 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+//Swagger setup
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Shoes and Blouse API", Version = "v1" });
+    c.AddSecurityDefinition("cookieAuth", new OpenApiSecurityScheme
+    {
+        Name = ".AspNetCore.Identity.Application",
+        Type = SecuritySchemeType.Http,
+        In = ParameterLocation.Cookie,
+        Description = "ASP.NET Core Identity Cookie"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "cookieAuth"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 builder.Services.AddSignalR();
+
+
+builder.Services.AddApplication()
+    .AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
@@ -22,7 +53,7 @@ if (app.Environment.IsDevelopment())
 app.MapHub<LobbyHub>("/lobby");
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
