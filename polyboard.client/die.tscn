@@ -1,0 +1,52 @@
+[gd_scene load_steps=5 format=3 uid="uid://dhj5sru57cpw4"]
+
+[ext_resource type="Script" path="res://die.gd" id="1_hsi77"]
+[ext_resource type="PackedScene" uid="uid://b6qj5ulmdh16s" path="res://die2.glb" id="2_qgh3o"]
+[ext_resource type="PackedScene" uid="uid://bcvt2oq4rv2gp" path="res://die_raycast.tscn" id="3_ykecl"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hoiya"]
+size = Vector3(2, 2, 2)
+
+[node name="Die" type="RigidBody3D"]
+gravity_scale = 2.0
+freeze = true
+script = ExtResource("1_hsi77")
+
+[node name="die" parent="." instance=ExtResource("2_qgh3o")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_hoiya")
+
+[node name="Raycasts" type="Node3D" parent="."]
+
+[node name="DieRaycast1" parent="Raycasts" instance=ExtResource("3_ykecl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0515656, -0.947187, -0.0416992)
+target_position = Vector3(0, -0.2, 0)
+opposite_side = 6
+
+[node name="DieRaycast2" parent="Raycasts" instance=ExtResource("3_ykecl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.948434, -0.117067, -0.0416992)
+target_position = Vector3(-0.2, 0, 0)
+opposite_side = 5
+
+[node name="DieRaycast3" parent="Raycasts" instance=ExtResource("3_ykecl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0515656, -0.117067, -0.903985)
+target_position = Vector3(0, 0, -0.2)
+opposite_side = 4
+
+[node name="DieRaycast4" parent="Raycasts" instance=ExtResource("3_ykecl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.149369, -0.135215, 0.975608)
+target_position = Vector3(0, 0, 0.2)
+opposite_side = 3
+
+[node name="DieRaycast5" parent="Raycasts" instance=ExtResource("3_ykecl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.983723, -0.117068, -0.0334113)
+target_position = Vector3(0.2, 0, 0)
+opposite_side = 2
+
+[node name="DieRaycast6" parent="Raycasts" instance=ExtResource("3_ykecl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0515656, 0.882933, -0.0416992)
+target_position = Vector3(0, 0.2, 0)
+opposite_side = 1
+
+[connection signal="sleeping_state_changed" from="." to="." method="_on_sleeping_state_changed"]
