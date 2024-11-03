@@ -1,9 +1,11 @@
-﻿using PolyBoard.Server.Core.Helpers;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using PolyBoard.Server.Core.Helpers;
 using PolyBoard.Server.Core.Interfaces;
 
 namespace PolyBoard.Server.Core.Entities.BoardSpaces
 {
     //podobnie, moze byc property, tax, jail itp
+    [NotMapped]
     public abstract class BoardSpace : IEntity, IEventSource
     {
         public Guid Id { get; set; } // Klucz główny

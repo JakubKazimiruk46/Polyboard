@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PolyBoard.Server.Core.Entities.GameEvents
 {
+    [NotMapped]
     public sealed class Offer : GameEvent
     {
         public Transaction? TransactionToReciver { get; set; }

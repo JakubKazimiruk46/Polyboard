@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PolyBoard.Server.Core.Entities.GameEvents.Auction
 {
+    [NotMapped]
     public sealed class Bid : IEntity
     {
         public Guid Id { get; set; }

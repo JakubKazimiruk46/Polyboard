@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PolyBoard.Server.Core.Entities
 {
+    [NotMapped]
     public sealed class Turn : IEntity
     {
         public Guid Id { get; set; }

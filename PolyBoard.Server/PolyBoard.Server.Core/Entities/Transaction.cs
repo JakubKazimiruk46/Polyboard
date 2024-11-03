@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PolyBoard.Server.Core.Entities
 {
+    [NotMapped]
     public sealed class Transaction : IEntity, IEventSource
     {
         public Guid Id { get; set; }
