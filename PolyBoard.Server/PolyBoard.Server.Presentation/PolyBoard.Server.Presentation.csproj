@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PolyBoard.Server.Application\PolyBoard.Server.Application.csproj" />
     <ProjectReference Include="..\PolyBoard.Server.Core\PolyBoard.Server.Core.csproj" />
+    <ProjectReference Include="..\PolyBoard.Server.Infrastructure\PolyBoard.Server.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
