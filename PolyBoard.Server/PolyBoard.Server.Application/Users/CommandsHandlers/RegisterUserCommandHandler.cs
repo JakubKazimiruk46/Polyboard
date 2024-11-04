@@ -21,7 +21,6 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, b
         if (!result.Succeeded)
         {
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            throw new Exception($"Failed to create user: {errors}");
         }
         return result.Succeeded;
     }
