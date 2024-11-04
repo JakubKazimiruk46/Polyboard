@@ -33,7 +33,6 @@ internal sealed class JwtProvider : IJwtProvider
             null,
             DateTime.UtcNow.AddHours(2),
             signingCredentials);
-        string tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
-        return tokenValue;
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }

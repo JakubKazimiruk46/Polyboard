@@ -20,11 +20,7 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, string>
     public async Task<string> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByNameAsync(request.UserName);
-        if (user == null) return string.Empty;
-        if (!await _userManager.CheckPasswordAsync(user, request.Password))
-        {
-            return string.Empty;
-        }
+        if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password)) return string.Empty;
         string token = _jwtProvider.Generate(user);
         return token;
     }

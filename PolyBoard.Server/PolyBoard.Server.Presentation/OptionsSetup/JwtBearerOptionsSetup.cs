@@ -27,6 +27,7 @@ public class JwtBearerOptionsSetup : IConfigureOptions<JwtBearerOptions>
             ValidAudience = _jwtOptions.Audience,
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_jwtOptions.SecretKey))
+            //SecretKey in appsettings.json has to be at least 32 characters long (256 bytes)
         };
     }
     

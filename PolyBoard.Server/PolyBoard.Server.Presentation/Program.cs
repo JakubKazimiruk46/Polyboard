@@ -14,7 +14,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Shoes and Blouse API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "PolyBoard API", Version = "v1" });
     c.AddSecurityDefinition("cookieAuth", new OpenApiSecurityScheme
     {
         Name = ".AspNetCore.Identity.Application",
