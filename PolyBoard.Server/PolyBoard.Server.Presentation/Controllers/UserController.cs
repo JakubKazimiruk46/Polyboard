@@ -28,8 +28,8 @@ namespace PolyBoard.Server.Presentation.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserCommand command)
         {
-            var success = await _mediator.Send(command);
-            return success ? Ok("Login successful.") : Unauthorized("Invalid login attempt.");
+            var token = await _mediator.Send(command);
+            return token != string.Empty ? Ok(token): Unauthorized(false);
         }
         [HttpGet("GetById/{userId}")]
         public async Task<ActionResult<User?>> GetById(Guid userId)

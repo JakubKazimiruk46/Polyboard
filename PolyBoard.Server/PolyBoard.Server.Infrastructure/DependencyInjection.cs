@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PolyBoard.Server.Application.Abstractions;
 using PolyBoard.Server.Core.Entities;
 using PolyBoard.Server.Core.Interfaces.Repositories;
+using PolyBoard.Server.Infrastructure.Authentication;
 using PolyBoard.Server.Infrastructure.Data;
 using PolyBoard.Server.Infrastructure.Repositories;
 
@@ -15,6 +18,7 @@ public static class DependencyInjection
     public  static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IRepository<User>, Repository<User>>();
+        services.AddScoped<IJwtProvider, JwtProvider>();
         //Mediator Pattern Setup
         services.AddMediatR(cfg => 
             cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
@@ -31,7 +35,6 @@ public static class DependencyInjection
             .AddIdentityCore<User>()
             .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<PostgresDbContext>();
-            
         return services;
     }
 }
