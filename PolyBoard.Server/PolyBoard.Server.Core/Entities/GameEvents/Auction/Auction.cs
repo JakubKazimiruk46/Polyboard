@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PolyBoard.Server.Core.Entities.GameEvents.Auction
 {
+    [NotMapped]
     public sealed class Auction : GameEvent
     {
         public Property AuctionedProperty { get; init; }

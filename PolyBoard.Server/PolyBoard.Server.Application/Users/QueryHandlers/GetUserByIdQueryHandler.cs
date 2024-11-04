@@ -10,7 +10,7 @@ namespace PolyBoard.Server.Application.Users.QueryHandlers
     {
         private readonly IRepository<User> _userRepository; // or concrete interface IUserRepository if a custom method is needed
 
-        public GetUserByIdQueryHandler(IUserRepository userRepository)
+        public GetUserByIdQueryHandler(IRepository<User> userRepository)
         {
             _userRepository = userRepository;
         }

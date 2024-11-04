@@ -10,7 +10,7 @@ namespace PolyBoard.Server.Infrastructure.Data
         public PostgresDbContext(DbContextOptions<PostgresDbContext> options) : base(options) { }
 
         public override DbSet<User> Users { get; set; }
-        public DbSet<Game> Games { get; init; }
+        //public DbSet<Game> Games { get; init; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

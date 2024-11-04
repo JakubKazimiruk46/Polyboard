@@ -1,8 +1,10 @@
-﻿using PolyBoard.Server.Core.Interfaces;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using PolyBoard.Server.Core.Interfaces;
 
 namespace PolyBoard.Server.Core.Entities.BoardSpaces.Property
 {
     // musi byc cos takiego bo w sqlach nie da sie przechowywać listy klucz - wartosc dla pojedynczej encji
+    [NotMapped]
     public sealed record RentPrice : IEntity
     {
         public Guid Id { get; set; }

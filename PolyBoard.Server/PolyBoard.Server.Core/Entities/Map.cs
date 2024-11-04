@@ -1,8 +1,10 @@
-﻿using PolyBoard.Server.Core.Entities.BoardSpaces;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using PolyBoard.Server.Core.Entities.BoardSpaces;
 using PolyBoard.Server.Core.Interfaces;
 
 namespace PolyBoard.Server.Core.Entities
 {
+    [NotMapped]
     public sealed class Map : IEntity
     {
         public Guid Id { get; set; }
