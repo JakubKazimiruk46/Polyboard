@@ -11,13 +11,10 @@ config_version=5
 [application]
 
 config/name="PolyBoard.Client"
-config/features=PackedStringArray("4.3", "Mobile")
+run/main_scene="res://level.tscn"
+config/features=PackedStringArray("4.3", "C#", "Mobile")
 config/icon="res://icon.svg"
 
 [dotnet]
 
 project/assembly_name="PolyBoard.Client"
-
-[rendering]
-
-renderer/rendering_method="mobile"
