@@ -5,7 +5,6 @@ using PolyBoard.Server.Core.Entities;
 
 namespace PolyBoard.Server.Application.Users.CommandsHandlers;
 
-
 public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, bool>
 {
     private readonly UserManager<User> _userManager;
@@ -17,8 +16,13 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, b
 
     public async Task<bool> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
-        var user = new User { UserName = request.Email, Email = request.Email };
+        var user = new User { UserName = request.UserName, Email = request.Email };
         var result = await _userManager.CreateAsync(user, request.Password);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            throw new Exception($"Failed to create user: {errors}");
+        }
         return result.Succeeded;
     }
 }

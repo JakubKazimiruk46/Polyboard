@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using PolyBoard.Server.Application;
 using PolyBoard.Server.Infrastructure;
 using PolyBoard.Server.Presentation.Hubs;
+using PolyBoard.Server.Presentation.OptionsSetup;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +38,10 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 builder.Services.AddSignalR();
-
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer();
+builder.Services.ConfigureOptions<JwtOptionsSetup>();
+builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 
 builder.Services.AddApplication()
     .AddInfrastructure(builder.Configuration);
