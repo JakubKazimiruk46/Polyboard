@@ -29,7 +29,7 @@ namespace PolyBoard.Server.Presentation.Hubs
                 (key, users) =>
                 {
                     if (!users.Any(u => u.Username == conn.Username))
-                        users.Add(conn); m
+                        users.Add(conn);
                     return users;
                 });
 
