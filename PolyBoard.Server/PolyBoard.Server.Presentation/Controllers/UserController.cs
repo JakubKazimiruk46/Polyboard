@@ -22,7 +22,11 @@ namespace PolyBoard.Server.Presentation.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterUserCommand command)
         {
             var success = await _mediator.Send(command);
+<<<<<<< HEAD
+            return success ? Ok("User registered successfully.") : BadRequest("Registration failed.");
+=======
             return success ? Ok(new {status=200, message="User registered successfully."}) : BadRequest(new {status=400, message="Registration failed."});
+>>>>>>> 46364e61ae863ab5a163b12d05610543dc42f1ec
         }
 
         [HttpPost("login")]

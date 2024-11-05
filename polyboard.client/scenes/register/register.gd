@@ -1,6 +1,10 @@
 class_name Register
 extends Control
 
+<<<<<<< HEAD
+@onready var back_button = $MarginContainer/HBoxContainer/VBoxContainer/back_button as Button
+@onready var register_button = $MarginContainer/HBoxContainer/VBoxContainer/register_button as Button
+=======
 #zmienne z przycisków
 @onready var back_button = $MarginContainer/HBoxContainer/VBoxContainer/back_button as Button
 @onready var username_input = $MarginContainer/HBoxContainer/VBoxContainer/username_input as TextEdit
@@ -12,11 +16,19 @@ extends Control
 #Kontaktowanie sie z serwerem
 @onready var http_request = $HTTPRequest 
 
+>>>>>>> 46364e61ae863ab5a163b12d05610543dc42f1ec
 
 signal exit_register_menu
 
 func _ready():
 	back_button.button_down.connect(on_back_button_pressed)
+<<<<<<< HEAD
+	set_process(false)
+	
+func on_back_button_pressed() -> void:
+	exit_register_menu.emit()
+	set_process(false)
+=======
 	register_button.button_down.connect(on_register_button_pressed)
 	http_request.connect("request_completed", _on_request_completed, 1)
 	set_process(false)
@@ -84,3 +96,4 @@ func _on_request_completed(result: int, response_code: int, headers: Array, body
 		exit_register_menu.emit()
 	else:
 		error_label.text = "Registration failed: " + response.result["message"]
+>>>>>>> 46364e61ae863ab5a163b12d05610543dc42f1ec

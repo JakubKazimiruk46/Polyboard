@@ -1,0 +1,19 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolyBoard.Client", "PolyBoard.Client.csproj", "{F4D92C38-0EB2-4C2B-9E8E-2FF59C1BEE8F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+	Debug|Any CPU = Debug|Any CPU
+	ExportDebug|Any CPU = ExportDebug|Any CPU
+	ExportRelease|Any CPU = ExportRelease|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F4D92C38-0EB2-4C2B-9E8E-2FF59C1BEE8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4D92C38-0EB2-4C2B-9E8E-2FF59C1BEE8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4D92C38-0EB2-4C2B-9E8E-2FF59C1BEE8F}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{F4D92C38-0EB2-4C2B-9E8E-2FF59C1BEE8F}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{F4D92C38-0EB2-4C2B-9E8E-2FF59C1BEE8F}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{F4D92C38-0EB2-4C2B-9E8E-2FF59C1BEE8F}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+	EndGlobalSection
+EndGlobal

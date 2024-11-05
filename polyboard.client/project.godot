@@ -25,7 +25,3 @@ SaveManager="*res://autoloads/SaveManager.gd"
 [dotnet]
 
 project/assembly_name="PolyBoard.Client"
-
-[rendering]
-
-renderer/rendering_method="mobile"
