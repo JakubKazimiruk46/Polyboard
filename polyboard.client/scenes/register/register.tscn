@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://dfrtt3my526sn"]
+[gd_scene load_steps=7 format=3 uid="uid://dfrtt3my526sn"]
 
 [ext_resource type="Script" path="res://scenes/register/register.gd" id="1_5xa4g"]
 [ext_resource type="Texture2D" uid="uid://e56daf0rtn6l" path="res://assets/images/background.jpg" id="1_sn7k2"]
@@ -6,6 +6,15 @@
 
 [sub_resource type="SystemFont" id="SystemFont_okde2"]
 font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mded7"]
+bg_color = Color(0.294118, 1, 0.2, 0.611765)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.294118, 1, 0.2, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k01fl"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -15,7 +24,7 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.294118, 1, 0.2, 1)
 
-[node name="Control" type="Control"]
+[node name="register" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -57,7 +66,7 @@ localize_numeral_system = false
 texture = ExtResource("2_2qdbv")
 
 [node name="Separator" type="Control" parent="MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 350)
+custom_minimum_size = Vector2(0, 400)
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
@@ -70,13 +79,18 @@ theme_override_constants/separation = 12
 alignment = 1
 
 [node name="Separator" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 200)
+custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
 
 [node name="email_input" type="LineEdit" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(300, 50)
 layout_mode = 2
 placeholder_text = "@Email"
+
+[node name="nickname_input" type="LineEdit" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(300, 50)
+layout_mode = 2
+placeholder_text = "Nickname"
 
 [node name="password_input" type="LineEdit" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 50)
@@ -92,11 +106,12 @@ secret = true
 
 [node name="register_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 modulate = Color(0.294118, 1, 0.2, 1)
-custom_minimum_size = Vector2(100, 50)
+custom_minimum_size = Vector2(100, 30)
 layout_mode = 2
 size_flags_horizontal = 4
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = SubResource("SystemFont_okde2")
+theme_override_styles/hover = SubResource("StyleBoxFlat_mded7")
 theme_override_styles/normal = SubResource("StyleBoxFlat_k01fl")
 text = "REGISTER"
 
@@ -106,7 +121,7 @@ layout_mode = 2
 size_flags_horizontal = 4
 
 [node name="back_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-custom_minimum_size = Vector2(100, 50)
+custom_minimum_size = Vector2(100, 30)
 layout_mode = 2
 size_flags_horizontal = 4
 mouse_default_cursor_shape = 2
