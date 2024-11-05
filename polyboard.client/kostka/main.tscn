@@ -22,7 +22,7 @@ data = PackedVector3Array(1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0, -1, 1, 0
 script = SubResource("GDScript_p2n8o")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -0.151714, 38.4337, 0.0862231)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -0.151714, 31.8726, 0.0862231)
 doppler_tracking = 2
 fov = 81.5625
 
@@ -45,5 +45,17 @@ shape = SubResource("ConcavePolygonShape3D_2br3n")
 [node name="Die" parent="." instance=ExtResource("1_ccmuf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.260971, 7.7639, -0.491669)
 
+[node name="Die2" parent="." instance=ExtResource("1_ccmuf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.34003, 7.7639, -0.491669)
+
+[node name="Die3" parent="." instance=ExtResource("1_ccmuf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.58654, 7.7639, -0.491669)
+
+[node name="Die4" parent="." instance=ExtResource("1_ccmuf")]
+transform = Transform3D(0.998077, -0.0619892, 0, 0.0619892, 0.998077, 0, 0, 0, 1, 8.91576, 7.7639, -0.491669)
+
 [connection signal="visibility_changed" from="." to="Die" method="_on_word_visibility_changed"]
 [connection signal="roll_finished" from="Die" to="." method="_on_die_roll_finished"]
+[connection signal="roll_finished" from="Die2" to="." method="_on_die_roll_finished"]
+[connection signal="roll_finished" from="Die3" to="." method="_on_die_roll_finished"]
+[connection signal="roll_finished" from="Die4" to="." method="_on_die_roll_finished"]
