@@ -57,6 +57,7 @@ if (app.Environment.IsDevelopment())
 
 app.MapHub<LobbyHub>("/lobby");
 
+
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -64,3 +65,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
