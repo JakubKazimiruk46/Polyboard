@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ckak3yprnffoi"
-path.s3tc="res://.godot/imported/die2_palette.png-ff0317c15b52df831c70d39ad12212fc.s3tc.ctex"
+path.s3tc="res://.godot/imported/die2_palette.png-9e15d4d9eab0c0942f587340226b8262.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -14,8 +14,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://die2_palette.png"
-dest_files=["res://.godot/imported/die2_palette.png-ff0317c15b52df831c70d39ad12212fc.s3tc.ctex"]
+source_file="res://kostka/die2_palette.png"
+dest_files=["res://.godot/imported/die2_palette.png-9e15d4d9eab0c0942f587340226b8262.s3tc.ctex"]
 
 [params]
 

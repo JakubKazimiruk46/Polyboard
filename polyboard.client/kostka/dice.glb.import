@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://cd1jno0k6u4b6"
-path="res://.godot/imported/dice.glb-a0ae8ebe8b59312d77993cadbeed0563.scn"
+path="res://.godot/imported/dice.glb-f21322aa62df9302f467bd82bcd460ba.scn"
 
 [deps]
 
-source_file="res://dice.glb"
-dest_files=["res://.godot/imported/dice.glb-a0ae8ebe8b59312d77993cadbeed0563.scn"]
+source_file="res://kostka/dice.glb"
+dest_files=["res://.godot/imported/dice.glb-f21322aa62df9302f467bd82bcd460ba.scn"]
 
 [params]
 

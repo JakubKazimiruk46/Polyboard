@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://jl5oedyrlt6r"
-path.s3tc="res://.godot/imported/dice_dice_uv_map.jpg-a11cf66c069203cf778704465c2818cd.s3tc.ctex"
+path.s3tc="res://.godot/imported/dice_dice_uv_map.jpg-3ef1c80eb1f975b4ef6d0ba3a70ab19d.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -14,8 +14,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://dice_dice_uv_map.jpg"
-dest_files=["res://.godot/imported/dice_dice_uv_map.jpg-a11cf66c069203cf778704465c2818cd.s3tc.ctex"]
+source_file="res://kostka/dice_dice_uv_map.jpg"
+dest_files=["res://.godot/imported/dice_dice_uv_map.jpg-3ef1c80eb1f975b4ef6d0ba3a70ab19d.s3tc.ctex"]
 
 [params]
 

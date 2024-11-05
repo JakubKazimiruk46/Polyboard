@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://b6qj5ulmdh16s"
-path="res://.godot/imported/die2.glb-aafe2bbe708ef57dd146451031b15569.scn"
+path="res://.godot/imported/die2.glb-49c95dc16ed3c90377ddcf342df5bc94.scn"
 
 [deps]
 
-source_file="res://die2.glb"
-dest_files=["res://.godot/imported/die2.glb-aafe2bbe708ef57dd146451031b15569.scn"]
+source_file="res://kostka/die2.glb"
+dest_files=["res://.godot/imported/die2.glb-49c95dc16ed3c90377ddcf342df5bc94.scn"]
 
 [params]
 
