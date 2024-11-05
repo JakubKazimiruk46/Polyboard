@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://oysiwns4yqyq"]
+[gd_scene load_steps=10 format=3 uid="uid://oysiwns4yqyq"]
 
 [ext_resource type="Texture2D" uid="uid://e56daf0rtn6l" path="res://assets/images/background.jpg" id="1_03hre"]
 [ext_resource type="Script" path="res://scenes/login/login.gd" id="1_coxyq"]
@@ -7,6 +7,15 @@
 
 [sub_resource type="SystemFont" id="SystemFont_evtyp"]
 font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2rts3"]
+bg_color = Color(0.294118, 1, 0.2, 0.611765)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.294118, 1, 0.2, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rsiqj"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -22,6 +31,7 @@ outline_color = Color(0.294118, 1, 0.2, 1)
 
 [sub_resource type="SystemFont" id="SystemFont_waesw"]
 font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
 
 [node name="login" type="Control"]
 layout_mode = 3
@@ -120,6 +130,7 @@ layout_mode = 2
 size_flags_horizontal = 4
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = SubResource("SystemFont_evtyp")
+theme_override_styles/hover = SubResource("StyleBoxFlat_2rts3")
 theme_override_styles/normal = SubResource("StyleBoxFlat_rsiqj")
 text = "LOG IN"
 
@@ -136,6 +147,7 @@ layout_mode = 2
 size_flags_horizontal = 4
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = SubResource("SystemFont_waesw")
+theme_override_styles/hover = SubResource("StyleBoxFlat_2rts3")
 theme_override_styles/normal = SubResource("StyleBoxFlat_rsiqj")
 text = "REGISTER"
 
