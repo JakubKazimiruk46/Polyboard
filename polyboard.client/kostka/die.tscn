@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://dhj5sru57cpw4"]
 
-[ext_resource type="Script" path="res://die.gd" id="1_hsi77"]
-[ext_resource type="PackedScene" uid="uid://b6qj5ulmdh16s" path="res://die2.glb" id="2_qgh3o"]
-[ext_resource type="PackedScene" uid="uid://bcvt2oq4rv2gp" path="res://die_raycast.tscn" id="3_ykecl"]
+[ext_resource type="Script" path="res://kostka//die.gd" id="1_hsi77"]
+[ext_resource type="PackedScene" uid="uid://b6qj5ulmdh16s" path="res://kostka//die2.glb" id="2_qgh3o"]
+[ext_resource type="PackedScene" uid="uid://bcvt2oq4rv2gp" path="res://kostka//die_raycast.tscn" id="3_ykecl"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_hoiya"]
 size = Vector3(2, 2, 2)
