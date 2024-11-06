@@ -46,7 +46,7 @@ localize_numeral_system = false
 texture = ExtResource("2_2qdbv")
 
 [node name="Separator" type="Control" parent="MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 350)
+custom_minimum_size = Vector2(0, 500)
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
@@ -59,7 +59,7 @@ theme_override_constants/separation = 12
 alignment = 1
 
 [node name="Separator" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 200)
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 
 [node name="username_input" type="TextEdit" parent="MarginContainer/HBoxContainer/VBoxContainer"]

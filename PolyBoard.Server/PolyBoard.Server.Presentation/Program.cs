@@ -57,8 +57,8 @@ if (app.Environment.IsDevelopment())
 
 app.MapHub<LobbyHub>("/lobby");
 
-
-app.UseHttpsRedirection();
+//TODO
+//app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
