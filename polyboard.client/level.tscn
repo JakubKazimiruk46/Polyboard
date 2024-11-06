@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://Board.cs" id="1_85jf0"]
 [ext_resource type="Texture2D" uid="uid://b7pvv856l7ot2" path="res://Mapa_szablon_1.png" id="1_wawif"]
 [ext_resource type="Texture2D" uid="uid://u6156pm3sx3h" path="res://pb_background.jpg" id="1_ymkqo"]
-[ext_resource type="PackedScene" uid="uid://wkg7gc52rgkh" path="res://figurehead.tscn" id="3_8t0aq"]
+[ext_resource type="PackedScene" uid="uid://corrmnc7rodeh" path="res://figurehead.tscn" id="3_8t0aq"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]
 size = Vector3(28.5, 0.2, 28.5)

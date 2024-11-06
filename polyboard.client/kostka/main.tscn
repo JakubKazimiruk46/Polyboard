@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://pdx4a2wepoi5"]
 
-[ext_resource type="PackedScene" uid="uid://dhj5sru57cpw4" path="res://die.tscn" id="1_ccmuf"]
+[ext_resource type="PackedScene" uid="uid://dhj5sru57cpw4" path="res://kostka/die.tscn" id="1_ccmuf"]
 
 [sub_resource type="GDScript" id="GDScript_p2n8o"]
 script/source = "extends Node3D
