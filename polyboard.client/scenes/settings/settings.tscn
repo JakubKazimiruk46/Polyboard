@@ -7,6 +7,7 @@
 [sub_resource type="SystemFont" id="SystemFont_48ca0"]
 font_names = PackedStringArray("Monospace")
 font_weight = 999
+subpixel_positioning = 0
 
 [node name="settings" type="Control"]
 layout_mode = 3
