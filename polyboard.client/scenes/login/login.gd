@@ -48,16 +48,17 @@ func on_login_pressed() -> void:
 	#TODO zmienić URL!
 	var url = "http://localhost:5000/login"
 	var headers = ["Content-Type: application/json"]
-	var error = http_request.request("http://localhost:7216/login", headers, HTTPClient.METHOD_POST, json_data)
+	var error = http_request.request("http://localhost:5000/login", headers, HTTPClient.METHOD_POST, json_data)
 
 	if error != OK:
 		error_label.text = "Failed to send request."
 		print("Error sending request: ", error)
 
-func _on_request_completed(result: int, response_code: int, headers: Array, body: Array):
-	error_label.text = "cosik"
-	var response_text = body
-	var response = JSON.parse_string(response_text)
+func _on_request_completed(result: int, response_code: int, headers: Array, body: PackedByteArray):
+	var response_text = body.get_string_from_utf8()
+	var json = JSON.new()
+	print("Raw response text: ", response_text)
+	var response = json.parse(response_text)
 
 	if response.error != OK:
 		error_label.text = "Failed to parse response."

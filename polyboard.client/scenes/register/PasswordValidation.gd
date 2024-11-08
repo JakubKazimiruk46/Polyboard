@@ -6,13 +6,18 @@ class_name PasswordValidator
 #Co najmniej jedna mała, jedna duża, jeden specjalny, dwa unikanlne i jedna cyfra
 func validate_password(password: String) -> String:
 	var password_regex = RegEx.new()
-	var regex_pattern = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z0-9!@#$%^&*(),.?\":{}|<>]{8,}$"
+	var regex_pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$"
+	var regex = RegEx.new()
+	regex.compile(regex_pattern)
 
 	if password.length() < 8:
 		return "Password must be at least 8 characters long!"
 	
 	if not password_regex.compile(regex_pattern):
 		return "Password must contain at least one upeercase, one lowercase letter, one number and one special character!"
+		
+	if not regex.search(password):
+		return "Email must contain exactly one '@' character and end with domain"
 
 	var unique_chars = {}
 	for c in password:

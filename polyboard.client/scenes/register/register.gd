@@ -45,16 +45,16 @@ func on_register_button_pressed() -> void:
 		error_label.text = "Passwords do not match."
 		return
 		
-	var val_pass_result = password_validator.validate_password(password)
-	var val_email_result = email_validator.validate_email(email)
-	
-	if val_email_result != "valid":
-		error_label.text = val_email_result
-		return
-	
-	if val_pass_result != "valid":
-		error_label.text = val_pass_result
-		return
+	#Nie działa z regexem?
+	#var val_email_result = email_validator.validate_email(email)
+	#if val_email_result != "valid":
+	#	error_label.text = val_email_result
+	#	return
+		
+	#var val_pass_result = password_validator.validate_password(password)
+	#if val_pass_result != "valid":
+	#	error_label.text = val_pass_result
+	#	return
 	
 	var registration_data = {
 		"UserName": username,
