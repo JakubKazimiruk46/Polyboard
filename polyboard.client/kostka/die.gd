@@ -5,7 +5,7 @@ extends RigidBody3D
 
 
 var start_pos
-var roll_strength = 20
+var roll_strength = 5
 
 var is_rolling = false
 

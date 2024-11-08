@@ -6,30 +6,34 @@ public partial class Figurehead : CharacterBody3D
 	private int currentPosition = 0; // Aktualna pozycja pionka
 	private const int TotalFields = 40; // Liczba pól na planszy
 
-	// Możesz dodać tu listę pozycji dla 40 pól
+	// Lista pozycji dla 40 pól
 	private Vector3[] fieldPositions = new Vector3[TotalFields];
+
+	[Export]
+	public NodePath dieNodePath;
 
 	public override void _Ready()
 	{
 		// Zainicjalizuj pozycje pól
 		InitializeFieldPositions();
-	}
 
-	public override void _Process(double delta)
-	{
-		if (Input.IsActionJustPressed("ui_accept")) // "ui_accept" odpowiada domyślnie spacji
+		// Spróbuj pobrać referencję do obiektu kostki
+		Node dieNode = GetNodeOrNull(dieNodePath);
+
+		if (dieNode == null)
 		{
-			RollAndMove();
+			GD.PrintErr($"Błąd: Nie znaleziono obiektu kostki pod ścieżką '{dieNodePath}'. Upewnij się, że dieNodePath jest ustawiony poprawnie.");
+			return;
 		}
+
+		// Połącz sygnał roll_finished z metodą OnDieRollFinished
+		dieNode.Connect("roll_finished", new Callable(this, nameof(OnDieRollFinished)));
 	}
 
-	private void RollAndMove()
+	private void OnDieRollFinished(int value)
 	{
-		Random random = new Random();
-		int rolledValue = random.Next(1, 7); // Losuje wartość od 1 do 6
-		GD.Print($"Rolled: {rolledValue}");
-
-		MovePiece(rolledValue);
+		GD.Print($"Wylosowano: {value}");
+		MovePiece(value);
 	}
 
 	private void MovePiece(int rolledValue)
