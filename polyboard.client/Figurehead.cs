@@ -1,53 +1,76 @@
 using Godot;
 using System;
+using System.Threading.Tasks; // Dodaj to, aby korzystać z Task
 
 public partial class Figurehead : CharacterBody3D
 {
 	private int currentPosition = 0; // Aktualna pozycja pionka
 	private const int TotalFields = 40; // Liczba pól na planszy
 
-	// Możesz dodać tu listę pozycji dla 40 pól
+	// Lista pozycji dla 40 pól
 	private Vector3[] fieldPositions = new Vector3[TotalFields];
+
+	[Export]
+	public NodePath dieNodePath;
 
 	public override void _Ready()
 	{
 		// Zainicjalizuj pozycje pól
 		InitializeFieldPositions();
+
+		// Spróbuj pobrać referencję do obiektu kostki
+		Node dieNode = GetNodeOrNull(dieNodePath);
+
+		if (dieNode == null)
+		{
+			GD.PrintErr($"Błąd: Nie znaleziono obiektu kostki pod ścieżką '{dieNodePath}'. Upewnij się, że dieNodePath jest ustawiony poprawnie.");
+			return;
+		}
+
+		// Połącz sygnał roll_finished z metodą OnDieRollFinished
+		dieNode.Connect("roll_finished", new Callable(this, nameof(OnDieRollFinished)));
 	}
 
-	public override void _Process(double delta)
+	private void OnDieRollFinished(int value)
 	{
-		if (Input.IsActionJustPressed("ui_accept")) // "ui_accept" odpowiada domyślnie spacji
+		GD.Print($"Wylosowano: {value}");
+		MovePiece(value);
+	}
+
+	private async void MovePiece(int rolledValue)
+	{
+		int stepsToMove = rolledValue;
+
+		while (stepsToMove > 0)
 		{
-			RollAndMove();
+			int nextPosition = currentPosition + 1;
+
+			// Jeśli przekroczyliśmy liczbę pól, wracamy do początku
+			if (nextPosition >= TotalFields)
+			{
+				nextPosition = 0;
+			}
+
+			Vector3 endPosition = CalculateTargetPosition(nextPosition);
+
+			// Animuj ruch do następnego pola
+			await MoveToPosition(endPosition);
+
+			currentPosition = nextPosition;
+			stepsToMove--;
 		}
 	}
 
-	private void RollAndMove()
+	private async Task MoveToPosition(Vector3 endPosition)
 	{
-		Random random = new Random();
-		int rolledValue = random.Next(1, 7); // Losuje wartość od 1 do 6
-		GD.Print($"Rolled: {rolledValue}");
+		// Utwórz Tween do animacji ruchu
+		Tween tween = CreateTween();
+		tween.TweenProperty(this, "global_position", endPosition, 0.5f)
+			 .SetTrans(Tween.TransitionType.Linear)
+			 .SetEase(Tween.EaseType.InOut);
 
-		MovePiece(rolledValue);
-	}
-
-	private void MovePiece(int rolledValue)
-	{
-		// Oblicz nową pozycję
-		currentPosition += rolledValue;
-
-		// Jeśli przekroczyliśmy liczbę pól, wracamy do początku (cyklicznie)
-		if (currentPosition >= TotalFields) // Zmienna 40 powinna być zgodna z liczbą pól na planszy
-		{
-			currentPosition -= TotalFields; // Wracamy do początku
-		}
-
-		// Oblicz nową pozycję pionka
-		Vector3 targetPosition = CalculateTargetPosition(currentPosition);
-
-		// Ustaw pozycję pionka
-		GlobalPosition = targetPosition; // Zakładając, że pionek ma właściwość GlobalPosition
+		// Poczekaj, aż Tween zakończy animację
+		await ToSignal(tween, "finished");
 	}
 
 	private Vector3 CalculateTargetPosition(int position)
@@ -66,16 +89,15 @@ public partial class Figurehead : CharacterBody3D
 		// Ustawienia pozycji dla 40 pól
 		for (int i = 0; i < TotalFields; i++)
 		{
-			// Przykładowe rozmieszczenie pól
-			float x = (i < 10) ? -boardSize / 2 + fieldWidth * (i + 0.5f) : // Górna krawędź
-					   (i < 20) ? boardSize / 2 : // Prawa krawędź
-					   (i < 30) ? boardSize / 2 - fieldWidth * (i - 19.5f) : // Dolna krawędź
-								   -boardSize / 2; // Lewa krawędź
+			float x = (i < 10) ? -boardSize / 2 + fieldWidth * (i + 0.5f) :
+					   (i < 20) ? boardSize / 2 :
+					   (i < 30) ? boardSize / 2 - fieldWidth * (i - 19.5f) :
+								   -boardSize / 2;
 
-			float z = (i < 10) ? boardSize / 2 : // Górna krawędź
-					   (i < 20) ? boardSize / 2 - fieldWidth * (i - 9.5f) : // Prawa krawędź
-					   (i < 30) ? -boardSize / 2 : // Dolna krawędź
-								   -boardSize / 2 + fieldWidth * (i - 29.5f); // Lewa krawędź
+			float z = (i < 10) ? boardSize / 2 :
+					   (i < 20) ? boardSize / 2 - fieldWidth * (i - 9.5f) :
+					   (i < 30) ? -boardSize / 2 :
+								   -boardSize / 2 + fieldWidth * (i - 29.5f);
 
 			fieldPositions[i] = new Vector3(x, fieldHeight, z);
 		}
