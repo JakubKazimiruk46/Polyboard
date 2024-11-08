@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Threading.Tasks; // Dodaj to, aby korzystać z Task
 
 public partial class Figurehead : CharacterBody3D
 {
@@ -36,22 +37,40 @@ public partial class Figurehead : CharacterBody3D
 		MovePiece(value);
 	}
 
-	private void MovePiece(int rolledValue)
+	private async void MovePiece(int rolledValue)
 	{
-		// Oblicz nową pozycję
-		currentPosition += rolledValue;
+		int stepsToMove = rolledValue;
 
-		// Jeśli przekroczyliśmy liczbę pól, wracamy do początku (cyklicznie)
-		if (currentPosition >= TotalFields) // Zmienna 40 powinna być zgodna z liczbą pól na planszy
+		while (stepsToMove > 0)
 		{
-			currentPosition -= TotalFields; // Wracamy do początku
+			int nextPosition = currentPosition + 1;
+
+			// Jeśli przekroczyliśmy liczbę pól, wracamy do początku
+			if (nextPosition >= TotalFields)
+			{
+				nextPosition = 0;
+			}
+
+			Vector3 endPosition = CalculateTargetPosition(nextPosition);
+
+			// Animuj ruch do następnego pola
+			await MoveToPosition(endPosition);
+
+			currentPosition = nextPosition;
+			stepsToMove--;
 		}
+	}
 
-		// Oblicz nową pozycję pionka
-		Vector3 targetPosition = CalculateTargetPosition(currentPosition);
+	private async Task MoveToPosition(Vector3 endPosition)
+	{
+		// Utwórz Tween do animacji ruchu
+		Tween tween = CreateTween();
+		tween.TweenProperty(this, "global_position", endPosition, 0.5f)
+			 .SetTrans(Tween.TransitionType.Linear)
+			 .SetEase(Tween.EaseType.InOut);
 
-		// Ustaw pozycję pionka
-		GlobalPosition = targetPosition; // Zakładając, że pionek ma właściwość GlobalPosition
+		// Poczekaj, aż Tween zakończy animację
+		await ToSignal(tween, "finished");
 	}
 
 	private Vector3 CalculateTargetPosition(int position)
@@ -70,16 +89,15 @@ public partial class Figurehead : CharacterBody3D
 		// Ustawienia pozycji dla 40 pól
 		for (int i = 0; i < TotalFields; i++)
 		{
-			// Przykładowe rozmieszczenie pól
-			float x = (i < 10) ? -boardSize / 2 + fieldWidth * (i + 0.5f) : // Górna krawędź
-					   (i < 20) ? boardSize / 2 : // Prawa krawędź
-					   (i < 30) ? boardSize / 2 - fieldWidth * (i - 19.5f) : // Dolna krawędź
-								   -boardSize / 2; // Lewa krawędź
+			float x = (i < 10) ? -boardSize / 2 + fieldWidth * (i + 0.5f) :
+					   (i < 20) ? boardSize / 2 :
+					   (i < 30) ? boardSize / 2 - fieldWidth * (i - 19.5f) :
+								   -boardSize / 2;
 
-			float z = (i < 10) ? boardSize / 2 : // Górna krawędź
-					   (i < 20) ? boardSize / 2 - fieldWidth * (i - 9.5f) : // Prawa krawędź
-					   (i < 30) ? -boardSize / 2 : // Dolna krawędź
-								   -boardSize / 2 + fieldWidth * (i - 29.5f); // Lewa krawędź
+			float z = (i < 10) ? boardSize / 2 :
+					   (i < 20) ? boardSize / 2 - fieldWidth * (i - 9.5f) :
+					   (i < 30) ? -boardSize / 2 :
+								   -boardSize / 2 + fieldWidth * (i - 29.5f);
 
 			fieldPositions[i] = new Vector3(x, fieldHeight, z);
 		}
