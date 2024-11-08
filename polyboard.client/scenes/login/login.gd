@@ -46,7 +46,7 @@ func on_login_pressed() -> void:
 	var json = JSON.new()
 	var json_data = json.stringify(login_data)
 	#TODO zmienić URL!
-	var url = "https://localhost:7216/login"
+	var url = "http://localhost:5000/login"
 	var headers = ["Content-Type: application/json"]
 	var error = http_request.request("http://localhost:7216/login", headers, HTTPClient.METHOD_POST, json_data)
 
@@ -80,7 +80,7 @@ func on_back_button_pressed() -> void:
 	set_process(false)
 
 func handle_connecting_signals() -> void:
-	register_button.button_down.connect(on_register_pressed)
-	login_button.button_down.connect(on_login_pressed)
-	back_button.button_down.connect(on_back_button_pressed)
+	register_button.pressed.connect(on_register_pressed)
+	login_button.pressed.connect(on_login_pressed)
+	back_button.pressed.connect(on_back_button_pressed)
 	register_menu.exit_register_menu.connect(on_exit_register_menu)

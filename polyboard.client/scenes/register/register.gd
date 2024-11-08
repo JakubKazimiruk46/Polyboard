@@ -12,24 +12,21 @@ extends Control
 @onready var error_label = $MarginContainer/HBoxContainer/VBoxContainer/error_label as Label
 #Kontaktowanie sie z serwerem
 @onready var http_request = $HTTPRequest as HTTPRequest
-
-
+#Walidacja
+var password_validator = preload("res://scenes/register/PasswordValidation.gd").new()
+var email_validator = preload("res://scenes/register/EmailValidation.gd").new()
 
 signal exit_register_menu
 
 func _ready():
-	back_button.button_down.connect(on_back_button_pressed)
-	register_button.button_down.connect(on_register_button_pressed)
+	back_button.pressed.connect(on_back_button_pressed)
+	register_button.pressed.connect(on_register_button_pressed)
 	set_process(false)
 	http_request.connect("request_completed", _on_request_completed, 1)
-	set_process(false)
 	
 func on_back_button_pressed() -> void:
 	exit_register_menu.emit()
 	set_process(false)
-
-
-
 
 func on_register_button_pressed() -> void:
 	#Zmienne z pól. strip_edges usuwa białe znaki z końca
@@ -43,35 +40,43 @@ func on_register_button_pressed() -> void:
 	if username == "":
 		error_label.text = "Username cannot be empty."
 		return
-
-	if email == "":
-		error_label.text = "Email cannot be empty."
-		return
-
-	if password == "":
-		error_label.text = "Password cannot be empty."
-		return
-
+	
 	if password != confirm_password:
 		error_label.text = "Passwords do not match."
 		return
 		
-	var registatrion_data = {
+	var val_pass_result = password_validator.validate_password(password)
+	var val_email_result = email_validator.validate_email(email)
+	
+	if val_email_result != "valid":
+		error_label.text = val_email_result
+		return
+	
+	if val_pass_result != "valid":
+		error_label.text = val_pass_result
+		return
+	
+	var registration_data = {
 		"UserName": username,
 		"Email": email,
 		"Password": password
 		}
+		
 	var json = JSON.new()
-	var json_data = json.stringify(registatrion_data)
+	var json_data = json.stringify(registration_data)
 	#TODO URL DO ZMIANY!
-	var url = "https://localhost:7216/register"
+	var url = "http://localhost:5000/register"
 	
 	var headers = ["Content-Type: application/json"]
 	var error = http_request.request(url, headers, HTTPClient.METHOD_POST, json_data)
 	
+	var json_data1 = json.stringify(registration_data)
+	print("JSON Data being sent:", json_data1)
+	
 	if error != OK:
 		error_label.text = "Failed to send request."
 		print("Error sending request: ", error)
+		
 func _on_request_completed(result: int, response_code: int, headers: Array, body: PackedByteArray):
 	var response_text = body.get_string_from_utf8()
 	var json = JSON.new()
