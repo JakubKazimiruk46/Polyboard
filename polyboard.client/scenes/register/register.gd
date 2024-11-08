@@ -21,8 +21,8 @@ signal exit_register_menu
 func _ready():
 	back_button.pressed.connect(on_back_button_pressed)
 	register_button.pressed.connect(on_register_button_pressed)
-	set_process(false)
 	http_request.connect("request_completed", _on_request_completed, 1)
+	set_process(false)
 	
 func on_back_button_pressed() -> void:
 	exit_register_menu.emit()

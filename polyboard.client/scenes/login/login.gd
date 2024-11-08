@@ -12,11 +12,13 @@ class_name Login
 @onready var register_menu = $register as Register
 @onready var margin_container = $MarginContainer as MarginContainer
 
-@onready var http_request = $HTTPRequest
+@onready var http_request = $HTTPRequest as HTTPRequest
 
 signal exit_login_menu
 
 func _ready():
+	login_button.pressed.connect(on_login_pressed)
+	http_request.connect("request_completed", _on_request_completed, 1)
 	handle_connecting_signals()
 	set_process(false)
 
@@ -45,32 +47,35 @@ func on_login_pressed() -> void:
 		
 	var json = JSON.new()
 	var json_data = json.stringify(login_data)
-	#TODO zmienić URL!
+	#TODO URL DO ZMIANY!
 	var url = "http://localhost:5000/login"
+	
 	var headers = ["Content-Type: application/json"]
-	var error = http_request.request("http://localhost:5000/login", headers, HTTPClient.METHOD_POST, json_data)
-
+	var error = http_request.request(url, headers, HTTPClient.METHOD_POST, json_data)
+	
+	var json_data1 = json.stringify(login_data)
+	print("JSON Data being sent:", json_data1)
+	
 	if error != OK:
 		error_label.text = "Failed to send request."
 		print("Error sending request: ", error)
 
 func _on_request_completed(result: int, response_code: int, headers: Array, body: PackedByteArray):
 	var response_text = body.get_string_from_utf8()
-	var json = JSON.new()
 	print("Raw response text: ", response_text)
-	var response = json.parse(response_text)
-
-	if response.error != OK:
+	
+	if response_code != 200:
 		error_label.text = "Failed to parse response."
-		print("Error parsing response: ", response.error)
-		exit_login_menu.emit()
+		print("Error parsing response: ", response_text)
 		return
-		
+
 	if response_code == 200:
-		print("Login successful: ", response.result)
+		print("Login successful: ", response_text)
 		error_label.text = "Login successful!"
+		exit_login_menu.emit()
+		set_process(false)
 	else:
-		error_label.text = "Login failed: " + response.result["message"]
+		error_label.text = "Login failed: " + response_text
 
 func on_exit_register_menu() -> void:
 	margin_container.visible = true
