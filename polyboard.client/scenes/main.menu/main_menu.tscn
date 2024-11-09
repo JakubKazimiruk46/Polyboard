@@ -116,9 +116,6 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_hmdkb")
 theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
 text = "LOGIN"
 
-[node name="Separator2" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
-
 [node name="new_game_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 modulate = Color(0.293333, 1, 0.2, 1)
 custom_minimum_size = Vector2(120, 0)
@@ -130,9 +127,6 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/hover = SubResource("StyleBoxFlat_hmdkb")
 theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
 text = "NEW GAME"
-
-[node name="Control" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
 
 [node name="join_game_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 modulate = Color(0.293333, 1, 0.2, 1)
@@ -146,9 +140,6 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_hmdkb")
 theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
 text = "JOIN GAME"
 
-[node name="Control2" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
-
 [node name="settings_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 modulate = Color(0.293333, 1, 0.2, 1)
 material = SubResource("CanvasItemMaterial_m6x2i")
@@ -161,9 +152,6 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_hmdkb")
 theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
 text = "SETTINGS
 "
-
-[node name="Control3" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
 
 [node name="exit_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 modulate = Color(0.293333, 1, 0.2, 1)
