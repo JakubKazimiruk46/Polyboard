@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using PolyBoard.Server.Core.Entities;
+using PolyBoard.Server.Core.Helpers;
 using System.Collections.Concurrent;
 
 namespace PolyBoard.Server.Presentation.Hubs
@@ -45,7 +46,7 @@ namespace PolyBoard.Server.Presentation.Hubs
         // Method for admins to remove a specific user from a room
         public async Task RemoveUserFromLobby(string adminUsername, string usernameToRemove, string gameRoom)
         {
-            if (RoomAdmins.TryGetValue(gameRoom, out string admin) && admin == adminUsername)
+            if (RoomAdmins.TryGetValue(gameRoom, out string? admin) && admin == adminUsername)
             {
                 // Find the connection ID of the user to remove
                 var userToRemove = Lobbies[gameRoom]?.FirstOrDefault(u => u.Username == usernameToRemove);
@@ -77,7 +78,7 @@ namespace PolyBoard.Server.Presentation.Hubs
             }
         }
 
-        public override async Task OnDisconnectedAsync(Exception exception)
+        public override async Task OnDisconnectedAsync(Exception? exception)
         {
             // Remove the user from all rooms they belong to and update lobbies
             foreach (var room in Lobbies)

@@ -1,0 +1,32 @@
+﻿version: "3"
+
+services:
+  polyboard.server.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8081
+    image: polyboard.server.api
+    build:
+      context: .
+      dockerfile: PolyBoard.Server.Presentation/Dockerfile
+    ports:
+      - "8081:8081"
+      - "8080:8080"
+    volumes:
+      - ./polyboard-api-data/:/var/lib/api/
+    depends_on:
+      - polyboard.server.database
+  
+  polyboard.server.database:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=PolyBoard
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+      - HOS
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - ./db-data/:/var/lib/postgresql/data/
+  
