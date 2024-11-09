@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace PolyBoard.Server.Core.Entities
 {
-    public class UserConnection
+    public sealed class UserConnection
     {
-        public string Username { get; set; } = string.Empty;
-
-        public string GameRoom { get; set; } = string.Empty;
+        public Guid LobbyId { get; set; }
+        public string? UserId { get; set; }
     }
 }
