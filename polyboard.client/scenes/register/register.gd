@@ -45,16 +45,15 @@ func on_register_button_pressed() -> void:
 		error_label.text = "Passwords do not match."
 		return
 		
-	#Nie działa z regexem?
-	#var val_email_result = email_validator.validate_email(email)
-	#if val_email_result != "valid":
-	#	error_label.text = val_email_result
-	#	return
+	var val_email_result = email_validator.validate_email(email)
+	if val_email_result != "valid":
+		error_label.text = val_email_result
+		return
 		
-	#var val_pass_result = password_validator.validate_password(password)
-	#if val_pass_result != "valid":
-	#	error_label.text = val_pass_result
-	#	return
+	var val_pass_result = password_validator.validate_password(password)
+	if val_pass_result != "valid":
+		error_label.text = val_pass_result
+		return
 	
 	var registration_data = {
 		"UserName": username,
@@ -83,12 +82,12 @@ func _on_request_completed(result: int, response_code: int, headers: Array, body
 	print("Raw response text: ", response_text)
 	var response = json.parse(response_text)
 	
-	if response != OK:
+	if response != 200:
 		error_label.text = "Failed to parse response."
 		print("Error parsing response: ", response)
 		return
 
-	if response == OK:
+	if response == 200:
 		print("Registration successful: ", response)
 		error_label.text = "Registration successful!"
 		exit_register_menu.emit()
