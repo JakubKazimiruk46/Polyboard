@@ -8,6 +8,7 @@ namespace PolyBoard.Server.Core.Entities.Cards
     //Ta klasa jest abstrakcyjna, bo trzeba efekty zaimplementować dla konkretnych kart (idziesz do wiezienia, dostajesz kaske od kazdego itp)
     // W tabeli bedzie kolumna okreslajaca konkretny typ karty zmapowana przez EF (TPH)
     //patrz command pattern
+    [NotMapped]
     public class Card : IEntity, IEventSource, ICollectable
     {
         public Guid Id { get; set; } // Klucz główny

@@ -35,7 +35,7 @@ public static class DependencyInjection
             .AddIdentityCore<User>()
             .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<PostgresDbContext>();
-
+        //TODO Comment it out for GENERATING migrations!
         services.ApplyMigrations();
         return services;
     }
