@@ -8,7 +8,8 @@ font_names = PackedStringArray("Impact")
 
 [node name="godot_splash_screen" type="VBoxContainer"]
 script = ExtResource("1_senbr")
-_time = 1.0
+_time = 0.5
+_fade_time = 0.5
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 2

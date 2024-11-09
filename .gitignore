@@ -377,4 +377,9 @@ export_presets.cfg
 .mono/
 data_*/
 mono_crash.*.json
-/PolyBoard.Server/PolyBoard.Server.Presentation/Controllers/UserController.cs
+
+PolyBoard.Server/db-data
+PolyBoard.Server/polyboard-api-data
+
+Polyboard.Server/PolyBoard.Server.Infrastructure/Migrations
+

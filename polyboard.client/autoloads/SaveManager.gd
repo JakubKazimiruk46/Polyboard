@@ -1,6 +1,7 @@
 extends Node
 
 const SETTINGS_SAVE_PATH : String = "user://SettingsData.save"
+const url : String = "http://localhost:8081{str}"
 
 var settings_data_dict : Dictionary = {}
 
