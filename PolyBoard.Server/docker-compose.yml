@@ -15,7 +15,7 @@ services:
   polyboard.server.database:
     image: postgres:latest
     environment:
-      - POSTGRES_DB=ShoesAndBlouse
+      - POSTGRES_DB=PolyBoard
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=admin
       - HOS
