@@ -23,7 +23,10 @@ namespace PolyBoard.Server.Presentation.Controllers
         {
             var success = await _mediator.Send(command);
 
-            return success ? Ok(new {status=200, message="User registered successfully."}) : BadRequest(new {status=400, message="Registration failed."});
+            if(success.Success)
+                return Ok(new {status = 200, message = "User register successfull"});
+            
+            return BadRequest(new { status = 400, message = success.Error ?? "Registration failed." });
 
         }
 
