@@ -9,13 +9,14 @@ subpixel_positioning = 0
 
 [node name="PolitechnikaSplashScreen" type="VBoxContainer"]
 script = ExtResource("1_n6jwf")
-_time = 1.0
+_time = 0.5
+_fade_time = 0.5
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 2
 theme_override_fonts/font = SubResource("SystemFont_ycxkf")
 theme_override_font_sizes/font_size = 40
-text = "GAME CREATED BY STUDENTS FROM"
+text = "GAME CREATED BY  AND FOR STUDENTS FROM"
 horizontal_alignment = 1
 
 [node name="ColorRect" type="ColorRect" parent="."]

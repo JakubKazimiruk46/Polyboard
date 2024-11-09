@@ -2,12 +2,17 @@ extends Control
 
 @export var _move_to: PackedScene
 
-@export var _initial_delay: float = 0.5
-
 var _splash_screens: Array[SplashScreen] = []
 
 @onready var _splash_screen_container: CenterContainer = $SplashScreenContainer
 
+func _process(delta) -> void:
+	go_to_main_menu()
+
+func go_to_main_menu() -> void:
+	if Input.is_action_just_pressed("ui_space"):
+		get_tree().change_scene_to_packed(_move_to)
+	
 func _ready() -> void:
 	assert(_move_to)
 	
@@ -15,7 +20,6 @@ func _ready() -> void:
 		splash_screen.hide()
 		_splash_screens.push_back(splash_screen)
 
-	await(get_tree().create_timer(_initial_delay).timeout)
 
 	_start_splash_screen()
 
