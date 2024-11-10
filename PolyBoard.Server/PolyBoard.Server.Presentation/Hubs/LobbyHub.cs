@@ -37,7 +37,7 @@ namespace PolyBoard.Server.Presentation.Hubs
             await Clients.Caller.SendAsync("ReceiveMessage", $"Joined lobby {conn.LobbyId}");
         }
 
-        public void ChangeLobbyAdmin(Guid lobbyId, Guid newAdminId)
+        public async Task ChangeLobbyAdmin(Guid lobbyId, Guid newAdminId)
         {
             _lobbyService.ChangeLobbyAdmin(lobbyId, newAdminId);
         }
