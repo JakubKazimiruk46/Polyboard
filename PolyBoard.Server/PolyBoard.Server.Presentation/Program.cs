@@ -38,7 +38,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-//Wymagania hasła
+//Wymagania hasła po stronie serwera
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequireDigit = true;
