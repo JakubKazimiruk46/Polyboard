@@ -3,6 +3,7 @@ using PolyBoard.Server.Core.Exceptions;
 using PolyBoard.Server.Core.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PolyBoard.Server.Core.Helpers
@@ -10,12 +11,15 @@ namespace PolyBoard.Server.Core.Helpers
     public sealed class LobbyService : ILobbyService
     {
         private static LobbyService? _instance;
-        private static readonly object _lock = new(); 
-        private readonly List<Lobby> _lobbies;
+        private static readonly object _lock = new();
 
-        private LobbyService()
+        private readonly List<Lobby> _lobbies;
+        private readonly List<UserConnection> _userConnections;
+
+        public LobbyService()
         {
             _lobbies = new List<Lobby>();
+            _userConnections = new List<UserConnection>();
         }
 
         public static LobbyService GetInstance()
@@ -30,37 +34,106 @@ namespace PolyBoard.Server.Core.Helpers
                     }
                 }
             }
-
             return _instance;
         }
 
-        public Task<IEnumerable<Lobby>> GetLobbiesAsync()
+        public List<Lobby> GetLobbies()
         {
             if (_lobbies == null)
                 throw new LobbyCollectionNullException();
 
-            return Task.FromResult((IEnumerable<Lobby>)_lobbies);
+            return _lobbies;
         }
 
-        public Task AddLobbyAsync(string lobbyName, Guid adminId)
+        public void AddLobby(string lobbyName, Guid adminId)
         {
             if (_lobbies == null)
                 throw new LobbyCollectionNullException();
 
             var lobby = new Lobby(lobbyName, adminId);
             _lobbies.Add(lobby);
-
-            return Task.CompletedTask;
         }
 
-        public Task<Lobby> GetLobbyByIdAsync(Guid lobbyId)
+        public Lobby? GetLobbyById(Guid? lobbyId)
         {
+            if (lobbyId == null)
+                return null;
+            
             Lobby? lobby = _lobbies.FirstOrDefault(l => lobbyId == l.Id);
+            return lobby;
+        }
+
+        public void RemoveLobbyById(Guid? lobbyId)
+        {
+            Lobby? lobbyToRemove = _lobbies.FirstOrDefault(l => l.Id == lobbyId);
+            if (lobbyToRemove != null)
+                _lobbies.Remove(lobbyToRemove);
+        }
+
+        public void ChangeLobbyAdmin(Guid lobbyId, Guid newAdminId)
+        {
+            Lobby? lobby = _lobbies.FirstOrDefault(l => l.Id == lobbyId);
+
+            if (lobby != null)  
+                lobby.AdminId = newAdminId;
+        }
+
+        public void ChangeLobbyAdmin(Guid? lobbyId)
+        {
+            Lobby? lobby = _lobbies.FirstOrDefault(l => l.Id == lobbyId);
 
             if (lobby != null)
-                return Task.FromResult(lobby);
+            {
+                IEnumerable<UserConnection> userConnectionInThisLobby = _userConnections.Where(uc => uc.LobbyId == lobbyId);
+                UserConnection? newAdmin = _userConnections.FirstOrDefault(uc => uc.UserId != lobby.AdminId);
 
-            return Task.FromResult(new Lobby());
+                if (newAdmin != null)
+                    lobby.AdminId = newAdmin.UserId;
+            }
+        }
+        
+        public List<UserConnection> GetConnectionsByLobby(Guid? lobbyId)
+        {
+            if (lobbyId == null)
+            {
+                throw new Exception("Null in lobbyId");
+            }
+
+            List<UserConnection> userConnectionsInThisLobby = _userConnections.Where(uc => uc.LobbyId == lobbyId).ToList();
+            return userConnectionsInThisLobby;
+        }
+
+        public void AddConnectionToLobby(Guid userId, string connectionId, Guid lobbyId)
+        {
+            var userConnection = new UserConnection
+            {
+                UserId = userId,
+                ConnectionId = connectionId,
+                LobbyId = lobbyId
+            };
+            _userConnections.Add(userConnection);
+        }
+
+        public Guid? GetLobbyIdByConnection(string connectionId)
+        {
+            var userConnection = _userConnections.FirstOrDefault(uc => uc.ConnectionId == connectionId);
+            return userConnection?.LobbyId;
+        }
+
+        public void RemoveConnectionFromLobby(string connectionId)
+        {
+            var userConnection = _userConnections.FirstOrDefault(uc => uc.ConnectionId == connectionId);
+            if (userConnection != null)
+            {
+                _userConnections.Remove(userConnection);
+            }
+        }
+
+        public Guid? GetUserIdByConnection(string connectionId)
+        {
+            UserConnection? userConnection = _userConnections.FirstOrDefault(u => u.ConnectionId == connectionId);
+
+            return userConnection?.UserId;
         }
     }
 }

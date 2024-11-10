@@ -11,11 +11,9 @@ namespace PolyBoard.Server.Core.Entities
     {
         public Guid Id { get; set; } = Guid.Empty;
 
-        public string LobbyName { get; set; } = string.Empty;
+        public string LobbyName { get; set; } = "Room";
 
         public Guid AdminId { get; set; } = new Guid();
-
-        public List<Guid> ConnectedUsers { get; set; } = new List<Guid>();
 
         public Lobby() { }
 
@@ -23,9 +21,7 @@ namespace PolyBoard.Server.Core.Entities
         {
             LobbyName = lobbyName;
             AdminId = adminId;
-
-            ConnectedUsers = new List<Guid>();
-            ConnectedUsers.Add(AdminId);
+            Id = Guid.NewGuid();
         }
     }
 }

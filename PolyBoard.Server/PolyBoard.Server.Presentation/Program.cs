@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using PolyBoard.Server.Application;
+using PolyBoard.Server.Core.Helpers;
+using PolyBoard.Server.Core.Interfaces;
 using PolyBoard.Server.Infrastructure;
 using PolyBoard.Server.Presentation.Hubs;
 using PolyBoard.Server.Presentation.OptionsSetup;
@@ -8,8 +10,8 @@ using PolyBoard.Server.Presentation.OptionsSetup;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
+
 //Swagger setup
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -46,6 +48,9 @@ builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 builder.Services.AddApplication()
     .AddInfrastructure(builder.Configuration);
 
+builder.Services.AddSingleton<ILobbyService, LobbyService>();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -65,4 +70,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-

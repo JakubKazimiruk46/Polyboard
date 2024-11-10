@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+
 using PolyBoard.Server.Core.Entities;
 using PolyBoard.Server.Core.Helpers;
 using PolyBoard.Server.Core.Interfaces;
@@ -20,38 +22,50 @@ namespace PolyBoard.Server.Presentation.Controllers
         }
 
         [HttpGet("GetLobbies")]
-        public async Task<IActionResult> GetLobbies()
+        public IActionResult GetLobbies()
         {
-            var lobbies = await _lobbyService.GetLobbiesAsync();
+            var lobbies = _lobbyService.GetLobbies();
             return Ok(lobbies);
         }
 
         [HttpPost("CreateLobby")]
-        public async Task<IActionResult> CreateLobby([FromBody] LobbyCreationRequest request)
+        public IActionResult CreateLobby([FromBody] LobbyCreationRequest request)
         {
             if (request == null)
-            {
-                return BadRequest("Request body cannot be null.");
-            }
+                throw new ArgumentNullException(nameof(request));
+            if (request.LobbyName == null)
+                throw new ArgumentNullException(nameof(request.LobbyName));
 
-            if (string.IsNullOrWhiteSpace(request.LobbyName))
-            {
-                return BadRequest("Lobby name cannot be empty.");
-            }
-
-            if (request.AdminId == Guid.Empty)
-            {
-                return BadRequest("Invalid admin ID.");
-            }
-
-            await _lobbyService.AddLobbyAsync(request.LobbyName, request.AdminId);
+            _lobbyService.AddLobby(request.LobbyName, request.AdminId);
             return Ok();
         }
+
+        [HttpGet("GetLobby")]
+        public IActionResult GetLobby(Guid lobbyId)
+        {
+            Lobby? lobby = _lobbyService.GetLobbyById(lobbyId);
+            List<UserConnection> connectedUsers = _lobbyService.GetConnectionsByLobby(lobbyId);
+
+            var response = new LobbyDetailsResponse
+            {
+                Lobby = lobby,
+                ConnectedUsers = connectedUsers
+            };
+
+            return Ok(response);
+        }
+
     }
 
     public class LobbyCreationRequest
     {
         public string? LobbyName { get; set; }
         public Guid AdminId { get; set; }
+    }
+
+    public class LobbyDetailsResponse
+    {
+        public Lobby? Lobby { get; set; }
+        public List<UserConnection> ConnectedUsers { get; set; } = new List<UserConnection>();
     }
 }

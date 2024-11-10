@@ -9,6 +9,9 @@ namespace PolyBoard.Server.Core.Entities
     public sealed class UserConnection
     {
         public Guid LobbyId { get; set; }
-        public string? UserId { get; set; }
+        public Guid UserId { get; set; }
+        public string? Username { get; set; } = string.Empty;
+        public string? ConnectionId { get; set; }
+        public string GroupString => LobbyId.ToString();
     }
 }
