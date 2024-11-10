@@ -3,7 +3,7 @@ using MediatR;
 
 namespace PolyBoard.Server.Application.Users.Commands;
 
-public class RegisterUserCommand : IRequest<bool>
+public class RegisterUserCommand : IRequest<RegisterUserResult>
 {
     public string Email { get; set; }
     public string UserName { get; set; }
