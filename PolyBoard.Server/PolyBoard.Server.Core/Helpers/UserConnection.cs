@@ -4,9 +4,11 @@
 namespace PolyBoard.Server.Core.Helpers;
 
 [NotMapped]
-public class UserConnection
+public sealed class UserConnection
 {
-    public string Username { get; set; } = string.Empty;
-
-    public string GameRoom { get; set; } = string.Empty;
+    public Guid LobbyId { get; set; }
+    public Guid UserId { get; set; }
+    public string? Username { get; set; } = string.Empty;
+    public string? ConnectionId { get; set; }
+    public string GroupString => LobbyId.ToString();
 }
