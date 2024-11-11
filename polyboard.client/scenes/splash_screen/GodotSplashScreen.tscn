@@ -12,12 +12,14 @@ _time = 0.5
 _fade_time = 0.5
 
 [node name="Label" type="Label" parent="."]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = SubResource("SystemFont_ft8ld")
-theme_override_font_sizes/font_size = 100
-text = "MADE IN"
+theme_override_font_sizes/font_size = 80
+text = "MADE IN GODOT"
 horizontal_alignment = 1
+autowrap_mode = 2
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 2

@@ -21,6 +21,7 @@ BackgroundMusic="*res://scenes/background_music.tscn"
 SettingsDataContainer="*res://autoloads/SettingsDataContainer.gd"
 SettingsSignalBus="*res://autoloads/SettingsSignalBus.gd"
 SaveManager="*res://autoloads/SaveManager.gd"
+Authentication="*res://scenes/authentication/authentication.gd"
 
 [dotnet]
 

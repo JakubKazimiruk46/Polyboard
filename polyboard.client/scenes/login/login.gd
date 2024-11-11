@@ -17,7 +17,6 @@ class_name Login
 signal exit_login_menu
 
 func _ready():
-	login_button.pressed.connect(on_login_pressed)
 	http_request.connect("request_completed", _on_request_completed, 1)
 	handle_connecting_signals()
 	set_process(false)
@@ -48,7 +47,7 @@ func on_login_pressed() -> void:
 	var json = JSON.new()
 	var json_data = json.stringify(login_data)
 	#TODO URL DO ZMIANY!
-	var url = "http://localhost:5000/login"
+	var url = SaveManager.url.format({"str":"/login"})
 	
 	var headers = ["Content-Type: application/json"]
 	var error = http_request.request(url, headers, HTTPClient.METHOD_POST, json_data)
@@ -71,7 +70,9 @@ func _on_request_completed(result: int, response_code: int, headers: Array, body
 
 	if response_code == 200:
 		print("Login successful: ", response_text)
-		error_label.text = "Login successful!"
+		Authentication.token = response_text
+		username_input.clear()
+		password_input.clear()
 		exit_login_menu.emit()
 		set_process(false)
 	else:

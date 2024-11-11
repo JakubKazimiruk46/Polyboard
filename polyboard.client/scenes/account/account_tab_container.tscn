@@ -1,0 +1,274 @@
+[gd_scene load_steps=9 format=3 uid="uid://caml7se6mxf4i"]
+
+[ext_resource type="PackedScene" uid="uid://by1k0ckydbvmy" path="res://scenes/account/match_history.tscn" id="1_hcews"]
+[ext_resource type="PackedScene" uid="uid://bioeyv8t6aq7g" path="res://scenes/account/achievement_filter.tscn" id="2_5diw0"]
+[ext_resource type="PackedScene" uid="uid://pqq8f6ycwv18" path="res://scenes/account/achievement.tscn" id="3_im1fl"]
+
+[sub_resource type="SystemFont" id="SystemFont_7t8lt"]
+font_names = PackedStringArray("Serif")
+subpixel_positioning = 0
+
+[sub_resource type="SystemFont" id="SystemFont_wymuc"]
+font_names = PackedStringArray("Serif")
+subpixel_positioning = 0
+
+[sub_resource type="SystemFont" id="SystemFont_iuv3x"]
+font_names = PackedStringArray("Serif")
+subpixel_positioning = 0
+
+[sub_resource type="SystemFont" id="SystemFont_nwjse"]
+font_names = PackedStringArray("Serif")
+subpixel_positioning = 0
+
+[sub_resource type="SystemFont" id="SystemFont_tu3lf"]
+font_names = PackedStringArray("Serif")
+subpixel_positioning = 0
+
+[node name="account_tab_container" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TabContainer" type="TabContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 100.0
+offset_top = 50.0
+offset_right = -100.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 25
+tab_alignment = 1
+current_tab = 2
+
+[node name="Account" type="TabBar" parent="TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="TabContainer/Account"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 60
+theme_override_constants/margin_bottom = 24
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Account/MarginContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Account/MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_constants/separation = 80
+alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 5
+
+[node name="username_label" type="Label" parent="TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Username"
+
+[node name="username" type="LineEdit" parent="TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_7t8lt")
+theme_override_font_sizes/font_size = 30
+placeholder_text = "username"
+
+[node name="HSeparator2" type="HSeparator" parent="TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="email_label" type="Label" parent="TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Email"
+
+[node name="email_label2" type="Label" parent="TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "this information is private and won't be shared with other players."
+autowrap_mode = 2
+
+[node name="email" type="LineEdit" parent="TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_wymuc")
+theme_override_font_sizes/font_size = 30
+placeholder_text = "Email"
+expand_to_text_length = true
+
+[node name="HSeparator" type="HSeparator" parent="TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="change_password_label" type="Label" parent="TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Change password"
+
+[node name="change_password_label2" type="Label" parent="TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_iuv3x")
+theme_override_font_sizes/font_size = 15
+text = "its recomended to update your password periodicaly to prevent unauthorized access to your account"
+autowrap_mode = 2
+
+[node name="current_password" type="LineEdit" parent="TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_nwjse")
+theme_override_font_sizes/font_size = 30
+placeholder_text = "current password"
+secret = true
+
+[node name="new_password" type="LineEdit" parent="TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_tu3lf")
+theme_override_font_sizes/font_size = 30
+placeholder_text = "new password"
+expand_to_text_length = true
+secret = true
+
+[node name="confirm_new_password" type="LineEdit" parent="TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_nwjse")
+theme_override_font_sizes/font_size = 30
+placeholder_text = "confirm new password"
+expand_to_text_length = true
+secret = true
+
+[node name="HSeparator3" type="HSeparator" parent="TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 2
+
+[node name="save_button" type="Button" parent="TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+modulate = Color(0.294118, 1, 0.2, 1)
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+text = "SAVE CHANGES"
+
+[node name="Match history" type="TabBar" parent="TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="TabContainer/Match history"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Match history/MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Match history/MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 112
+
+[node name="MatchHistory" parent="TabContainer/Match history/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("1_hcews")]
+layout_mode = 2
+
+[node name="MatchHistory2" parent="TabContainer/Match history/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("1_hcews")]
+layout_mode = 2
+
+[node name="MatchHistory3" parent="TabContainer/Match history/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("1_hcews")]
+layout_mode = 2
+
+[node name="MatchHistory4" parent="TabContainer/Match history/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("1_hcews")]
+layout_mode = 2
+
+[node name="MatchHistory5" parent="TabContainer/Match history/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("1_hcews")]
+layout_mode = 2
+
+[node name="MatchHistory6" parent="TabContainer/Match history/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("1_hcews")]
+layout_mode = 2
+
+[node name="Achievements" type="TabBar" parent="TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="TabContainer/Achievements"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="AchievementFilter" parent="TabContainer/Achievements/MarginContainer" instance=ExtResource("2_5diw0")]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Achievements/MarginContainer"]
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Achievements/MarginContainer/ScrollContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Control" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("3_im1fl")]
+custom_minimum_size = Vector2(274, 40)
+layout_mode = 2
+
+[node name="Control2" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("3_im1fl")]
+custom_minimum_size = Vector2(274, 40)
+layout_mode = 2
+
+[node name="Control3" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("3_im1fl")]
+custom_minimum_size = Vector2(274, 40)
+layout_mode = 2
+
+[node name="Control4" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("3_im1fl")]
+custom_minimum_size = Vector2(274, 40)
+layout_mode = 2
+
+[node name="Control5" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("3_im1fl")]
+custom_minimum_size = Vector2(274, 40)
+layout_mode = 2
+
+[node name="Control6" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("3_im1fl")]
+custom_minimum_size = Vector2(274, 40)
+layout_mode = 2
+
+[node name="Control7" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("3_im1fl")]
+custom_minimum_size = Vector2(274, 40)
+layout_mode = 2
+
+[node name="Control8" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("3_im1fl")]
+custom_minimum_size = Vector2(274, 40)
+layout_mode = 2

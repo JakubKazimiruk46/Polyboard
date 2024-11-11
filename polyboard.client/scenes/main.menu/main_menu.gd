@@ -1,11 +1,14 @@
 class_name MainMenu
 extends Control
 
+@onready var logout_button = $MarginContainer/HBoxContainer/VBoxContainer/logout_button as Button
+@onready var account_button = $MarginContainer/HBoxContainer/VBoxContainer/account_button as Button
 @onready var newgame_button = $MarginContainer/HBoxContainer/VBoxContainer/new_game_button as Button
 @onready var join_game_button = $MarginContainer/HBoxContainer/VBoxContainer/join_game_button as Button
 @onready var settings_button = $MarginContainer/HBoxContainer/VBoxContainer/settings_button as Button
 @onready var exit_button = $MarginContainer/HBoxContainer/VBoxContainer/exit_button as Button
 @onready var login_button = $MarginContainer/HBoxContainer/VBoxContainer/login_button as Button
+@onready var account_menu = $account as Account
 @onready var login_menu = $login as Login
 @onready var newgame_menu = $new_game as NewGame
 @onready var joingame_menu = $join_game as JoinGame
@@ -17,6 +20,17 @@ extends Control
 func _ready():
 	handle_connecting_signals()
 	
+
+func on_account_pressed() -> void:
+	margin_container.visible = false
+	account_menu.set_process(true)
+	account_menu.visible = true
+
+func on_logout_pressed() -> void:
+	Authentication.token = ""
+	margin_container.visible = false
+	login_menu.set_process(true)
+	login_menu.visible = true
 
 func on_login_pressed() -> void:
 	margin_container.visible = false
@@ -38,9 +52,25 @@ func on_settings_pressed() -> void:
 	settings_menu.set_process(true)
 	settings_menu.visible = true
 
+func on_exit_account_menu() -> void:
+	margin_container.visible = true
+	account_menu.visible = false
+
 func on_exit_login_menu() -> void:
 	margin_container.visible = true
 	login_menu.visible = false
+	if Authentication.token == "":
+		newgame_button.visible = false
+		join_game_button.visible = false
+		account_button.visible = false
+		logout_button.visible = false
+		login_button.visible = true
+	else:
+		account_button.visible = true
+		login_button.visible = false
+		logout_button.visible = true
+		newgame_button.visible = true
+		join_game_button.visible = true
 
 func on_exit_newgame_menu() -> void:
 	margin_container.visible = true
@@ -58,6 +88,9 @@ func on_exit_pressed() -> void:
 	get_tree().quit()
 
 func handle_connecting_signals() -> void:
+	account_button.button_down.connect(on_account_pressed)
+	account_menu.exit_account_menu.connect(on_exit_account_menu)
+	logout_button.button_down.connect(on_logout_pressed)
 	newgame_button.button_down.connect(on_newgame_pressed)
 	newgame_menu.exit_newgame_menu.connect(on_exit_newgame_menu)
 	login_button.button_down.connect(on_login_pressed)

@@ -62,7 +62,7 @@ func on_register_button_pressed() -> void:
 		}
 		
 	var json = JSON.new()
-	var json_data = json.stringify(registatrion_data)
+	var json_data = json.stringify(registration_data)
 	var url = SaveManager.url.format({"str":"/register"})
 	
 	var headers = ["Content-Type: application/json"]
