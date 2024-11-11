@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,6 +19,12 @@
     <ProjectReference Include="..\PolyBoard.Server.Application\PolyBoard.Server.Application.csproj" />
     <ProjectReference Include="..\PolyBoard.Server.Core\PolyBoard.Server.Core.csproj" />
     <ProjectReference Include="..\PolyBoard.Server.Infrastructure\PolyBoard.Server.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
   </ItemGroup>
 
 </Project>
