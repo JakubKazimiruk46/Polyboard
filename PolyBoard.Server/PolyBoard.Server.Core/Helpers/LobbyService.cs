@@ -1,40 +1,17 @@
 ﻿using PolyBoard.Server.Core.Entities;
 using PolyBoard.Server.Core.Exceptions;
 using PolyBoard.Server.Core.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PolyBoard.Server.Core.Helpers
 {
     public sealed class LobbyService : ILobbyService
     {
-        private static LobbyService? _instance;
-        private static readonly object _lock = new();
-
-        private readonly List<Lobby> _lobbies;
+        private static List<Lobby> _lobbies = new List<Lobby>();
         private readonly List<UserConnection> _userConnections;
 
         public LobbyService()
         {
-            _lobbies = new List<Lobby>();
             _userConnections = new List<UserConnection>();
-        }
-
-        public static LobbyService GetInstance()
-        {
-            if (_instance == null)
-            {
-                lock (_lock)
-                {
-                    if (_instance == null)
-                    {
-                        _instance = new LobbyService();
-                    }
-                }
-            }
-            return _instance;
         }
 
         public List<Lobby> GetLobbies()

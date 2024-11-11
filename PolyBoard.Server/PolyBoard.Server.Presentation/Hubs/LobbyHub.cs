@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using PolyBoard.Server.Core.Entities;
+using PolyBoard.Server.Core.Helpers;
 using PolyBoard.Server.Core.Interfaces;
-using System.Threading.Tasks;
 
 namespace PolyBoard.Server.Presentation.Hubs
 {

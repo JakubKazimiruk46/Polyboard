@@ -1,12 +1,9 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-
+﻿using Microsoft.AspNetCore.Mvc;
+using PolyBoard.Server.Application.DTO;
 using PolyBoard.Server.Core.Entities;
 using PolyBoard.Server.Core.Helpers;
 using PolyBoard.Server.Core.Interfaces;
-using System;
-using System.Threading.Tasks;
+
 
 namespace PolyBoard.Server.Presentation.Controllers
 {
@@ -55,17 +52,5 @@ namespace PolyBoard.Server.Presentation.Controllers
             return Ok(response);
         }
 
-    }
-
-    public class LobbyCreationRequest
-    {
-        public string? LobbyName { get; set; }
-        public Guid AdminId { get; set; }
-    }
-
-    public class LobbyDetailsResponse
-    {
-        public Lobby? Lobby { get; set; }
-        public List<UserConnection> ConnectedUsers { get; set; } = new List<UserConnection>();
     }
 }

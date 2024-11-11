@@ -1,4 +1,5 @@
 ﻿using PolyBoard.Server.Core.Entities;
+using PolyBoard.Server.Core.Helpers;
 
 namespace PolyBoard.Server.Core.Interfaces
 {
@@ -14,7 +15,7 @@ namespace PolyBoard.Server.Core.Interfaces
         void AddConnectionToLobby(Guid userId, string connectionId, Guid lobbyId);
         void RemoveConnectionFromLobby(string connectionId);
         Guid? GetUserIdByConnection(string connectionId);
-        public List<UserConnection> GetConnectionsByLobby(Guid? lobbyId);
+        List<UserConnection> GetConnectionsByLobby(Guid? lobbyId);
 
     }
 
