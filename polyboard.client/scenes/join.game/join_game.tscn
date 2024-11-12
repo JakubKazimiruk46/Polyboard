@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://bilcswbdfpvbx"]
+[gd_scene load_steps=6 format=3 uid="uid://bilcswbdfpvbx"]
 
 [ext_resource type="Script" path="res://scenes/join.game/join_game.gd" id="1_1buva"]
 [ext_resource type="Texture2D" uid="uid://e56daf0rtn6l" path="res://assets/images/background.jpg" id="1_gaq8n"]
 [ext_resource type="Texture2D" uid="uid://cr20hx020sdy3" path="res://assets/images/back_button.png" id="2_1h3es"]
+[ext_resource type="PackedScene" uid="uid://e6flyg7864a4" path="res://scenes/lobby/lobby.tscn" id="5_irtdl"]
 
 [sub_resource type="SystemFont" id="SystemFont_iwxe6"]
 font_names = PackedStringArray("Monospace")
@@ -39,7 +40,10 @@ theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 12
 
-[node name="back_button" type="TextureButton" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="back_button" type="TextureButton" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
@@ -47,7 +51,7 @@ mouse_default_cursor_shape = 2
 texture_normal = ExtResource("2_1h3es")
 texture_pressed = ExtResource("2_1h3es")
 
-[node name="Label" type="Label" parent="MarginContainer"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
@@ -55,3 +59,47 @@ theme_override_constants/outline_size = 20
 theme_override_fonts/font = SubResource("SystemFont_iwxe6")
 theme_override_font_sizes/font_size = 75
 text = "LOBBY LIST"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(380, 400)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 60
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "🔒"
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "user lobby"
+
+[node name="VSeparator" type="VSeparator" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/VBoxContainer/HBoxContainer"]
+modulate = Color(1, 1, 1, 0.00392157)
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "1👤"
+
+[node name="button_join" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "JOIN"
+
+[node name="Lobby" parent="." instance=ExtResource("5_irtdl")]
+visible = false
+layout_mode = 1
