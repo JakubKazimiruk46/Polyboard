@@ -1,6 +1,7 @@
 class_name MainMenu
 extends Control
 
+@onready var board_button = $MarginContainer/HBoxContainer/VBoxContainer/board_button as Button
 @onready var logout_button = $MarginContainer/HBoxContainer/VBoxContainer/logout_button as Button
 @onready var account_button = $MarginContainer/HBoxContainer/VBoxContainer/account_button as Button
 @onready var newgame_button = $MarginContainer/HBoxContainer/VBoxContainer/new_game_button as Button
@@ -20,6 +21,9 @@ extends Control
 func _ready():
 	handle_connecting_signals()
 	
+
+func on_board_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/board/level/level.tscn")
 
 func on_account_pressed() -> void:
 	margin_container.visible = false
@@ -88,6 +92,7 @@ func on_exit_pressed() -> void:
 	get_tree().quit()
 
 func handle_connecting_signals() -> void:
+	board_button.button_down.connect(on_board_pressed)
 	account_button.button_down.connect(on_account_pressed)
 	account_menu.exit_account_menu.connect(on_exit_account_menu)
 	logout_button.button_down.connect(on_logout_pressed)

@@ -96,6 +96,19 @@ custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 size_flags_horizontal = 4
 
+[node name="board_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+modulate = Color(0.293333, 1, 0.2, 1)
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+theme_override_fonts/font = SubResource("SystemFont_0607m")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_hmdkb")
+theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
+text = "BOARD"
+
 [node name="logout_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 visible = false
 modulate = Color(0.293333, 1, 0.2, 1)

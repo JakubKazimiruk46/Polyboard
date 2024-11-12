@@ -81,12 +81,12 @@ func _on_request_completed(result: int, response_code: int, headers: Array, body
 	print("Raw response text: ", response_text)
 	var response = json.parse(response_text)
 	
-	if response != 200:
+	if response_code != 200:
 		error_label.text = "Failed to parse response."
 		print("Error parsing response: ", response)
 		return
 
-	if response == 200:
+	if response_code == 200:
 		print("Registration successful: ", response)
 		error_label.text = "Registration successful!"
 		exit_register_menu.emit()
