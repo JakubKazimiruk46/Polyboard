@@ -1,0 +1,170 @@
+[gd_scene load_steps=12 format=3 uid="uid://c1oq52jpnu57"]
+
+[ext_resource type="Script" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
+[ext_resource type="Texture2D" uid="uid://u6156pm3sx3h" path="res://assets/images/pb_background.jpg" id="1_ymkqo"]
+[ext_resource type="PackedScene" uid="uid://corrmnc7rodeh" path="res://scenes/board/figurehead/figurehead.tscn" id="3_8t0aq"]
+[ext_resource type="PackedScene" uid="uid://cqpmepp30bdrg" path="res://scenes/board/level/MAPA_OBIEKT.glb" id="4_6krdw"]
+[ext_resource type="PackedScene" uid="uid://dhj5sru57cpw4" path="res://kostka/die.tscn" id="5_p3toi"]
+[ext_resource type="PackedScene" uid="uid://bvlhympj7pq71" path="res://scenes/board/level/field.tscn" id="6_jcf5o"]
+[ext_resource type="PackedScene" uid="uid://cxbg61n0xrbda" path="res://scenes/board/level/corner_field.tscn" id="6_ms3uj"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]
+size = Vector3(28.5, 0.2, 28.5)
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_6ppou"]
+panorama = ExtResource("1_ymkqo")
+
+[sub_resource type="Sky" id="Sky_6qm8h"]
+sky_material = SubResource("PanoramaSkyMaterial_6ppou")
+
+[sub_resource type="Environment" id="Environment_7ajdt"]
+background_mode = 1
+background_color = Color(0.762404, 0.762404, 0.762404, 1)
+sky = SubResource("Sky_6qm8h")
+
+[node name="Level" type="Node3D"]
+
+[node name="Board" type="StaticBody3D" parent="."]
+script = ExtResource("1_85jf0")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Board"]
+shape = SubResource("BoxShape3D_3sahm")
+
+[node name="Board_object" parent="Board" instance=ExtResource("4_6krdw")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
+
+[node name="CornerField0" parent="Board" instance=ExtResource("6_ms3uj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.924, 0, 11.918)
+
+[node name="Field1" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, -11.9356, -9.53674e-07, 8.70734)
+
+[node name="Field2" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, -11.9362, 0, 6.53606)
+
+[node name="Field3" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, -11.9462, 0, 4.34337)
+
+[node name="Field4" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, -11.8965, 0, 2.18711)
+
+[node name="Field5" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, -11.9523, 0, -0.0162379)
+
+[node name="Field6" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, -11.9394, 0, -2.19433)
+
+[node name="Field7" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, -11.9203, 0, -4.37638)
+
+[node name="Field8" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, -11.9273, 0, -6.54903)
+
+[node name="Field9" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, -11.9151, 0, -8.73898)
+
+[node name="CornerField10" parent="Board" instance=ExtResource("6_ms3uj")]
+transform = Transform3D(1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, -11.9022, 0, -11.9134)
+
+[node name="Field11" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -8.73555, 0, -11.9327)
+
+[node name="Field12" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -6.55015, 0, -11.9417)
+
+[node name="Field13" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -4.36399, 0, -11.9448)
+
+[node name="Field14" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -2.19385, 0, -11.9303)
+
+[node name="Field15" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -0.0119567, 0, -11.9338)
+
+[node name="Field16" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 2.15725, 0, -11.9161)
+
+[node name="Field17" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 4.34704, 0, -11.9272)
+
+[node name="Field18" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 6.54182, 0, -11.9417)
+
+[node name="Field19" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 8.69567, 0, -11.9226)
+
+[node name="CornerField20" parent="Board" instance=ExtResource("6_ms3uj")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 11.9274, 0, -11.9198)
+
+[node name="Field21" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.9055, 0, -8.70481)
+
+[node name="Field22" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.923, 0, -6.54769)
+
+[node name="Field23" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.9038, 0, -4.36249)
+
+[node name="Field24" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.9309, 0, -2.17983)
+
+[node name="Field25" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.9209, 0, -0.00402308)
+
+[node name="Field26" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.905, 0, 2.17782)
+
+[node name="Field27" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.9116, 0, 4.36318)
+
+[node name="Field28" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.93, 0, 6.54362)
+
+[node name="Field29" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.9308, 0, 8.72162)
+
+[node name="CornerField30" parent="Board" instance=ExtResource("6_ms3uj")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.9394, 0, 11.9314)
+
+[node name="Field31" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.71935, 0, 11.9254)
+
+[node name="Field32" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.54128, 0, 11.9147)
+
+[node name="Field33" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.36488, 0, 11.9118)
+
+[node name="Field34" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.17395, 0, 11.9171)
+
+[node name="Field35" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00878954, 0, 11.9313)
+
+[node name="Field36" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.18376, 0, 11.9148)
+
+[node name="Field37" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.36666, 0, 11.9042)
+
+[node name="Field38" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5513, 0, 11.9424)
+
+[node name="Field39" parent="Board" instance=ExtResource("6_jcf5o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.73327, 0, 11.8929)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.0105, 0.666462)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_7ajdt")
+
+[node name="Figurehead" parent="." instance=ExtResource("3_8t0aq")]
+transform = Transform3D(0.5, 0, 0, 0, 0.497711, -0.0477839, 0, 0.0477839, 0.497711, 11.0225, 0.5, 10.3388)
+dieNodePath = NodePath("../Die")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0.397148, -0.917755, 0, 0.917755, 0.397148, 1, 1.73599e-08, -4.01163e-08, -23.9239, 9.10441, -0.0824251)
+
+[node name="Die" parent="." instance=ExtResource("5_p3toi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.86167, 0)

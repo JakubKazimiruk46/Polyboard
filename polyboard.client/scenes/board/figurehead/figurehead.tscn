@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://corrmnc7rodeh"]
 
-[ext_resource type="Script" path="res://Figurehead.cs" id="1_rwqsc"]
+[ext_resource type="Script" path="res://scenes/board/figurehead/Figurehead.cs" id="1_rwqsc"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_nhme2"]
 

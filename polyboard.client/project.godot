@@ -13,7 +13,11 @@ config_version=5
 config/name="PolyBoard.Client"
 run/main_scene="res://scenes/splash_screen/SplashScreenManager.tscn"
 config/features=PackedStringArray("4.3", "C#", "Mobile")
-config/icon="res://logo.svg"
+config/icon="res://assets/images/logo.svg"
+
+[audio]
+
+buses/default_bus_layout="res://assets/images/default_bus_layout.tres"
 
 [autoload]
 

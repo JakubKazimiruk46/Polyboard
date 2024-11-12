@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://bvlhympj7pq71"]
+
+[ext_resource type="Script" path="res://scenes/board/level/Field.cs" id="1_04n6o"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_yajq1"]
+size = Vector2(2, 4)
+
+[node name="Field" type="Node3D"]
+script = ExtResource("1_04n6o")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_yajq1")
