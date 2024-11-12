@@ -17,7 +17,6 @@ class_name Login
 signal exit_login_menu
 
 func _ready():
-	login_button.pressed.connect(on_login_pressed)
 	http_request.connect("request_completed", _on_request_completed, 1)
 	handle_connecting_signals()
 	set_process(false)
