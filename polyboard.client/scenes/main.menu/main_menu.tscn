@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bggyt1jlrmlak"]
+[gd_scene load_steps=16 format=3 uid="uid://bggyt1jlrmlak"]
 
 [ext_resource type="Script" path="res://scenes/main.menu/main_menu.gd" id="1_gmssk"]
 [ext_resource type="Texture2D" uid="uid://e56daf0rtn6l" path="res://assets/images/background.jpg" id="1_rlbls"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://csa6usilxq2w1" path="res://scenes/new.game/new_game.tscn" id="5_b6k4j"]
 [ext_resource type="PackedScene" uid="uid://bilcswbdfpvbx" path="res://scenes/join.game/join_game.tscn" id="6_xjq7c"]
 [ext_resource type="PackedScene" uid="uid://bi2qj87pi88pc" path="res://scenes/settings/settings.tscn" id="7_8sai1"]
+[ext_resource type="PackedScene" uid="uid://cstbb363ys2s8" path="res://scenes/account/account.tscn" id="8_rrr4y"]
 
 [sub_resource type="SystemFont" id="SystemFont_0607m"]
 font_names = PackedStringArray("Impact")
@@ -67,27 +68,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 30
-theme_override_constants/margin_top = 100
-theme_override_constants/margin_right = 30
-theme_override_constants/margin_bottom = 30
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-theme_override_constants/separation = 60
-alignment = 1
-
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-texture = ExtResource("2_rf33w")
-
-[node name="Control" type="Control" parent="MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 300)
-layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
@@ -100,14 +84,51 @@ size_flags_vertical = 4
 theme_override_constants/separation = 12
 alignment = 1
 
-[node name="Control4" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 200)
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("2_rf33w")
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="logout_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+visible = false
+modulate = Color(0.293333, 1, 0.2, 1)
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+theme_override_fonts/font = SubResource("SystemFont_0607m")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_hmdkb")
+theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
+text = "LOG OUT"
+
+[node name="account_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+visible = false
+modulate = Color(0.293333, 1, 0.2, 1)
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+theme_override_fonts/font = SubResource("SystemFont_0607m")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_hmdkb")
+theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
+text = "ACCOUNT"
 
 [node name="login_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 modulate = Color(0.293333, 1, 0.2, 1)
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 4
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = SubResource("SystemFont_0607m")
@@ -116,13 +137,12 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_hmdkb")
 theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
 text = "LOGIN"
 
-[node name="Separator2" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
-
 [node name="new_game_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+visible = false
 modulate = Color(0.293333, 1, 0.2, 1)
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 4
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = SubResource("SystemFont_0607m")
@@ -131,13 +151,13 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_hmdkb")
 theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
 text = "NEW GAME"
 
-[node name="Control" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
-
 [node name="join_game_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+visible = false
 modulate = Color(0.293333, 1, 0.2, 1)
 material = SubResource("CanvasItemMaterial_m6x2i")
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 4
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = SubResource("SystemFont_erfkp")
@@ -146,13 +166,12 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_hmdkb")
 theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
 text = "JOIN GAME"
 
-[node name="Control2" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
-
 [node name="settings_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 modulate = Color(0.293333, 1, 0.2, 1)
 material = SubResource("CanvasItemMaterial_m6x2i")
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 4
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = SubResource("SystemFont_r545u")
@@ -162,13 +181,12 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
 text = "SETTINGS
 "
 
-[node name="Control3" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
-
 [node name="exit_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 modulate = Color(0.293333, 1, 0.2, 1)
 material = SubResource("CanvasItemMaterial_m6x2i")
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 4
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = SubResource("SystemFont_s36qm")
@@ -191,5 +209,9 @@ visible = false
 layout_mode = 1
 
 [node name="settings" parent="." instance=ExtResource("7_8sai1")]
+visible = false
+layout_mode = 1
+
+[node name="account" parent="." instance=ExtResource("8_rrr4y")]
 visible = false
 layout_mode = 1

@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3 uid="uid://i5oejjnclglt"]
+
+[ext_resource type="Texture2D" uid="uid://b770vb2xde3u8" path="res://assets/images/PolitechnikaBialostocka.png" id="1_m741p"]
+[ext_resource type="Script" path="res://scenes/splash_screen/splash_screen.gd" id="1_n6jwf"]
+
+[sub_resource type="SystemFont" id="SystemFont_ycxkf"]
+font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
+
+[node name="PolitechnikaSplashScreen" type="VBoxContainer"]
+script = ExtResource("1_n6jwf")
+_time = 0.5
+_fade_time = 0.5
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_ycxkf")
+theme_override_font_sizes/font_size = 40
+text = "GAME CREATED BY  AND FOR STUDENTS FROM"
+horizontal_alignment = 1
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("1_m741p")
+stretch_mode = 2

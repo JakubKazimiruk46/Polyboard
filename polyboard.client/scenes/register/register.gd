@@ -63,8 +63,7 @@ func on_register_button_pressed() -> void:
 		
 	var json = JSON.new()
 	var json_data = json.stringify(registration_data)
-	#TODO URL DO ZMIANY!
-	var url = "http://localhost:5000/register"
+	var url = SaveManager.url.format({"str":"/register"})
 	
 	var headers = ["Content-Type: application/json"]
 	var error = http_request.request(url, headers, HTTPClient.METHOD_POST, json_data)
