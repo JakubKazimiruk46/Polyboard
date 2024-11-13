@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=14 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Texture2D" uid="uid://u6156pm3sx3h" path="res://assets/images/pb_background.jpg" id="1_ymkqo"]
@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" uid="uid://dhj5sru57cpw4" path="res://kostka/die.tscn" id="5_p3toi"]
 [ext_resource type="PackedScene" uid="uid://bvlhympj7pq71" path="res://scenes/board/level/field.tscn" id="6_jcf5o"]
 [ext_resource type="PackedScene" uid="uid://cxbg61n0xrbda" path="res://scenes/board/level/corner_field.tscn" id="6_ms3uj"]
+[ext_resource type="Script" path="res://scenes/board/level/kamera_figurehead.gd" id="7_xxuvu"]
+[ext_resource type="Script" path="res://scenes/board/level/kamera_dice.gd" id="9_r7882"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]
 size = Vector3(28.5, 0.2, 28.5)
@@ -163,8 +165,18 @@ environment = SubResource("Environment_7ajdt")
 transform = Transform3D(0.5, 0, 0, 0, 0.497711, -0.0477839, 0, 0.0477839, 0.497711, 11.0225, 0.5, 10.3388)
 dieNodePath = NodePath("../Die")
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="Camera3D" type="Camera3D" parent="Figurehead" node_paths=PackedStringArray("target")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+current = true
+fov = 90.0
+script = ExtResource("7_xxuvu")
+target = NodePath("..")
+
+[node name="Master shot" type="Camera3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0.397148, -0.917755, 0, 0.917755, 0.397148, 1, 1.73599e-08, -4.01163e-08, -23.9239, 9.10441, -0.0824251)
 
 [node name="Die" parent="." instance=ExtResource("5_p3toi")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.86167, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Die"]
+script = ExtResource("9_r7882")
