@@ -8,7 +8,6 @@
 [ext_resource type="PackedScene" uid="uid://bvlhympj7pq71" path="res://scenes/board/level/field.tscn" id="6_jcf5o"]
 [ext_resource type="PackedScene" uid="uid://cxbg61n0xrbda" path="res://scenes/board/level/corner_field.tscn" id="6_ms3uj"]
 [ext_resource type="Script" path="res://scenes/board/level/kamera_figurehead.gd" id="7_xxuvu"]
-[ext_resource type="Script" path="res://scenes/board/level/kamera_dice.gd" id="9_r7882"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]
 size = Vector3(28.5, 0.2, 28.5)
@@ -23,6 +22,9 @@ sky_material = SubResource("PanoramaSkyMaterial_6ppou")
 background_mode = 1
 background_color = Color(0.762404, 0.762404, 0.762404, 1)
 sky = SubResource("Sky_6qm8h")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8hnxd"]
+size = Vector3(0.113281, 102.644, 19.4651)
 
 [node name="Level" type="Node3D"]
 
@@ -163,20 +165,47 @@ environment = SubResource("Environment_7ajdt")
 
 [node name="Figurehead" parent="." instance=ExtResource("3_8t0aq")]
 transform = Transform3D(0.5, 0, 0, 0, 0.497711, -0.0477839, 0, 0.0477839, 0.497711, 11.0225, 0.5, 10.3388)
-dieNodePath = NodePath("../Die")
+dieNodePath1 = NodePath("../Die1")
+dieNodePath2 = NodePath("../Die2")
 
 [node name="Camera3D" type="Camera3D" parent="Figurehead" node_paths=PackedStringArray("target")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
-current = true
 fov = 90.0
 script = ExtResource("7_xxuvu")
 target = NodePath("..")
 
 [node name="Master shot" type="Camera3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0.397148, -0.917755, 0, 0.917755, 0.397148, 1, 1.73599e-08, -4.01163e-08, -23.9239, 9.10441, -0.0824251)
+current = true
 
-[node name="Die" parent="." instance=ExtResource("5_p3toi")]
+[node name="Die1" parent="." instance=ExtResource("5_p3toi")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.86167, 0)
 
-[node name="Camera3D" type="Camera3D" parent="Die"]
-script = ExtResource("9_r7882")
+[node name="Die2" parent="." instance=ExtResource("5_p3toi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.86167, 0)
+
+[node name="Ściana1" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ściana1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.67496, 6.51099, -0.0130615)
+shape = SubResource("BoxShape3D_8hnxd")
+
+[node name="Ściana2" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ściana2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.647, 44.3112, -0.0130615)
+shape = SubResource("BoxShape3D_8hnxd")
+
+[node name="Ściana3" type="StaticBody3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ściana3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.647, 0, -0.0130615)
+shape = SubResource("BoxShape3D_8hnxd")
+
+[node name="Ściana4" type="StaticBody3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ściana4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.59304, 0, -0.0130624)
+shape = SubResource("BoxShape3D_8hnxd")
