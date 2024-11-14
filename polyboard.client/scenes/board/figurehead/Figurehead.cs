@@ -16,9 +16,12 @@ public partial class Figurehead : CharacterBody3D
 	public NodePath masterCameraPath; // Ścieżka do kamery Master shot
 	[Export]
 	public NodePath tpCameraPath;     // Ścieżka do kamery TP
+	[Export]
+	public NodePath diceCameraPath;    // Ścieżka do kamery Kostki
 
 	private Camera3D masterCamera;
 	private Camera3D tpCamera;
+	private Camera3D diceCamera;
 
 	private int? die1Result = null;
 	private int? die2Result = null;
@@ -29,8 +32,9 @@ public partial class Figurehead : CharacterBody3D
 		// Pobierz kamery
 		masterCamera = GetNodeOrNull<Camera3D>(masterCameraPath);
 		tpCamera = GetNodeOrNull<Camera3D>(tpCameraPath);
+		diceCamera = GetNodeOrNull<Camera3D>(diceCameraPath);
 
-		if (masterCamera == null || tpCamera == null)
+		if (masterCamera == null || tpCamera == null || diceCamera == null)
 		{
 			GD.PrintErr("Błąd: Nie znaleziono jednej z kamer. Sprawdź ścieżki.");
 		}
@@ -73,6 +77,14 @@ public partial class Figurehead : CharacterBody3D
 		else
 		{
 			GD.Print("Plansza została poprawnie załadowana.");
+		}
+	}
+
+	public override void _Input(InputEvent @event)
+	{
+		if (@event.IsActionPressed("ui_accept"))
+		{
+			SwitchToDiceCamera(); // Przełącz na kamerę Kostki
 		}
 	}
 
@@ -119,6 +131,7 @@ public partial class Figurehead : CharacterBody3D
 
 	private void ReRollDice()
 	{
+		SwitchToDiceCamera();
 		Node dieNode1 = GetNodeOrNull(dieNodePath1);
 		Node dieNode2 = GetNodeOrNull(dieNodePath2);
 		if (dieNode1 != null && dieNode2 != null)
@@ -197,6 +210,19 @@ public partial class Figurehead : CharacterBody3D
 		else
 		{
 			GD.PrintErr("Błąd: Kamera Master shot jest nieprawidłowa.");
+		}
+	}
+
+	private void SwitchToDiceCamera()
+	{
+		if (diceCamera != null)
+		{
+			GD.Print("Przełączono na kamerę Kostki.");
+			diceCamera.Current = true;
+		}
+		else
+		{
+			GD.PrintErr("Błąd: Kamera Kostki jest nieprawidłowa.");
 		}
 	}
 }
