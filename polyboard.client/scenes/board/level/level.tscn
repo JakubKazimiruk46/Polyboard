@@ -168,3 +168,7 @@ transform = Transform3D(-4.37114e-08, 0.397148, -0.917755, 0, 0.917755, 0.397148
 
 [node name="Die" parent="." instance=ExtResource("5_p3toi")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.86167, 0)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="FieldCard" type="Sprite2D" parent="CanvasLayer"]

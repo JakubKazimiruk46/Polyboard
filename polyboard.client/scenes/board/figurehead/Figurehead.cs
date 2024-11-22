@@ -61,5 +61,7 @@ public partial class Figurehead : CharacterBody3D
 				 .SetEase(Tween.EaseType.InOut);
 			await ToSignal(tween, "finished");
 		}
+		board.ShowFieldTexture(targetIndex);
+		
 	}
 }
