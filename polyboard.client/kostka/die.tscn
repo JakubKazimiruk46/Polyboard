@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://dhj5sru57cpw4"]
 
-[ext_resource type="Script" path="res://kostka//die.gd" id="1_hsi77"]
-[ext_resource type="PackedScene" uid="uid://b6qj5ulmdh16s" path="res://kostka//die2.glb" id="2_qgh3o"]
-[ext_resource type="PackedScene" uid="uid://bcvt2oq4rv2gp" path="res://kostka//die_raycast.tscn" id="3_ykecl"]
+[ext_resource type="Script" path="res://kostka/die.gd" id="1_hsi77"]
+[ext_resource type="PackedScene" uid="uid://b6qj5ulmdh16s" path="res://kostka/die2.glb" id="2_qgh3o"]
+[ext_resource type="PackedScene" uid="uid://bcvt2oq4rv2gp" path="res://kostka/die_raycast.tscn" id="3_ykecl"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_hoiya"]
 size = Vector3(2, 2, 2)
@@ -13,11 +13,14 @@ freeze = true
 script = ExtResource("1_hsi77")
 
 [node name="die" parent="." instance=ExtResource("2_qgh3o")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 shape = SubResource("BoxShape3D_hoiya")
 
 [node name="Raycasts" type="Node3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 
 [node name="DieRaycast1" parent="Raycasts" instance=ExtResource("3_ykecl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0515656, -0.947187, -0.0416992)

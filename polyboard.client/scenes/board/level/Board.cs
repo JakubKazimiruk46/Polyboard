@@ -11,10 +11,18 @@ public partial class Board : StaticBody3D
 	private Vector3 targetPosition; 
 	private List<Field> fields = new List<Field>();
 	Figurehead figurehead;
+	private Sprite2D textureDisplay;
+	
 	
 
 	public override void _Ready()
 {
+	
+	 textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/FieldCard");
+	if (textureDisplay == null)
+	{
+		GD.PrintErr("Błąd: Nie znaleziono Sprite2D do wyświetlania tekstur.");
+	}
 	targetPosition = GlobalPosition;
 	figurehead = GetTree().Root.GetNode<Figurehead>("Level/Figurehead");
 	if (figurehead == null)
@@ -38,6 +46,43 @@ public partial class Board : StaticBody3D
 	}
 	
 }
+	
+	public void ShowFieldTexture(int fieldId)
+	{
+		
+		string textureName = $"Field{fieldId}";
+		
+		Texture2D fieldTexture = ResourceLoader.Load<Texture2D>($"res://scenes/board/level/textures/{textureName}.png");
+		if (fieldTexture != null)
+		{
+			textureDisplay.Texture = fieldTexture;
+			float offsetX = 10; 
+			float offsetY =10 ; 
+			float textureWidth = fieldTexture.GetSize().X;
+			float textureHeight = fieldTexture.GetSize().Y;
+			Vector2 viewportSize = GetViewport().GetVisibleRect().Size;
+			
+			float scaleFactorX = viewportSize.X / 1920f;  
+			float scaleFactorY = viewportSize.Y / 1080f;  
+			float scaleFactor = Math.Min(scaleFactorX, scaleFactorY);
+			Vector2 scale = new Vector2(scaleFactor, scaleFactor);
+			
+			textureDisplay.Scale = scale; 
+			
+			float posX = viewportSize.X - (textureWidth*scaleFactorX/2) - offsetX;
+			float posY = offsetY +(textureHeight*scaleFactorY/2);
+			
+			textureDisplay.Position = new Vector2(posX, posY);
+			textureDisplay.Visible = true; 
+			 
+		}
+		else
+		{
+			GD.PrintErr($"Błąd: Nie udało się załadować tekstury {textureName}.");
+		}
+	}
+	
+
 	
 	public Vector3? GetPositionForPawn(int fieldId, int positionIndex)
 	{
