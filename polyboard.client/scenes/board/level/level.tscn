@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dhj5sru57cpw4" path="res://kostka/die.tscn" id="5_p3toi"]
 [ext_resource type="PackedScene" uid="uid://bvlhympj7pq71" path="res://scenes/board/level/field.tscn" id="6_jcf5o"]
 [ext_resource type="PackedScene" uid="uid://cxbg61n0xrbda" path="res://scenes/board/level/corner_field.tscn" id="6_ms3uj"]
+[ext_resource type="Script" path="res://scenes/board/level/Camera3d.cs" id="7_mjkk7"]
 [ext_resource type="Script" path="res://scenes/board/level/kamera_figurehead.gd" id="7_xxuvu"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]
@@ -158,7 +159,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5513, 0, 11.9424)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.73327, 0, 11.8929)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.0105, 0.666462)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_7ajdt")

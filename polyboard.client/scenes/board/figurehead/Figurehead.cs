@@ -224,5 +224,7 @@ public partial class Figurehead : CharacterBody3D
 		{
 			GD.PrintErr("Błąd: Kamera Kostki jest nieprawidłowa.");
 		}
+		board.ShowFieldTexture(targetIndex);
+		
 	}
 }
