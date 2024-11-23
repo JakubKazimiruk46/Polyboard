@@ -13,9 +13,11 @@ public partial class Board : StaticBody3D
 	Figurehead figurehead;
 	private Sprite2D textureDisplay;
 	
+	
 
 	public override void _Ready()
 {
+	
 	 textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/FieldCard");
 	if (textureDisplay == null)
 	{
@@ -68,7 +70,7 @@ public partial class Board : StaticBody3D
 			textureDisplay.Scale = scale; 
 			
 			float posX = viewportSize.X - (textureWidth*scaleFactorX/2) - offsetX;
-			float posY = 10+(textureHeight*scaleFactorY/2);
+			float posY = offsetY +(textureHeight*scaleFactorY/2);
 			
 			textureDisplay.Position = new Vector2(posX, posY);
 			textureDisplay.Visible = true; 
