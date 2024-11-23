@@ -6,6 +6,9 @@ public partial class Figurehead : CharacterBody3D
 {
 	public int CurrentPositionIndex { get; set; } = 0;
 	private Board board;
+	
+	private Sprite2D textureDisplay;
+	
 
 	[Export]
 	public NodePath dieNodePath1; // Ścieżka do pierwszej kostki
@@ -33,6 +36,7 @@ public partial class Figurehead : CharacterBody3D
 		masterCamera = GetNodeOrNull<Camera3D>(masterCameraPath);
 		tpCamera = GetNodeOrNull<Camera3D>(tpCameraPath);
 		diceCamera = GetNodeOrNull<Camera3D>(diceCameraPath);
+		textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/FieldCard");
 
 		if (masterCamera == null || tpCamera == null || diceCamera == null)
 		{
@@ -85,6 +89,7 @@ public partial class Figurehead : CharacterBody3D
 		if (@event.IsActionPressed("ui_accept"))
 		{
 			SwitchToDiceCamera(); // Przełącz na kamerę Kostki
+			textureDisplay.Visible = false;
 		}
 	}
 
@@ -181,6 +186,7 @@ public partial class Figurehead : CharacterBody3D
 				 .SetEase(Tween.EaseType.InOut);
 			await ToSignal(tween, "finished");
 		}
+		board.ShowFieldTexture(targetIndex);
 
 		// Przełącz z powrotem na kamerę Master shot po zakończeniu ruchu
 		GD.Print("Przełączanie kamery z powrotem na Master shot po zakończeniu ruchu.");
@@ -224,7 +230,6 @@ public partial class Figurehead : CharacterBody3D
 		{
 			GD.PrintErr("Błąd: Kamera Kostki jest nieprawidłowa.");
 		}
-		board.ShowFieldTexture(targetIndex);
 		
 	}
 }
