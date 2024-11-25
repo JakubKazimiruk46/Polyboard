@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using PolyBoard.Server.Application;
-using PolyBoard.Server.Core.Helpers;
-using PolyBoard.Server.Core.Interfaces;
 using PolyBoard.Server.Infrastructure;
 using PolyBoard.Server.Presentation.Hubs;
 using PolyBoard.Server.Presentation.OptionsSetup;
@@ -51,9 +49,6 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddApplication()
     .AddInfrastructure(builder.Configuration);
-
-builder.Services.AddSingleton<ILobbyService, LobbyService>();
-
 
 var app = builder.Build();
 

@@ -1,83 +1,234 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using PolyBoard.Server.Core.Entities;
+using PolyBoard.Server.Application.DTO;
+using PolyBoard.Server.Core.Enums;
 using PolyBoard.Server.Core.Helpers;
-using PolyBoard.Server.Core.Interfaces;
+using System.Collections.Concurrent;
 
 namespace PolyBoard.Server.Presentation.Hubs
 {
     public class LobbyHub : Hub
     {
-        private readonly ILobbyService _lobbyService;
+        private static readonly ConcurrentDictionary<Guid, Lobby> _lobbies = new();
 
-        public LobbyHub(ILobbyService lobbyService)
+        public static List<LobbyListItemDTO> GetAvailableLobbies()
         {
-            _lobbyService = lobbyService;
+            var availableLobbies = _lobbies
+                .Where(l => l.Value.LobbyStatus == LobbyStatus.Waiting)
+                .Select(lobby => new LobbyListItemDTO(lobby.Value))
+                .ToList();
+
+            return availableLobbies;
         }
 
-        public override async Task OnConnectedAsync()
+        public async Task SendLobbyDetails(Guid lobbyId, string? password = null)
         {
-            await Clients.All.SendAsync("ReceiveMessage", $"{Context.ConnectionId} has joined the server.");
-        }
+            var lobby = _lobbies.FirstOrDefault(l => l.Value.Id.ToString() == lobbyId.ToString()).Value;
 
-        public async Task JoinSpecificGameRoom(UserConnection conn)
-        {
-            
-            var lobby = _lobbyService.GetLobbyById(conn.LobbyId);
+            if (lobby == null || lobby.Password != password)
+                return;
 
-            if (lobby == null)
+            var lobbyDetails = new
             {
-                await Clients.Caller.SendAsync("ReceiveMessage", "Lobby not found.");
+                id = lobby.Id,
+                lobbyName = lobby.LobbyName,
+                status = lobby.LobbyStatus,
+                connectedUsers = lobby.Connections.Select(c => new LobbyUserDTO
+                {
+                    Id = c.UserId,
+                    ConnectionId = c.ConnectionId,
+                    Username = c.Username,
+                    IsReady = c.IsReady
+                }).ToList()
+            };
+
+            await Clients.Caller.SendAsync("ReceiveLobbyDetails", lobbyDetails);
+        }
+
+
+        public async Task CreateLobby(string lobbyName, int? maxPlayers = 4, string? password = null)
+        {
+            var lobby = new Lobby(lobbyName, maxPlayers, password);
+            _lobbies[lobby.Id] = lobby;
+
+            var userConnection = new UserConnection
+            {
+                ConnectionId = Context.ConnectionId,
+                UserId = Context.UserIdentifier ?? Guid.NewGuid().ToString()
+            };
+            if(!lobby.AddConnection(userConnection, password))
+            {
+                await Clients.Caller.SendAsync("Error", "Failed Joinin Lobby! Try JoinLobby function...");
                 return;
             }
 
-            _lobbyService.AddConnectionToLobby(conn.UserId, Context.ConnectionId, conn.LobbyId);
-
-            await Groups.AddToGroupAsync(Context.ConnectionId, conn.GroupString);
-
-            await Clients.Caller.SendAsync("ReceiveMessage", $"Joined lobby {conn.LobbyId}");
+            await Groups.AddToGroupAsync(Context.ConnectionId, lobby.Id.ToString());
+            await Clients.Caller.SendAsync("LobbyCreated", lobby.Id);
         }
 
-        public async Task ChangeLobbyAdmin(Guid lobbyId, Guid newAdminId)
+        public async Task JoinLobby(Guid lobbyId, string? password = null)
         {
-            _lobbyService.ChangeLobbyAdmin(lobbyId, newAdminId);
-        }
+            var lobby = _lobbies.FirstOrDefault(l => l.Value.Id == lobbyId).Value;
 
-        
-        public override async Task OnDisconnectedAsync(Exception? exception)
-        {
-            Guid? lobbyId = _lobbyService.GetLobbyIdByConnection(Context.ConnectionId);
-            Lobby? lobby = _lobbyService.GetLobbyById(lobbyId);
-
-            if (lobby != null && lobbyId != null)
+            if (lobby == null)
             {
-                Guid? userId = _lobbyService.GetUserIdByConnection(Context.ConnectionId);
-
-                if (lobby.AdminId == userId)
-                {
-                    if (_lobbyService.GetConnectionsByLobby(lobbyId).Count > 1)
-                        _lobbyService.ChangeLobbyAdmin(lobbyId);
-
-                    else
-                    {
-                        _lobbyService.RemoveLobbyById(lobbyId);
-                    }
-                }
-                Guid lobbyIdAfterConversion = (Guid)lobbyId;
-
-                _lobbyService.RemoveConnectionFromLobby(Context.ConnectionId);
-
-                await Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyIdAfterConversion.ToString());
-
-                await Clients.Group(lobbyIdAfterConversion.ToString()).SendAsync("ReceiveMessage", $"{Context.ConnectionId} has left the lobby.");
+                await Clients.Caller.SendAsync("Error", "Lobby not found");
+                return;
             }
 
-            if (exception != null)
+            if(lobby.Password != password)
             {
-                Console.WriteLine($"Error on disconnect: {exception.Message}");
+                await Clients.Caller.SendAsync("Error", "Wrong password!");
+                return;
+            }
+
+            if(lobby.Connections
+                .Where(uc => uc.ConnectionId == Context.ConnectionId)
+                .Any())
+            {
+                return;
+            }
+
+            var userConnection = new UserConnection
+            {
+                UserId = Context.UserIdentifier ?? Guid.NewGuid().ToString(),
+                ConnectionId = Context.ConnectionId,
+                Username = Context.UserIdentifier ?? "User",
+                IsReady = false
+            };
+
+            if(!lobby.AddConnection(userConnection, password))
+            {
+                await Clients.Caller.SendAsync("Error", "Failed joining lobby.");
+                return;
+            }
+
+
+            await SendLobbyDetails(lobbyId, password);
+
+            await Clients.Group(lobbyId.ToString()).SendAsync("UserJoinedLobby", new LobbyUserDTO
+            {
+                Id = userConnection.UserId,
+                ConnectionId = userConnection.ConnectionId,
+                Username = userConnection.Username,
+                IsReady = userConnection.IsReady
+            });
+
+            await Groups.AddToGroupAsync(Context.ConnectionId, lobbyId.ToString());
+        }
+
+
+        public async Task LeaveLobby(Guid lobbyId)
+        {
+            if (!_lobbies.TryGetValue(lobbyId, out var lobby))
+            {
+                await Clients.Caller.SendAsync("Error", "Lobby not found.");
+                return;
+            }
+
+            var userConnection = lobby.Connections.FirstOrDefault(c => c.ConnectionId == Context.ConnectionId);
+            if (userConnection == null)
+            {
+                await Clients.Caller.SendAsync("Error", "User not in lobby.");
+                return;
+            }
+
+            lobby.RemoveConnection(userConnection);
+
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyId.ToString());
+            await Clients.Group(lobbyId.ToString()).SendAsync("UserLeft", Context.UserIdentifier);
+
+            if (!lobby.Connections.Any())
+            {
+                _lobbies.TryRemove(lobbyId, out _);
+            }
+            else if (lobby.Connections.First() == userConnection)
+            {
+                var newAdmin = lobby.Connections.First();
+                await Clients.Group(lobbyId.ToString()).SendAsync("AdminChanged", newAdmin.UserId);
+            }
+        }
+
+        public async Task ChangeLobbyStatus(Guid lobbyId, LobbyStatus status)
+        {
+            if (!_lobbies.TryGetValue(lobbyId, out var lobby))
+            {
+                await Clients.Caller.SendAsync("Error", "Lobby not found.");
+                return;
+            }
+
+            lobby.LobbyStatus = status;
+            await Clients.Group(lobbyId.ToString()).SendAsync("LobbyStatusChanged", status);
+        }
+
+        public async Task SetUserReady(Guid lobbyId, bool isReady)
+        {
+            if (!_lobbies.TryGetValue(lobbyId, out var lobby))
+            {
+                await Clients.Caller.SendAsync("Error", "Lobby not found.");
+                return;
+            }
+
+            var userConnection = lobby.Connections.FirstOrDefault(c => c.ConnectionId == Context.ConnectionId);
+            if (userConnection == null)
+            {
+                await Clients.Caller.SendAsync("Error", "User not in lobby.");
+                return;
+            }
+
+            userConnection.IsReady = isReady;
+            await Clients.Group(lobbyId.ToString()).SendAsync("UserReadyStatusChanged", Context.UserIdentifier, isReady);
+        }
+
+        public async Task PromoteToAdmin(Guid lobbyId, string newAdminId)
+        {
+            if (!_lobbies.TryGetValue(lobbyId, out var lobby))
+            {
+                await Clients.Caller.SendAsync("Error", "Lobby not found.");
+                return;
+            }
+
+            var newAdmin = lobby.Connections.FirstOrDefault(c => c.UserId == newAdminId);
+            if (newAdmin == null)
+            {
+                await Clients.Caller.SendAsync("Error", "New admin not found in the lobby.");
+                return;
+            }
+
+            lock (lobby.Connections)
+            {
+                lobby.Connections.Remove(newAdmin);
+                lobby.Connections.Insert(0, newAdmin);
+            }
+
+            await Clients.Group(lobbyId.ToString()).SendAsync("AdminChanged", newAdminId);
+        }
+
+        public override async Task OnDisconnectedAsync(Exception? exception)
+        {
+            foreach (var (lobbyId, lobby) in _lobbies)
+            {
+                var userConnection = lobby.Connections.FirstOrDefault(c => c.ConnectionId == Context.ConnectionId);
+                if (userConnection != null)
+                {
+                    lobby.RemoveConnection(userConnection);
+                    await Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyId.ToString());
+                    await Clients.Group(lobbyId.ToString()).SendAsync("UserDisconnected", Context.UserIdentifier);
+
+                    if (!lobby.Connections.Any())
+                    {
+                        _lobbies.TryRemove(lobbyId, out _);
+                    }
+                    else if (lobby.Connections.First() == userConnection)
+                    {
+                        var newAdmin = lobby.Connections.First();
+                        await Clients.Group(lobbyId.ToString()).SendAsync("AdminChanged", newAdmin.UserId);
+                    }
+
+                    break;
+                }
             }
 
             await base.OnDisconnectedAsync(exception);
         }
-        
     }
 }
