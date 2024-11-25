@@ -51,7 +51,11 @@ mouse_default_cursor_shape = 2
 texture_normal = ExtResource("2_1h3es")
 texture_pressed = ExtResource("2_1h3es")
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="MarginContainer2" type="MarginContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_bottom = 5
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/MarginContainer2"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
@@ -74,31 +78,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 60
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-text = "🔒"
-vertical_alignment = 1
-
-[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-text = "user lobby"
-
-[node name="VSeparator" type="VSeparator" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/VBoxContainer/HBoxContainer"]
-modulate = Color(1, 1, 1, 0.00392157)
-custom_minimum_size = Vector2(150, 0)
-layout_mode = 2
-
-[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-text = "1👤"
-
-[node name="button_join" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-text = "JOIN"
 
 [node name="Lobby" parent="." instance=ExtResource("5_irtdl")]
 visible = false
