@@ -26,15 +26,16 @@ namespace PolyBoard.Server.Core.Helpers
             Password = password;
         }
 
-        public void AddConnection(UserConnection playerConnection, string? password = null)
+        public bool AddConnection(UserConnection playerConnection, string? password = null)
         {
             if (IsPrivate && password != Password)
-                return;
+                return false;
 
             if (Connections.Contains(playerConnection) || Connections.Count >= MaxPlayers)
-                return;
+                return false;
 
             Connections.Add(playerConnection);
+            return true;
         }
 
         public void RemoveConnection(UserConnection playerConnection) 

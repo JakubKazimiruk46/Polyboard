@@ -20,18 +20,18 @@ namespace PolyBoard.Server.Presentation.Hubs
             return availableLobbies;
         }
 
-        public async Task SendLobbyDetails(Guid lobbyId)
+        public async Task SendLobbyDetails(Guid lobbyId, string? password = null)
         {
-            var lobby = _lobbies.FirstOrDefault(l => l.Value.Id == lobbyId).Value;
+            var lobby = _lobbies.FirstOrDefault(l => l.Value.Id.ToString() == lobbyId.ToString()).Value;
 
-            if (lobby == null)
+            if (lobby == null || lobby.Password != password)
                 return;
 
             var lobbyDetails = new
             {
                 id = lobby.Id,
                 lobbyName = lobby.LobbyName,
-                status = lobby.LobbyStatus.ToString(),
+                status = lobby.LobbyStatus,
                 connectedUsers = lobby.Connections.Select(c => new LobbyUserDTO
                 {
                     Id = c.UserId,
@@ -53,15 +53,19 @@ namespace PolyBoard.Server.Presentation.Hubs
             var userConnection = new UserConnection
             {
                 ConnectionId = Context.ConnectionId,
-                UserId = Context.UserIdentifier
+                UserId = Context.UserIdentifier ?? Guid.NewGuid().ToString()
             };
-            lobby.AddConnection(userConnection, password);
+            if(!lobby.AddConnection(userConnection, password))
+            {
+                await Clients.Caller.SendAsync("Error", "Failed Joinin Lobby! Try JoinLobby function...");
+                return;
+            }
 
             await Groups.AddToGroupAsync(Context.ConnectionId, lobby.Id.ToString());
             await Clients.Caller.SendAsync("LobbyCreated", lobby.Id);
         }
 
-        public async Task JoinLobby(Guid lobbyId)
+        public async Task JoinLobby(Guid lobbyId, string? password = null)
         {
             var lobby = _lobbies.FirstOrDefault(l => l.Value.Id == lobbyId).Value;
 
@@ -71,20 +75,36 @@ namespace PolyBoard.Server.Presentation.Hubs
                 return;
             }
 
+            if(lobby.Password != password)
+            {
+                await Clients.Caller.SendAsync("Error", "Wrong password!");
+                return;
+            }
+
+            if(lobby.Connections
+                .Where(uc => uc.ConnectionId == Context.ConnectionId)
+                .Any())
+            {
+                return;
+            }
+
             var userConnection = new UserConnection
             {
-                UserId = Context.UserIdentifier != null ? Context.UserIdentifier : Guid.NewGuid().ToString(),
+                UserId = Context.UserIdentifier ?? Guid.NewGuid().ToString(),
                 ConnectionId = Context.ConnectionId,
-                Username = Context.UserIdentifier ?? "User", // Pobierz nazwę użytkownika z Context.UserIdentifier lub innego źródła
+                Username = Context.UserIdentifier ?? "User",
                 IsReady = false
             };
 
-            lobby.AddConnection(userConnection);
+            if(!lobby.AddConnection(userConnection, password))
+            {
+                await Clients.Caller.SendAsync("Error", "Failed joining lobby.");
+                return;
+            }
 
-            // Wyślij szczegóły lobby do nowego użytkownika
-            await SendLobbyDetails(lobbyId);
 
-            // Powiadom innych w lobby o nowym użytkowniku
+            await SendLobbyDetails(lobbyId, password);
+
             await Clients.Group(lobbyId.ToString()).SendAsync("UserJoinedLobby", new LobbyUserDTO
             {
                 Id = userConnection.UserId,
@@ -93,7 +113,6 @@ namespace PolyBoard.Server.Presentation.Hubs
                 IsReady = userConnection.IsReady
             });
 
-            // Dodaj użytkownika do grupy SignalR
             await Groups.AddToGroupAsync(Context.ConnectionId, lobbyId.ToString());
         }
 
@@ -120,11 +139,10 @@ namespace PolyBoard.Server.Presentation.Hubs
 
             if (!lobby.Connections.Any())
             {
-                _lobbies.TryRemove(lobbyId, out _); // Remove empty lobby
+                _lobbies.TryRemove(lobbyId, out _);
             }
             else if (lobby.Connections.First() == userConnection)
             {
-                // Notify about admin change if the admin left
                 var newAdmin = lobby.Connections.First();
                 await Clients.Group(lobbyId.ToString()).SendAsync("AdminChanged", newAdmin.UserId);
             }
@@ -179,7 +197,7 @@ namespace PolyBoard.Server.Presentation.Hubs
             lock (lobby.Connections)
             {
                 lobby.Connections.Remove(newAdmin);
-                lobby.Connections.Insert(0, newAdmin); // Move new admin to the front
+                lobby.Connections.Insert(0, newAdmin);
             }
 
             await Clients.Group(lobbyId.ToString()).SendAsync("AdminChanged", newAdminId);
@@ -198,11 +216,10 @@ namespace PolyBoard.Server.Presentation.Hubs
 
                     if (!lobby.Connections.Any())
                     {
-                        _lobbies.TryRemove(lobbyId, out _); // Remove empty lobby
+                        _lobbies.TryRemove(lobbyId, out _);
                     }
                     else if (lobby.Connections.First() == userConnection)
                     {
-                        // Notify about admin change if the admin left
                         var newAdmin = lobby.Connections.First();
                         await Clients.Group(lobbyId.ToString()).SendAsync("AdminChanged", newAdmin.UserId);
                     }
