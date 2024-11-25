@@ -15,8 +15,4 @@
     <ProjectReference Include="..\PolyBoard.Server.Core\PolyBoard.Server.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Lobbies\" />
-  </ItemGroup>
-
 </Project>
