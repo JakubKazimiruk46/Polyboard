@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://csa6usilxq2w1"]
+[gd_scene load_steps=8 format=3 uid="uid://csa6usilxq2w1"]
 
 [ext_resource type="Texture2D" uid="uid://e56daf0rtn6l" path="res://assets/images/background.jpg" id="1_ra2kx"]
 [ext_resource type="Script" path="res://scenes/new.game/new_game.gd" id="1_twkho"]
 [ext_resource type="ButtonGroup" uid="uid://gwoggf1vldhe" path="res://scenes/new.game/lobby_mode.tres" id="3_foa5h"]
+[ext_resource type="PackedScene" uid="uid://e6flyg7864a4" path="res://scenes/lobby/lobby.tscn" id="4_ww4u2"]
 
 [sub_resource type="SystemFont" id="SystemFont_cdubw"]
 font_names = PackedStringArray("Monospace")
@@ -116,7 +117,7 @@ secret = true
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer/VBoxContainer2"]
+[node name="create_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer/VBoxContainer2"]
 modulate = Color(0.294118, 1, 0.2, 1)
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
@@ -125,6 +126,9 @@ mouse_default_cursor_shape = 2
 theme_override_styles/hover = SubResource("StyleBoxFlat_peoru")
 theme_override_styles/normal = SubResource("StyleBoxFlat_shcr8")
 text = "CREATE "
+
+[node name="error_label" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/VBoxContainer2"]
+layout_mode = 2
 
 [node name="HSeparator" type="HSeparator" parent="MarginContainer/HBoxContainer/VBoxContainer/VBoxContainer2"]
 custom_minimum_size = Vector2(150, 30)
@@ -136,3 +140,7 @@ layout_mode = 2
 size_flags_horizontal = 4
 mouse_default_cursor_shape = 2
 text = "BACK"
+
+[node name="Lobby" parent="." instance=ExtResource("4_ww4u2")]
+visible = false
+layout_mode = 1
