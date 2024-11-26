@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://bry235jbe74xg"]
+[gd_scene load_steps=4 format=3 uid="uid://bry235jbe74xg"]
 
 [ext_resource type="Script" path="res://scenes/lobby/lobby_person.gd" id="1_1qjf0"]
 [ext_resource type="Texture2D" uid="uid://bk0w2lagf3e7o" path="res://assets/images/korona.png" id="2_ohhtn"]
@@ -10,9 +10,6 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.000113828, 0.000113828, 0.000113828, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5gjyq"]
-bg_color = Color(0.190688, 0.555203, 0.129068, 1)
 
 [node name="LobbyPerson" type="Control"]
 layout_mode = 3
@@ -57,7 +54,7 @@ modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 
-[node name="Button" type="Button" parent="PanelContainer/MarginContainer/HBoxContainer"]
+[node name="Status" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_5gjyq")
-text = "READY"
+text = "READY
+"
