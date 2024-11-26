@@ -36,11 +36,22 @@ namespace PolyBoard.Server.Presentation.Controllers
             var token = await _mediator.Send(command);
             return token != string.Empty ? Ok(token): Unauthorized(false);
         }
+
         [HttpGet("GetById/{userId}")]
         public async Task<ActionResult<User?>> GetById(Guid userId)
         {
             var user = await _mediator.Send(new GetUserByIdQuery { Id = userId });
             return Ok(user);
+        }
+        
+        [HttpPut("edit-profile")]
+        public async Task<IActionResult> EditProfile([FromBody] EditUserProfileCommand command){
+            var success = await _mediator.Send(command);
+
+            if(success)
+                return Ok(new {status = 200, message = "Profile update Succesfull"});
+            
+            return BadRequest(new { status = 400, message = "Failed to update profile." });
         }
     }
 }
