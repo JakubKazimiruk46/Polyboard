@@ -64,6 +64,11 @@ theme_override_fonts/font = SubResource("SystemFont_iwxe6")
 theme_override_font_sizes/font_size = 75
 text = "LOBBY LIST"
 
+[node name="refresh_button" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Refresh"
+
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
@@ -82,3 +87,5 @@ theme_override_constants/separation = 60
 [node name="Lobby" parent="." instance=ExtResource("5_irtdl")]
 visible = false
 layout_mode = 1
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
