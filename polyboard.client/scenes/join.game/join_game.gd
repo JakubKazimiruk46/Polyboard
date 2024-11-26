@@ -1,44 +1,49 @@
 extends Control
-
+class_name JoinGame
+@onready var back_button = $MarginContainer/VBoxContainer/back_button as TextureButton
 @onready var scroll_container = $MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer
 @onready var lobby_list_container = scroll_container.get_node("VBoxContainer")
 @onready var http_request = $HTTPRequest as HTTPRequest
-
+@onready var refresh_button = $MarginContainer/VBoxContainer/refresh_button as Button
 signal join_lobby(lobby_id: String)
+signal exit_joingame_menu
 
 func _ready():
-	add_refresh_button()
+	handle_connecting_signals()
+	http_request.connect("request_completed", _on_request_completed, 1)
+	set_process(false)
 	fetch_lobbies()
 
 func fetch_lobbies() -> void:
-	var url = SaveManager.url.format({"str":"/Lobby/lobbies"})
+	var url = "http://localhost:8081/Lobby/lobbies"
 	var error = http_request.request(url, [], HTTPClient.METHOD_GET)
 	if error != OK:
 		print("Error sending GET request: ", error)
-		
 
 func _on_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
-	if response_code == 200:
-		var json_parser = JSON.new()
-		var response = json_parser.parse(body.get_string_from_utf8())
-		if response.error == OK:
-			populate_lobby_list(response.result)
-		else:
-			print("Błąd parsowania JSON:", response.error_string)
-	else:
-		print("HTTP Błąd:", response_code)
-func add_refresh_button() -> void:
-	var refresh_button = Button.new()
-	refresh_button.text = "Odśwież"
-	refresh_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	$MarginContainer.add_child(refresh_button)
-	refresh_button.pressed.connect(func() -> void:
-		_on_refresh_button_pressed()
-	)
-func _on_refresh_button_pressed() -> void:
-	print("Odświeżam scenę...")
-	fetch_lobbies()
+	var response_text = body.get_string_from_utf8()
+	print("Raw response: ", response_text) 
+	
+	var json = JSON.new()
+	var parse_result = json.parse(response_text)
+	if parse_result != OK:
+		print("JSON parse error: ", json.get_error_message())
+		return
+	
+	var lobbies = json.data  
+	if typeof(lobbies) != TYPE_ARRAY:
+		print("Unexpected data format. Expected Array, got: ", typeof(lobbies))
+		return
 
+	if response_code == 200:
+		print("Successfully fetched lobbies: ", lobbies)
+		populate_lobby_list(lobbies)
+	else:
+		print("HTTP Error: ", response_code, " Response: ", response_text)
+
+func _on_refresh_button_pressed() -> void:
+	print("Refreshing scene...")
+	fetch_lobbies()
 
 func populate_lobby_list(lobbies: Array) -> void:
 	for child in lobby_list_container.get_children():
@@ -62,19 +67,17 @@ func populate_lobby_list(lobbies: Array) -> void:
 		lobby_item.add_child(players_label)
 		lobby_item.add_child(join_button)
 		
-		
 		name_label.text = lobby_data["lobbyName"]
-		players_label.text = str(lobby_data["connectedUsersCount"]) + " 👤"
+		players_label.text = str(lobby_data.get("connectedUserCount")) + " 👤"
 		join_button.text = "Join"
-
 		
 		vseperator.modulate = Color(1, 1, 1, 0)
 		vseperator.custom_minimum_size = Vector2(30,0)
-		name_label.autowrap_mode=false
+		name_label.autowrap_mode = false
 		name_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		name_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		name_label.custom_minimum_size = Vector2(200,0)
-		players_label.autowrap_mode=false
+		players_label.autowrap_mode = false
 		players_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		players_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		join_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -84,7 +87,7 @@ func populate_lobby_list(lobbies: Array) -> void:
 		hseperator.modulate = Color(1,1,1,0)
 		lobby_list.add_child(hseperator)
 		join_button.pressed.connect(func() -> void:
-			_on_join_button_pressed(lobby_data["id"])
+			_on_join_button_pressed(lobby_data["id"], lobby_data["isPrivate"])
 		)
 		var privacy_texture = preload("res://assets/images/lock.png")
 		privacy_icon.texture = privacy_texture
@@ -92,6 +95,65 @@ func populate_lobby_list(lobbies: Array) -> void:
 			privacy_icon.modulate = Color(1, 1, 1, 0)
 		lobby_list_container.add_child(lobby_list)
 
-func _on_join_button_pressed(lobby_id: String) -> void:
-	emit_signal("join_lobby", lobby_id)
-	print("Joining lobby: ", lobby_id)
+func _on_join_button_pressed(lobby_id: String, isPrivate: bool) -> void:
+	if !isPrivate:
+		emit_signal("join_lobby", lobby_id)
+		print("Joining lobby: ", lobby_id)
+	else:
+		var password_popup = Popup.new()
+		password_popup.name = "PasswordPopup"
+		password_popup.title = "Enter Password"
+		password_popup.add_theme_color_override("bg_color", Color(0, 0, 0, 0.8))  
+		add_child(password_popup)
+
+		var panel = Panel.new()
+		panel.add_theme_color_override("bg_color", Color(0.2, 0.2, 0.2))  
+		panel.custom_minimum_size = Vector2(260, 120) 
+		password_popup.add_child(panel)
+
+		var vbox = VBoxContainer.new()
+		vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		vbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		panel.add_child(vbox)
+		vbox.custom_minimum_size = Vector2(260, 140)
+		var label = Label.new()
+		label.text = "Enter the Lobby Password"
+		label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		vbox.add_child(label)
+
+		var password_line_edit = LineEdit.new()
+		password_line_edit.placeholder_text = "Password"
+		password_line_edit.secret = true
+		password_line_edit.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		password_line_edit.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		password_line_edit.add_theme_color_override("focus_color", Color(0.5, 0.5, 0.5))  
+		password_line_edit.add_theme_color_override("font_color", Color(1, 1, 1)) 
+		password_line_edit.custom_minimum_size = Vector2(250, 40)  
+		vbox.add_child(password_line_edit)
+
+		var ok_button = Button.new()
+		ok_button.text = "OK"
+		ok_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		ok_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		ok_button.add_theme_color_override("font_color", Color(0, 1, 0))  
+		ok_button.custom_minimum_size = Vector2(150, 40)
+		ok_button.connect("pressed", func() -> void:
+			var entered_password = password_line_edit.text
+			if entered_password.strip_edges() == "":
+				print("Password cannot be empty!")
+			else:
+				emit_signal("join_lobby", lobby_id, entered_password)
+				print("Joining private lobby: ", lobby_id, " with password: ", entered_password)
+				password_popup.queue_free()
+		)
+		vbox.add_child(ok_button)
+		password_popup.popup_centered()
+
+func _on_back_button_pressed() -> void:
+	exit_joingame_menu.emit()
+	print("Going back to main menu...")
+	set_process(false)
+	
+func handle_connecting_signals() -> void:
+	back_button.pressed.connect(_on_back_button_pressed)
+	refresh_button.pressed.connect(_on_refresh_button_pressed)
