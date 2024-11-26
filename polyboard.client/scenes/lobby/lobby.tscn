@@ -1,16 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://e6flyg7864a4"]
+[gd_scene load_steps=4 format=3 uid="uid://e6flyg7864a4"]
 
-[ext_resource type="Script" path="res://scenes/lobby/lobby.gd" id="1_idq3t"]
+[ext_resource type="Script" path="res://scenes/lobby/Lobby.cs" id="1_d4xsy"]
 [ext_resource type="Texture2D" uid="uid://e56daf0rtn6l" path="res://assets/images/background.jpg" id="2_447ek"]
 [ext_resource type="Texture2D" uid="uid://cr20hx020sdy3" path="res://assets/images/back_button.png" id="3_1hxoy"]
-[ext_resource type="Texture2D" uid="uid://bq5t3m46k1g1b" path="res://assets/images/correct.png" id="4_dug2j"]
-[ext_resource type="Texture2D" uid="uid://blx4jyoaq5k0t" path="res://assets/images/incorrect — kopia.png" id="5_oo1d4"]
-[ext_resource type="PackedScene" uid="uid://bry235jbe74xg" path="res://scenes/lobby/lobby_person.tscn" id="6_gc6vp"]
-
-[sub_resource type="SystemFont" id="SystemFont_4g32n"]
-font_names = PackedStringArray("Monospace")
-font_weight = 999
-subpixel_positioning = 0
 
 [node name="Lobby" type="Control"]
 layout_mode = 3
@@ -19,10 +11,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_idq3t")
+script = ExtResource("1_d4xsy")
 
 [node name="TextureRect" type="TextureRect" parent="."]
-visible = false
 layout_mode = 0
 offset_left = -174.0
 offset_top = -176.0
@@ -42,59 +33,40 @@ theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 12
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer2"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 
-[node name="back_button" type="TextureButton" parent="MarginContainer/VBoxContainer2/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
-size_flags_stretch_ratio = 1.08
-mouse_default_cursor_shape = 2
-texture_normal = ExtResource("3_1hxoy")
-texture_pressed = ExtResource("3_1hxoy")
+[node name="BackButton" type="Sprite2D" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+position = Vector2(20, 6)
+texture = ExtResource("3_1hxoy")
+offset = Vector2(0, 30)
 
-[node name="incorrect_button" type="TextureButton" parent="MarginContainer/VBoxContainer2/HBoxContainer"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 10
-size_flags_vertical = 0
-mouse_default_cursor_shape = 2
-texture_normal = ExtResource("5_oo1d4")
-texture_pressed = ExtResource("5_oo1d4")
+theme_override_font_sizes/font_size = 43
+text = "Lobby"
+horizontal_alignment = 1
 
-[node name="correct_button" type="TextureButton" parent="MarginContainer/VBoxContainer2/HBoxContainer"]
-visible = false
+[node name="UserList" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 400)
 layout_mode = 2
-size_flags_horizontal = 10
-size_flags_vertical = 0
-mouse_default_cursor_shape = 2
-texture_normal = ExtResource("4_dug2j")
-texture_pressed = ExtResource("4_dug2j")
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer2"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 0
-theme_override_constants/outline_size = 20
-theme_override_fonts/font = SubResource("SystemFont_4g32n")
-theme_override_font_sizes/font_size = 75
-text = "LOBBY"
+alignment = 1
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer2"]
+[node name="ReadyButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-size_flags_vertical = 3
+text = "READY"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer2/HBoxContainer2"]
+[node name="StartButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 60
-
-[node name="LobbyPerson" parent="MarginContainer/VBoxContainer2/HBoxContainer2/VBoxContainer" instance=ExtResource("6_gc6vp")]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="LobbyPerson2" parent="MarginContainer/VBoxContainer2/HBoxContainer2/VBoxContainer" instance=ExtResource("6_gc6vp")]
-layout_mode = 2
+text = "START GAME
+"
