@@ -1,5 +1,5 @@
 extends Control
-
+class_name JoinGame
 @onready var back_button = $MarginContainer/VBoxContainer/back_button as TextureButton
 @onready var scroll_container = $MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer
 @onready var lobby_list_container = scroll_container.get_node("VBoxContainer")
