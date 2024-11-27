@@ -1,11 +1,10 @@
 using MediatR;
 
-public class EditUserProfileCommand : IRequest<bool>{
+public record EditUserProfileCommand{
 
-    public Guid UserId {get; set;}
-    public string UserName {get; set;}
-    public string Email {get; set;}
-    public string NewPassword {get; set;}
-    public string CurrentPassword { get; set; }
-
-}
+    Guid UserId
+    string? UserName = null,
+    string? Email = null,
+    string? NewPassword = null,
+    string? CurrentPassword = null
+}: IRequest<bool>

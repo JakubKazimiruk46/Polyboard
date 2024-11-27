@@ -44,7 +44,7 @@ namespace PolyBoard.Server.Presentation.Controllers
             return Ok(user);
         }
         
-        [HttpPut("edit-profile")]
+        [HttpPatch("edit-profile")]
         public async Task<IActionResult> EditProfile([FromBody] EditUserProfileCommand command){
             var success = await _mediator.Send(command);
 
