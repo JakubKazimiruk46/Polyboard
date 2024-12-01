@@ -31,9 +31,17 @@ func on_window_mode_selected(index: int) -> void:
 		1: #Window mode
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 			DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, false)
+			var screen_size = DisplayServer.screen_get_size()
+			var window_size = DisplayServer.window_get_size()
+			var center_position = (screen_size - window_size) / 2
+			DisplayServer.window_set_position(center_position)
 		2: #Borderless Window
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 			DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, true)
+			var screen_size = DisplayServer.screen_get_size()
+			var window_size = DisplayServer.window_get_size()
+			var center_position = (screen_size - window_size) / 2
+			DisplayServer.window_set_position(center_position)
 		3: #Borderless Fullscreen
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 			DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, true)

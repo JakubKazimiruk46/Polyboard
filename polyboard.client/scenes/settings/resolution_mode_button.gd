@@ -24,3 +24,7 @@ func add_resolution_items() -> void:
 func on_resolution_selected(index: int) -> void:
 	SettingsSignalBus.emit_on_resolution_selected(index)
 	DisplayServer.window_set_size(RESOLUTION_DICTIONARY.values()[index])
+	var screen_size = DisplayServer.screen_get_size()
+	var window_size = DisplayServer.window_get_size()
+	var center_position = (screen_size - window_size) / 2
+	DisplayServer.window_set_position(center_position)
