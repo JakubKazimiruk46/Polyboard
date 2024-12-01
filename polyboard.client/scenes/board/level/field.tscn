@@ -1,12 +1,28 @@
-[gd_scene load_steps=3 format=3 uid="uid://bvlhympj7pq71"]
+[gd_scene load_steps=5 format=3 uid="uid://bvlhympj7pq71"]
 
 [ext_resource type="Script" path="res://scenes/board/level/Field.cs" id="1_04n6o"]
+[ext_resource type="Texture2D" uid="uid://cqqrjgdhq5flb" path="res://scenes/board/level/textures/FieldSelectionBorder.png" id="2_3tn34"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_yajq1"]
 size = Vector2(2, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_k4ob6"]
+size = Vector3(2, 1, 4)
 
 [node name="Field" type="Node3D"]
 script = ExtResource("1_04n6o")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("PlaneMesh_yajq1")
+
+[node name="Border" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+visible = false
+axis = 1
+texture = ExtResource("2_3tn34")
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.0595093)
+shape = SubResource("BoxShape3D_k4ob6")
