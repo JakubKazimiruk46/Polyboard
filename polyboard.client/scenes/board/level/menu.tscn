@@ -1,8 +1,13 @@
-[gd_scene load_steps=4 format=3 uid="uid://uicwwtau32m7"]
+[gd_scene load_steps=7 format=3 uid="uid://uicwwtau32m7"]
 
 [ext_resource type="Script" path="res://scenes/board/level/game_menu.gd" id="1_vvfqc"]
 [ext_resource type="PackedScene" uid="uid://cdxn460y08ix4" path="res://scenes/settings/settings_tab_container.tscn" id="2_m8ndh"]
 [ext_resource type="Script" path="res://scenes/board/level/game_settings.gd" id="2_o86wk"]
+[ext_resource type="Script" path="res://scenes/board/level/exit_confirm.gd" id="4_gh84u"]
+[ext_resource type="Script" path="res://scenes/board/level/exit_game_confirm.gd" id="5_4hk7i"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5i8wj"]
+bg_color = Color(0.555276, 0, 0.109748, 1)
 
 [node name="Menu" type="CanvasLayer"]
 
@@ -57,6 +62,7 @@ layout_mode = 2
 text = "QUIT GAME"
 
 [node name="GameSettings" type="Panel" parent="."]
+visible = false
 anchors_preset = -1
 anchor_left = 0.05
 anchor_top = 0.1
@@ -92,8 +98,112 @@ size_flags_horizontal = 4
 size_flags_vertical = 8
 text = "BACK"
 
+[node name="ExitMainMenuConfirm" type="Panel" parent="."]
+visible = false
+anchors_preset = -1
+anchor_left = 0.3
+anchor_top = 0.45
+anchor_right = 0.7
+anchor_bottom = 0.6
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_5i8wj")
+script = ExtResource("4_gh84u")
+
+[node name="MarginContainer" type="MarginContainer" parent="ExitMainMenuConfirm"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_bottom = 20
+
+[node name="Label" type="Label" parent="ExitMainMenuConfirm/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 20
+text = "Are you sure you want to exit to the main menu?"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ExitMainMenuConfirm/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+alignment = 1
+
+[node name="Button" type="Button" parent="ExitMainMenuConfirm/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 4
+text = "YES"
+
+[node name="Button2" type="Button" parent="ExitMainMenuConfirm/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 4
+text = "NO"
+
+[node name="ExitGameConfirm" type="Panel" parent="."]
+visible = false
+anchors_preset = -1
+anchor_left = 0.3
+anchor_top = 0.45
+anchor_right = 0.7
+anchor_bottom = 0.6
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_5i8wj")
+script = ExtResource("5_4hk7i")
+
+[node name="MarginContainer" type="MarginContainer" parent="ExitGameConfirm"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_bottom = 20
+
+[node name="Label" type="Label" parent="ExitGameConfirm/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 20
+text = "Are you sure you want to exit the game?"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ExitGameConfirm/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+alignment = 1
+
+[node name="Button" type="Button" parent="ExitGameConfirm/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 4
+text = "YES"
+
+[node name="Button2" type="Button" parent="ExitGameConfirm/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 4
+text = "NO"
+
 [connection signal="pressed" from="GameMenu/MarginContainer/VBoxContainer/Button" to="GameMenu" method="_on_ResumeButton_pressed"]
 [connection signal="pressed" from="GameMenu/MarginContainer/VBoxContainer/Button2" to="GameMenu" method="_on_OptionButton_pressed"]
 [connection signal="pressed" from="GameMenu/MarginContainer/VBoxContainer/Button3" to="GameMenu" method="_on_MainMenuButton_pressed"]
 [connection signal="pressed" from="GameMenu/MarginContainer/VBoxContainer/Button4" to="GameMenu" method="_on_QuitButton_pressed"]
 [connection signal="pressed" from="GameSettings/MarginContainer/back_button" to="GameSettings" method="on_back_button_pressed"]
+[connection signal="pressed" from="ExitMainMenuConfirm/MarginContainer/HBoxContainer/Button" to="ExitMainMenuConfirm" method="on_exit_button_pressed"]
+[connection signal="pressed" from="ExitMainMenuConfirm/MarginContainer/HBoxContainer/Button2" to="ExitMainMenuConfirm" method="on_cancel_button_pressed"]
+[connection signal="pressed" from="ExitGameConfirm/MarginContainer/HBoxContainer/Button" to="ExitGameConfirm" method="on_exit_button_pressed"]
+[connection signal="pressed" from="ExitGameConfirm/MarginContainer/HBoxContainer/Button2" to="ExitGameConfirm" method="on_cancel_button_pressed"]
