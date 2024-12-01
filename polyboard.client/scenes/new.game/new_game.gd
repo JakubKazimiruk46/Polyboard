@@ -10,8 +10,6 @@ extends Control
 @onready var error_label = $MarginContainer/HBoxContainer/VBoxContainer/VBoxContainer2/error_label as Label
 @onready var margin_container = $MarginContainer
 @onready var lobby = $Lobby
-@onready var hubConnectionService_script = load("res://services/HubConnectionService.cs")
-@onready var hubConnectionService_node = hubConnectionService_script.new("ws://loclalhost:8081/lobby")
 
 
 signal exit_newgame_menu
@@ -38,7 +36,7 @@ func on_create_button_pressed() -> void:
 	var is_public = public_checkbox.is_pressed()
 	var is_private = private_checkbox.is_pressed()
 	var password = password_input.text.strip_edges() if is_private else null
-	hubConnectionService_node.CreateLobby(lobby_name, 4, password);
+	HubConnectionService.CreateLobby(lobby_name, 4, password)
 
 	error_label.text = ""
 
