@@ -36,6 +36,7 @@ script = ExtResource("1_djwtq")
 script = ExtResource("1_85jf0")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Board"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0478573, 0.00241506, 0)
 shape = SubResource("BoxShape3D_3sahm")
 
 [node name="Board_object" parent="Board" instance=ExtResource("4_6krdw")]
@@ -105,7 +106,7 @@ transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 8.6956
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 11.9274, 0, -11.9198)
 
 [node name="Field21" parent="Board" instance=ExtResource("6_jcf5o")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.9055, 0, -8.70481)
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.9055, 0, -8.7532)
 
 [node name="Field22" parent="Board" instance=ExtResource("6_jcf5o")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.923, 0, -6.54769)
@@ -168,7 +169,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
 environment = SubResource("Environment_7ajdt")
 
 [node name="Figurehead" parent="." instance=ExtResource("3_8t0aq")]
-transform = Transform3D(0.5, 0, 0, 0, 0.497711, -0.0477839, 0, 0.0477839, 0.497711, 11.0225, 0.5, 10.3388)
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
 dieNodePath1 = NodePath("../Die1")
 dieNodePath2 = NodePath("../Die2")
 masterCameraPath = NodePath("../MasterShot")
@@ -223,6 +224,31 @@ shape = SubResource("BoxShape3D_8hnxd")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
+[node name="TextureRect2" type="TextureRect" parent="CanvasLayer"]
+anchors_preset = -1
+anchor_left = 0.885
+anchor_top = 0.25
+anchor_right = 0.96
+anchor_bottom = 0.565
+offset_left = 0.479919
+offset_right = 0.0799561
+offset_bottom = -0.119995
+
+[node name="FieldCard" type="Sprite2D" parent="CanvasLayer/TextureRect2"]
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer"]
+anchors_preset = -1
+anchor_left = 0.088
+anchor_top = 0.92
+anchor_right = 0.266
+anchor_bottom = 0.971
+offset_left = -0.376007
+offset_top = -0.160034
+offset_right = 0.567993
+offset_bottom = -0.208069
+
+[node name="ViewDetailsDialog" type="Sprite2D" parent="CanvasLayer/TextureRect"]
+visible = false
 [node name="FieldCard" type="Sprite2D" parent="CanvasLayer"]
 
 [node name="Menu" parent="." instance=ExtResource("10_8um66")]
