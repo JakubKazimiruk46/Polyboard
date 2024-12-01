@@ -17,5 +17,8 @@ size_flags_horizontal = 8
 size_flags_vertical = 4
 script = ExtResource("2_rxjmp")
 
+[node name="HBoxContainer" parent="." index="0"]
+theme_override_constants/separation = 140
+
 [node name="Label" parent="HBoxContainer" index="0"]
 text = "Window Mode"

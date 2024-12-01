@@ -1,6 +1,7 @@
-[gd_scene load_steps=15 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=17 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
+[ext_resource type="Script" path="res://scenes/board/level/level.gd" id="1_djwtq"]
 [ext_resource type="Texture2D" uid="uid://u6156pm3sx3h" path="res://assets/images/pb_background.jpg" id="1_ymkqo"]
 [ext_resource type="PackedScene" uid="uid://corrmnc7rodeh" path="res://scenes/board/figurehead/figurehead.tscn" id="3_8t0aq"]
 [ext_resource type="PackedScene" uid="uid://cqpmepp30bdrg" path="res://scenes/board/level/MAPA_OBIEKT.glb" id="4_6krdw"]
@@ -9,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://cxbg61n0xrbda" path="res://scenes/board/level/corner_field.tscn" id="6_ms3uj"]
 [ext_resource type="Script" path="res://scenes/board/level/kamera_figurehead.gd" id="7_xxuvu"]
 [ext_resource type="Script" path="res://scenes/board/level/MasterShot.cs" id="8_cd8t5"]
+[ext_resource type="PackedScene" uid="uid://uicwwtau32m7" path="res://scenes/board/level/menu.tscn" id="10_8um66"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]
 size = Vector3(28.5, 0.2, 28.5)
@@ -28,6 +30,7 @@ sky = SubResource("Sky_6qm8h")
 size = Vector3(0.113281, 102.644, 19.4651)
 
 [node name="Level" type="Node3D"]
+script = ExtResource("1_djwtq")
 
 [node name="Board" type="StaticBody3D" parent="."]
 script = ExtResource("1_85jf0")
@@ -245,4 +248,8 @@ offset_right = 0.567993
 offset_bottom = -0.208069
 
 [node name="ViewDetailsDialog" type="Sprite2D" parent="CanvasLayer/TextureRect"]
+visible = false
+[node name="FieldCard" type="Sprite2D" parent="CanvasLayer"]
+
+[node name="Menu" parent="." instance=ExtResource("10_8um66")]
 visible = false
