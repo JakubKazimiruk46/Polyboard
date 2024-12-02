@@ -249,6 +249,7 @@ offset_bottom = -0.208069
 
 [node name="ViewDetailsDialog" type="Sprite2D" parent="CanvasLayer/TextureRect"]
 visible = false
+
 [node name="FieldCard" type="Sprite2D" parent="CanvasLayer"]
 
 [node name="Menu" parent="." instance=ExtResource("10_8um66")]

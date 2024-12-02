@@ -45,7 +45,7 @@ position = Vector2(20, 6)
 texture = ExtResource("3_1hxoy")
 offset = Vector2(0, 30)
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="LobbyNameLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 43
 text = "Lobby"

@@ -40,19 +40,27 @@ public partial class Lobby : Control
 		public string Username { get; set; }
 		public bool IsReady { get; set; }
 	}
-
+	
 	private PackedScene _lobbyPersonScene;
-
 	private List<User> _users;
 
 	private Dictionary<User, Control> _userGuiMap = new Dictionary<User, Control>();
-
-	private Button _readyButton;
 	
+	private Label _lobbyNameLabel;
+	
+	private Button _readyButton;
 	private Button _startGameButton;
+	
+	public Guid LobbyId { get; set; }
+	
+	private HubConnectionService _hubService;
 
 	public override void _Ready()
 	{
+		_hubService = GetTree().Root.GetNode<HubConnectionService>("services/HubConnectionService");
+		_hubService.Connect(nameof(HubConnectionService.LobbyDetailsFetchedEventHandler), new Callable(this, nameof(OnLobbyDetailsFetched)));
+		FetchLobbyDetails();
+		
 		_lobbyPersonScene = (PackedScene)GD.Load("res://scenes/lobby/lobby_person.tscn");
 
 		var userListContainer = GetNode<VBoxContainer>("MarginContainer/VBoxContainer/UserList");
@@ -64,7 +72,10 @@ public partial class Lobby : Control
 		
 		_startGameButton = GetNode<Button>("MarginContainer/VBoxContainer/HBoxContainer/StartButton");
 		_startGameButton.Pressed += OnStartButtonPressed;
-
+		
+		_lobbyNameLabel = GetNode<Label>("MarginContainer/VBoxContainer/VBoxContainer/LobbyNameLabel");
+		_lobbyNameLabel = 
+		
 		foreach (var user in _users)
 		{
 			var lobbyPersonInstance = (Control)_lobbyPersonScene.Instantiate();
@@ -87,7 +98,32 @@ public partial class Lobby : Control
 		var firstUser = _users[0];
 		_readyButton.Text = firstUser.IsReady ? "Unready" : "Ready";
 	}
-
+	
+	private void FetchLobbyDetails()
+	{
+		_hubService.FetchLobbyDetails(LobbyId);
+	}
+	
+	private void OnLobbyDetailsFetched(LobbyDetailsDTO lobbyDetails)
+	{
+		GD.Print($"Received lobby details for lobby: {lobbyDetails.LobbyName}");
+		_lobbyNameLabel.Text = lobbyDetails.LobbyName;
+		//PopulateUserList(lobbyDetails.ConnectedUsers);
+	}
+	
+	/*private void PopulateUserList(List<LobbyUserDTO> users)
+	{
+		foreach (Node child in UserListContainer.GetChildren())
+		{
+			child.QueueFree();
+		}
+		foreach (var user in users)
+		{
+			var userEntry = CreateUserEntry(user);
+			UserListContainer.AddChild(userEntry);
+		}
+	}*/
+	
 	private void OnReadyButtonPressed()
 	{
 		var firstUser = _users[0];
