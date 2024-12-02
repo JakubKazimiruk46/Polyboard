@@ -21,6 +21,10 @@ public partial class Figurehead : CharacterBody3D
 	public NodePath tpCameraPath;     // Ścieżka do kamery TP
 	[Export]
 	public NodePath diceCameraPath;    // Ścieżka do kamery Kostki
+	
+	[Export]
+	public float moveDuration = 0.5f; // Czas ruchu w sekundach
+
 
 	private Camera3D masterCamera;
 	private Camera3D tpCamera;
@@ -186,39 +190,40 @@ public partial class Figurehead : CharacterBody3D
 		GD.Print("Zakończono turę i zresetowano wartości kostek.");
 	}
 
-	public async void MovePawnSequentially(int steps)
+public async void MovePawnSequentially(int steps)
+{
+	int targetIndex = CurrentPositionIndex + steps;
+
+	if (targetIndex >= 40)
 	{
-		int targetIndex = CurrentPositionIndex + steps;
-
-		if (targetIndex >= 40)
-		{
-			targetIndex = targetIndex % 40;
-		}
-
-		while (CurrentPositionIndex != targetIndex)
-		{
-			CurrentPositionIndex = (CurrentPositionIndex + 1) % 40;
-
-			Field nextField = board.GetFieldById(CurrentPositionIndex);
-			if (nextField == null || nextField.positions.Count == 0)
-			{
-				GD.PrintErr("Błąd: Nie znaleziono pola docelowego lub brak pozycji na polu.");
-				return;
-			}
-			Vector3 nextPosition = nextField.positions[0];
-			GD.Print($"Przemieszczenie pionka na pozycję {CurrentPositionIndex}.");
-			Tween tween = CreateTween();
-			tween.TweenProperty(this, "global_position", nextPosition, 0.3f)
-				 .SetTrans(Tween.TransitionType.Linear)
-				 .SetEase(Tween.EaseType.InOut);
-			await ToSignal(tween, "finished");
-		}
-		board.ShowFieldTexture(targetIndex);
-		ShowNotification($"Pionek przeniesiony na pole {targetIndex}.");
-		// Przełącz z powrotem na kamerę Master shot po zakończeniu ruchu
-		GD.Print("Przełączanie kamery z powrotem na Master shot po zakończeniu ruchu.");
-		SwitchToMasterCamera();
+		targetIndex = targetIndex % 40;
 	}
+
+	while (CurrentPositionIndex != targetIndex)
+	{
+		CurrentPositionIndex = (CurrentPositionIndex + 1) % 40;
+
+		Field nextField = board.GetFieldById(CurrentPositionIndex);
+		if (nextField == null || nextField.positions.Count == 0)
+		{
+			GD.PrintErr("Błąd: Nie znaleziono pola docelowego lub brak pozycji na polu.");
+			return;
+		}
+		Vector3 nextPosition = nextField.positions[0];
+		GD.Print($"Przemieszczenie pionka na pozycję {CurrentPositionIndex}.");
+		Tween tween = CreateTween();
+		tween.TweenProperty(this, "global_position", nextPosition, moveDuration) // Użycie zmiennej moveDuration
+				.SetTrans(Tween.TransitionType.Linear)
+				.SetEase(Tween.EaseType.InOut);
+		await ToSignal(tween, "finished");
+	}
+	board.ShowFieldTexture(targetIndex);
+	ShowNotification($"Pionek przeniesiony na pole {targetIndex}.");
+	// Przełącz z powrotem na kamerę Master shot po zakończeniu ruchu
+	GD.Print("Przełączanie kamery z powrotem na Master shot po zakończeniu ruchu.");
+	SwitchToMasterCamera();
+}
+
 
 	private void SwitchToTPCamera()
 	{
