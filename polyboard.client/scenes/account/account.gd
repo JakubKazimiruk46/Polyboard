@@ -12,12 +12,29 @@ extends Control
 @onready var error_label = account_tab_container.get_node("TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/error_label") as Label
 @onready var http_request = account_tab_container.get_node("TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HTTPRequest") as HTTPRequest
 
+var user_id = ""
+
 signal exit_account_menu()
 
 func _ready():
 	http_request.connect("request_completed", _on_edit_request_completed, 1)
 	save_button.connect("pressed", _on_save_pressed, 1)
+
 	handle_connecting_signals()
+
+func get_user_id_from_jwt() -> String:
+	# Decode JWT to get userId
+	var token = Authentication.token
+	var jwt_decoder = JwtDecoder.new()
+	var decoded_data = jwt_decoder.decode_jwt(token)
+
+	# Check if decoded data is a valid dictionary and contains userId
+	if decoded_data is Dictionary:
+		print ("Decoded data: ",decoded_data)
+		return decoded_data.get("userId", "")  # Return userId as a string
+	else:
+		print("Error: Failed to decode JWT or userId not found.")
+		return ""  # Return empty string if not found or decoding fails
 
 func _on_save_pressed() -> void:
 	
@@ -25,10 +42,13 @@ func _on_save_pressed() -> void:
 	email = str(email.text.strip_edges())
 	current_pass = str(current_pass.text.strip_edges())
 	new_pass = str(new_pass.text.strip_edges())
+	user_id = get_user_id_from_jwt()
+	print("User id: ", user_id)
+	
 	
 	if username != "":
 		var user_data = {
-			"userId": "8febdaec-e5bf-47c0-bbe0-8bc1502367fa", #??????
+			"userId": user_id,
 			"userName": username,
 			"email": email,
 			"CurrentPassword": current_pass,
