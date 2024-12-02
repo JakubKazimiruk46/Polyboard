@@ -35,7 +35,7 @@ func _on_save_pressed() -> void:
 		#DO ZMIANY!
 		var url = SaveManager.url.format({"str": "/edit-profile"})
 		var headers = ["Content-Type: application/json"]
-		var error = http_request.request(url, headers, HTTPClient.METHOD_POST, json_data)
+		var error = http_request.request(url, headers, HTTPClient.METHOD_PATCH, json_data)
 	
 		if error != OK:
 			error_label.text = "Failed to send request."
