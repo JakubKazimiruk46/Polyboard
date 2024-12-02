@@ -79,6 +79,10 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_constants/separation = 5
 
+[node name="error_label" type="Label" parent="TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+
 [node name="username_label" type="Label" parent="TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
@@ -167,6 +171,8 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 8
 text = "SAVE CHANGES"
+
+[node name="HTTPRequest" type="HTTPRequest" parent="TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
 
 [node name="Match history" type="TabBar" parent="TabContainer"]
 visible = false
