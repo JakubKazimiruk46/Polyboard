@@ -43,15 +43,36 @@ namespace PolyBoard.Server.Presentation.Controllers
             var user = await _mediator.Send(new GetUserByIdQuery { Id = userId });
             return Ok(user);
         }
-        
-        [HttpPatch("edit-profile")]
-        public async Task<IActionResult> EditProfile([FromBody] EditUserProfileCommand command){
-            var success = await _mediator.Send(command);
 
-            if(success)
-                return Ok(new {status = 200, message = "Profile update Succesfull"});
-            
-            return BadRequest(new { status = 400, message = "Failed to update profile." });
+        [HttpPatch("edit-profile")]
+        public async Task<IActionResult> EditProfile([FromBody] EditUserProfileCommand command)
+        {
+            if (command == null)
+            {
+                Console.WriteLine("EditProfile called with a null command.");
+                return BadRequest(new { status = 400, message = "Invalid request body." });
+            }
+
+            try
+            {
+                var success = await _mediator.Send(command);
+
+                if (success)
+                {
+                    Console.WriteLine($"Profile updated successfully for user {command.UserId}.");
+                    return Ok(new { status = 200, message = "Profile updated successfully." });
+                }
+
+                Console.WriteLine($"Profile update failed for user {command.UserId}.");
+                return BadRequest(new { status = 400, message = "Failed to update profile. Please check the provided data and try again." });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating profile for user {command.UserId}: {ex.Message}");
+                return StatusCode(500, new { status = 500, message = "An error occurred while processing the request." });
+            }
         }
+
     }
 }
+

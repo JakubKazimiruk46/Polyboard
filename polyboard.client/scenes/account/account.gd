@@ -17,17 +17,22 @@ signal exit_account_menu()
 func _ready():
 	http_request.connect("request_completed", _on_edit_request_completed, 1)
 	save_button.connect("pressed", _on_save_pressed, 1)
+	handle_connecting_signals()
 
 func _on_save_pressed() -> void:
-	print("Kliknął")
-	if username.text.strip_edges() != "":
-		print("Wszedł")
+	
+	username = str(username.text.strip_edges())
+	email = str(email.text.strip_edges())
+	current_pass = str(current_pass.text.strip_edges())
+	new_pass = str(new_pass.text.strip_edges())
+	
+	if username != "":
 		var user_data = {
-			"userId": "fc1e5ee3-f124-499f-b6a9-85df2ed88c56", #??????
+			"userId": "8febdaec-e5bf-47c0-bbe0-8bc1502367fa", #??????
 			"userName": username,
 			"email": email,
-			"CurrentPassword": current_pass.text.strip_edges(),
-			"NewPassword": new_pass.text.strip_edges()
+			"CurrentPassword": current_pass,
+			"NewPassword": new_pass
 			
 		}
 		var json = JSON.new()
@@ -39,7 +44,7 @@ func _on_save_pressed() -> void:
 	
 		if error != OK:
 			error_label.text = "Failed to send request."
-			print("Error sending password change request: ", error)
+			print("Error sending profile change request: ", error)
 	
 
 func _on_edit_request_completed(result: int, response_code: int, headers: Array, body: PackedByteArray):
@@ -47,13 +52,10 @@ func _on_edit_request_completed(result: int, response_code: int, headers: Array,
 	print("Profile edit response: ", response_text)
 
 	if response_code == 200:
-		print("Password successfully updated.")
-		current_pass.clear()
-		new_pass.clear()
-		confirm_new_pass.clear()
-		error_label.text = "Password updated successfully."
+		print("Profile successfully updated.")
+		error_label.text = "Profile updated successfully."
 	else:
-		var error_message = response_text if response_text != "" else "Failed to update password."
+		var error_message = response_text if response_text != "" else "Failed to update profile."
 		error_label.text = "Error: " + error_message
 
 func on_back_button_pressed() -> void:
