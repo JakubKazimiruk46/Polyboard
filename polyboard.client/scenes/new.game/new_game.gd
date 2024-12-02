@@ -36,6 +36,7 @@ func on_create_button_pressed() -> void:
 	var is_public = public_checkbox.is_pressed()
 	var is_private = private_checkbox.is_pressed()
 	var password = password_input.text.strip_edges() if is_private else null
+	HubConnectionService.CreateLobby(lobby_name, 4, password)
 
 	error_label.text = ""
 

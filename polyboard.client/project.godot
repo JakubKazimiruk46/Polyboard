@@ -26,6 +26,7 @@ SettingsDataContainer="*res://autoloads/SettingsDataContainer.gd"
 SettingsSignalBus="*res://autoloads/SettingsSignalBus.gd"
 SaveManager="*res://autoloads/SaveManager.gd"
 Authentication="*res://scenes/authentication/authentication.gd"
+HubConnectionService="*res://services/HubConnectionService.cs"
 
 [dotnet]
 
