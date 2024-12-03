@@ -49,28 +49,17 @@ namespace PolyBoard.Server.Presentation.Controllers
         {
             if (command == null)
             {
-                Console.WriteLine("EditProfile called with a null command.");
-                return BadRequest(new { status = 400, message = "Invalid request body." });
+                return BadRequest(new { status = 400, message = "Invalid request." });
             }
 
-            try
+            var success = await _mediator.Send(command);
+
+            if (success)
             {
-                var success = await _mediator.Send(command);
-
-                if (success)
-                {
-                    Console.WriteLine($"Profile updated successfully for user {command.UserId}.");
-                    return Ok(new { status = 200, message = "Profile updated successfully." });
-                }
-
-                Console.WriteLine($"Profile update failed for user {command.UserId}.");
-                return BadRequest(new { status = 400, message = "Failed to update profile. Please check the provided data and try again." });
+                return Ok(new { status = 200, message = "Success." });
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error updating profile for user {command.UserId}: {ex.Message}");
-                return StatusCode(500, new { status = 500, message = "An error occurred while processing the request." });
-            }
+
+            return BadRequest(new { status = 400, message = "Error." });
         }
 
     }
