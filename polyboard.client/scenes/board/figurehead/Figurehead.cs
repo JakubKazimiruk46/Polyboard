@@ -14,6 +14,8 @@ public partial class Figurehead : CharacterBody3D
 	[Export]
 	public NodePath dieNodePath2; // Ścieżka do drugiej kostki
 	[Export]
+	public NodePath notificationPanelPath;
+	[Export]
 	public NodePath notificationLabelPath; // Ścieżka do powiadomień
 	[Export]
 	public NodePath masterCameraPath; // Ścieżka do kamery Master shot
@@ -30,6 +32,7 @@ public partial class Figurehead : CharacterBody3D
 	private Camera3D tpCamera;
 	private Camera3D diceCamera;
 	private Label notificationLabel;
+	private Panel notificationPanel;
 
 	private int? die1Result = null;
 	private int? die2Result = null;
@@ -43,6 +46,7 @@ public partial class Figurehead : CharacterBody3D
 		diceCamera = GetNodeOrNull<Camera3D>(diceCameraPath);
 		textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/FieldCard");
 		notificationLabel = GetNodeOrNull<Label>(notificationLabelPath);
+		notificationPanel = GetNodeOrNull<Panel>(notificationPanelPath);
 		if (masterCamera == null || tpCamera == null || diceCamera == null)
 		{
 			GD.PrintErr("Błąd: Nie znaleziono jednej z kamer. Sprawdź ścieżki.");
@@ -87,6 +91,14 @@ public partial class Figurehead : CharacterBody3D
 		{
 			GD.Print("Plansza została poprawnie załadowana.");
 		}
+		if (notificationPanel == null)
+		{
+			GD.PrintErr("Nie znaleziono NotificationPanel. Sprawdź ścieżkę");
+		}
+		else
+		{
+			notificationPanel.Visible = false;
+		}
 		if (notificationLabel == null)
 		{
 			GD.PrintErr("Nie znaleziono NotificationLabel. Sprawdź ścieżkę.");
@@ -98,6 +110,7 @@ public partial class Figurehead : CharacterBody3D
 			return;
 
 		notificationLabel.Text = message;
+		notificationPanel.Visible = true;
 		notificationLabel.Visible = true;
 
 		// Ukryj powiadomienie po określonym czasie
@@ -108,6 +121,7 @@ public partial class Figurehead : CharacterBody3D
 	{
 		if (notificationLabel != null)
 		{
+			notificationPanel.Visible = false;
 			notificationLabel.Visible = false;
 		}
 	}
@@ -123,7 +137,6 @@ public partial class Figurehead : CharacterBody3D
 	private void OnDie1RollFinished(int value)
 	{
 		GD.Print($"Wylosowano dla pierwszej kostki: {value}");
-		ShowNotification($"Pierwszy rzut kostką: {value}");
 		die1Result = value;
 		CheckAndMovePawn();
 	}
@@ -131,7 +144,6 @@ public partial class Figurehead : CharacterBody3D
 	private void OnDie2RollFinished(int value)
 	{
 		GD.Print($"Wylosowano dla drugiej kostki: {value}");
-		ShowNotification($"Drugi rzut kostką: {value}");
 		die2Result = value;
 		CheckAndMovePawn();
 	}
@@ -218,7 +230,6 @@ public async void MovePawnSequentially(int steps)
 		await ToSignal(tween, "finished");
 	}
 	board.ShowFieldTexture(targetIndex);
-	ShowNotification($"Pionek przeniesiony na pole {targetIndex}.");
 	// Przełącz z powrotem na kamerę Master shot po zakończeniu ruchu
 	GD.Print("Przełączanie kamery z powrotem na Master shot po zakończeniu ruchu.");
 	SwitchToMasterCamera();
