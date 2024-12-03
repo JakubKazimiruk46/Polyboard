@@ -61,7 +61,7 @@ func on_login_pressed() -> void:
 
 func _on_request_completed(result: int, response_code: int, headers: Array, body: PackedByteArray):
 	var response_text = body.get_string_from_utf8()
-	print("Raw response text: ", response_text)
+	#print("Raw response text: ", response_text)
 	
 	if response_code != 200:
 		error_label.text = "Failed to parse response."

@@ -23,21 +23,20 @@ func _ready():
 	handle_connecting_signals()
 
 func get_user_id_from_jwt() -> String:
-	# Decode JWT to get userId
 	var token = Authentication.token
 	var jwt_decoder = JwtDecoder.new()
 	var decoded_data = jwt_decoder.decode_jwt(token)
 
-	# Check if decoded data is a valid dictionary and contains userId
 	if decoded_data is Dictionary:
 		print ("Decoded data: ",decoded_data)
-		return decoded_data.get("userId", "")  # Return userId as a string
+		print("!!!!USER ID!!!!", decoded_data.get("sub", ""))
+		return decoded_data.get("sub", "") 
 	else:
 		print("Error: Failed to decode JWT or userId not found.")
-		return ""  # Return empty string if not found or decoding fails
+		return ""
 
 func _on_save_pressed() -> void:
-	
+	#Bug - po ponownych zmianach wyskakuje blad z .text
 	username = str(username.text.strip_edges())
 	email = str(email.text.strip_edges())
 	current_pass = str(current_pass.text.strip_edges())

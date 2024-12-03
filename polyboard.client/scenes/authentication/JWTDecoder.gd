@@ -19,11 +19,11 @@ func decode_jwt(token: String) -> Dictionary:
 		print("Failed to decode JWT payload")
 		return {}
 		
-	print("JSON DATA: ", json.result)
+	var json_data = json.data
 
-	return json.result
+	return json_data as Dictionary
 
 func decode_base64(base64_string: String) -> String:
-	var decoded_bytes = base64_string.base64_to_raw() 
+	var decoded_bytes = Marshalls.base64_to_raw(base64_string) 
 	
 	return decoded_bytes.get_string_from_utf8()
