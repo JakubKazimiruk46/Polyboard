@@ -24,12 +24,12 @@ func _ready():
 
 func get_user_id_from_jwt() -> String:
 	var token = Authentication.token
+	print("Token: ", token)
 	var jwt_decoder = JwtDecoder.new()
 	var decoded_data = jwt_decoder.decode_jwt(token)
 
 	if decoded_data is Dictionary:
-		print ("Decoded data: ",decoded_data)
-		print("!!!!USER ID!!!!", decoded_data.get("sub", ""))
+		print("USER ID", decoded_data.get("sub", ""))
 		return decoded_data.get("sub", "") 
 	else:
 		print("Error: Failed to decode JWT or userId not found.")
@@ -37,21 +37,21 @@ func get_user_id_from_jwt() -> String:
 
 func _on_save_pressed() -> void:
 	#Bug - po ponownych zmianach wyskakuje blad z .text
-	username = str(username.text.strip_edges())
-	email = str(email.text.strip_edges())
-	current_pass = str(current_pass.text.strip_edges())
-	new_pass = str(new_pass.text.strip_edges())
+	var username_text = str(username.text.strip_edges())
+	var email_text = str(email.text.strip_edges())
+	var current_pass_text = str(current_pass.text.strip_edges())
+	var new_pass_text = str(new_pass.text.strip_edges())
 	user_id = get_user_id_from_jwt()
 	print("User id: ", user_id)
 	
 	
-	if username != "":
+	if username_text != "":
 		var user_data = {
 			"userId": user_id,
-			"userName": username,
-			"email": email,
-			"CurrentPassword": current_pass,
-			"NewPassword": new_pass
+			"userName": username_text,
+			"email": email_text,
+			"CurrentPassword": current_pass_text,
+			"NewPassword": new_pass_text
 			
 		}
 		var json = JSON.new()

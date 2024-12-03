@@ -13,6 +13,7 @@ func decode_jwt(token: String) -> Dictionary:
 	var payload_json = decode_base64(payload_base64)
 	
 	var json = JSON.new()
+	print("Payload_json: ", payload_json)
 	var parse_result = json.parse(payload_json)
 
 	if parse_result != OK:
@@ -24,6 +25,9 @@ func decode_jwt(token: String) -> Dictionary:
 	return json_data as Dictionary
 
 func decode_base64(base64_string: String) -> String:
-	var decoded_bytes = Marshalls.base64_to_raw(base64_string) 
+	var repaired_base64 = base64_string.replace("-", "+").replace("_", "/")
+	while repaired_base64.length() % 4 != 0:
+		repaired_base64 += "="
 	
+	var decoded_bytes = Marshalls.base64_to_raw(repaired_base64)
 	return decoded_bytes.get_string_from_utf8()
