@@ -1,6 +1,6 @@
 extends CanvasLayer
 
-@onready var notification_label = $NotificationLabel
+@onready var notification_label = $NotificationPanel/NotificationLabel
 @onready var notification_panel = $NotificationPanel
 
 func show_notification(message: String, duration: float = 3.0) -> void:
