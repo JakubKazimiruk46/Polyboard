@@ -11,6 +11,7 @@ script = ExtResource("2_vjy46")
 
 [node name="HBoxContainer" parent="." index="0"]
 custom_minimum_size = Vector2(844, 64)
+theme_override_constants/separation = 140
 
 [node name="Label" parent="HBoxContainer" index="0"]
 text = "Resolution"

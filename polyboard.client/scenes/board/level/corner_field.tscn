@@ -1,12 +1,27 @@
-[gd_scene load_steps=3 format=3 uid="uid://cxbg61n0xrbda"]
+[gd_scene load_steps=5 format=3 uid="uid://cxbg61n0xrbda"]
 
 [ext_resource type="Script" path="res://scenes/board/level/CornerField.cs" id="1_cmmif"]
+[ext_resource type="Texture2D" uid="uid://cyie7trgiylkw" path="res://scenes/board/level/textures/CornerFieldSelectionBorder1.png" id="2_tyrrk"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_xhbij"]
 size = Vector2(4, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_td306"]
+size = Vector3(4, 1, 4)
 
 [node name="CornerField" type="Node3D"]
 script = ExtResource("1_cmmif")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("PlaneMesh_xhbij")
+
+[node name="Border" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0901251, 0.05)
+visible = false
+axis = 1
+texture = ExtResource("2_tyrrk")
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("BoxShape3D_td306")

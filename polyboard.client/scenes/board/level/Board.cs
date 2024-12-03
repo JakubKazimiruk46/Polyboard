@@ -18,7 +18,7 @@ public partial class Board : StaticBody3D
 	public override void _Ready()
 {
 	
-	 textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/FieldCard");
+	 textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/FieldCard");
 	if (textureDisplay == null)
 	{
 		GD.PrintErr("Błąd: Nie znaleziono Sprite2D do wyświetlania tekstur.");
@@ -56,25 +56,16 @@ public partial class Board : StaticBody3D
 		if (fieldTexture != null)
 		{
 			textureDisplay.Texture = fieldTexture;
-			float offsetX = 10; 
-			float offsetY =10 ; 
-			float textureWidth = fieldTexture.GetSize().X;
-			float textureHeight = fieldTexture.GetSize().Y;
+			
 			Vector2 viewportSize = GetViewport().GetVisibleRect().Size;
 			
-			float scaleFactorX = viewportSize.X / 1920f;  
+			float scaleFactorX = viewportSize.X / 2500f;  
 			float scaleFactorY = viewportSize.Y / 1080f;  
 			float scaleFactor = Math.Min(scaleFactorX, scaleFactorY);
 			Vector2 scale = new Vector2(scaleFactor, scaleFactor);
 			
 			textureDisplay.Scale = scale; 
-			
-			float posX = viewportSize.X - (textureWidth*scaleFactorX/2) - offsetX;
-			float posY = offsetY +(textureHeight*scaleFactorY/2);
-			
-			textureDisplay.Position = new Vector2(posX, posY);
-			textureDisplay.Visible = true; 
-			 
+			textureDisplay.Visible = true;  
 		}
 		else
 		{
