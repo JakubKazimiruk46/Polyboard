@@ -9,22 +9,30 @@ public partial class Figurehead : CharacterBody3D
 	
 	private Sprite2D textureDisplay;
 	
-
 	[Export]
 	public NodePath dieNodePath1; // Ścieżka do pierwszej kostki
 	[Export]
 	public NodePath dieNodePath2; // Ścieżka do drugiej kostki
-
+	[Export]
+	public NodePath notificationPanelPath;
+	[Export]
+	public NodePath notificationLabelPath; // Ścieżka do powiadomień
 	[Export]
 	public NodePath masterCameraPath; // Ścieżka do kamery Master shot
 	[Export]
 	public NodePath tpCameraPath;     // Ścieżka do kamery TP
 	[Export]
 	public NodePath diceCameraPath;    // Ścieżka do kamery Kostki
+	
+	[Export]
+	public float moveDuration = 0.5f; // Czas ruchu w sekundach
+
 
 	private Camera3D masterCamera;
 	private Camera3D tpCamera;
 	private Camera3D diceCamera;
+	private Label notificationLabel;
+	private Panel notificationPanel;
 
 	private int? die1Result = null;
 	private int? die2Result = null;
@@ -37,7 +45,8 @@ public partial class Figurehead : CharacterBody3D
 		tpCamera = GetNodeOrNull<Camera3D>(tpCameraPath);
 		diceCamera = GetNodeOrNull<Camera3D>(diceCameraPath);
 		textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/FieldCard");
-
+		notificationLabel = GetNodeOrNull<Label>(notificationLabelPath);
+		notificationPanel = GetNodeOrNull<Panel>(notificationPanelPath);
 		if (masterCamera == null || tpCamera == null || diceCamera == null)
 		{
 			GD.PrintErr("Błąd: Nie znaleziono jednej z kamer. Sprawdź ścieżki.");
@@ -82,8 +91,40 @@ public partial class Figurehead : CharacterBody3D
 		{
 			GD.Print("Plansza została poprawnie załadowana.");
 		}
+		if (notificationPanel == null)
+		{
+			GD.PrintErr("Nie znaleziono NotificationPanel. Sprawdź ścieżkę");
+		}
+		else
+		{
+			notificationPanel.Visible = false;
+		}
+		if (notificationLabel == null)
+		{
+			GD.PrintErr("Nie znaleziono NotificationLabel. Sprawdź ścieżkę.");
+		}
 	}
+	private void ShowNotification(string message, float duration = 3f)
+	{
+		if (notificationLabel == null)
+			return;
 
+		notificationLabel.Text = message;
+		notificationPanel.Visible = true;
+		notificationLabel.Visible = true;
+
+		// Ukryj powiadomienie po określonym czasie
+		var timer = GetTree().CreateTimer(duration);
+		timer.Connect("timeout", new Callable(this, nameof(HideNotification)));
+	}
+	private void HideNotification()
+	{
+		if (notificationLabel != null)
+		{
+			notificationPanel.Visible = false;
+			notificationLabel.Visible = false;
+		}
+	}
 	public override void _Input(InputEvent @event)
 	{
 		if (@event.IsActionPressed("ui_accept"))
@@ -113,6 +154,7 @@ public partial class Figurehead : CharacterBody3D
 		{
 			totalSteps += die1Result.Value + die2Result.Value;
 			GD.Print($"Łączna suma oczek: {totalSteps}");
+			ShowNotification($"Łączna suma oczek: {totalSteps}");
 
 			// Przełączenie kamery na TP po rzucie
 			SwitchToTPCamera();
@@ -121,6 +163,7 @@ public partial class Figurehead : CharacterBody3D
 			if (die1Result.Value == die2Result.Value)
 			{
 				GD.Print("Wylosowano tę samą wartość na obu kostkach! Powtórzenie rzutu.");
+				ShowNotification("Dublet! Powtórz rzut.", 5f);
 				die1Result = null;
 				die2Result = null;
 				ReRollDice(); // Powtórz rzut, aby dodać do sumy
@@ -159,39 +202,39 @@ public partial class Figurehead : CharacterBody3D
 		GD.Print("Zakończono turę i zresetowano wartości kostek.");
 	}
 
-	public async void MovePawnSequentially(int steps)
+public async void MovePawnSequentially(int steps)
+{
+	int targetIndex = CurrentPositionIndex + steps;
+
+	if (targetIndex >= 40)
 	{
-		int targetIndex = CurrentPositionIndex + steps;
-
-		if (targetIndex >= 40)
-		{
-			targetIndex = targetIndex % 40;
-		}
-
-		while (CurrentPositionIndex != targetIndex)
-		{
-			CurrentPositionIndex = (CurrentPositionIndex + 1) % 40;
-
-			Field nextField = board.GetFieldById(CurrentPositionIndex);
-			if (nextField == null || nextField.positions.Count == 0)
-			{
-				GD.PrintErr("Błąd: Nie znaleziono pola docelowego lub brak pozycji na polu.");
-				return;
-			}
-			Vector3 nextPosition = nextField.positions[0];
-			GD.Print($"Przemieszczenie pionka na pozycję {CurrentPositionIndex}.");
-			Tween tween = CreateTween();
-			tween.TweenProperty(this, "global_position", nextPosition, 0.3f)
-				 .SetTrans(Tween.TransitionType.Linear)
-				 .SetEase(Tween.EaseType.InOut);
-			await ToSignal(tween, "finished");
-		}
-		board.ShowFieldTexture(targetIndex);
-
-		// Przełącz z powrotem na kamerę Master shot po zakończeniu ruchu
-		GD.Print("Przełączanie kamery z powrotem na Master shot po zakończeniu ruchu.");
-		SwitchToMasterCamera();
+		targetIndex = targetIndex % 40;
 	}
+
+	while (CurrentPositionIndex != targetIndex)
+	{
+		CurrentPositionIndex = (CurrentPositionIndex + 1) % 40;
+
+		Field nextField = board.GetFieldById(CurrentPositionIndex);
+		if (nextField == null || nextField.positions.Count == 0)
+		{
+			GD.PrintErr("Błąd: Nie znaleziono pola docelowego lub brak pozycji na polu.");
+			return;
+		}
+		Vector3 nextPosition = nextField.positions[0];
+		GD.Print($"Przemieszczenie pionka na pozycję {CurrentPositionIndex}.");
+		Tween tween = CreateTween();
+		tween.TweenProperty(this, "global_position", nextPosition, moveDuration) // Użycie zmiennej moveDuration
+				.SetTrans(Tween.TransitionType.Linear)
+				.SetEase(Tween.EaseType.InOut);
+		await ToSignal(tween, "finished");
+	}
+	board.ShowFieldTexture(targetIndex);
+	// Przełącz z powrotem na kamerę Master shot po zakończeniu ruchu
+	GD.Print("Przełączanie kamery z powrotem na Master shot po zakończeniu ruchu.");
+	SwitchToMasterCamera();
+}
+
 
 	private void SwitchToTPCamera()
 	{
