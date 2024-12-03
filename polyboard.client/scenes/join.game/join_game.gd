@@ -99,26 +99,12 @@ func populate_lobby_list(lobbies: Array) -> void:
 			privacy_icon.modulate = Color(1, 1, 1, 0)
 		lobby_list_container.add_child(lobby_list)
 		
-func change_to_lobby_scene(lobby_id):
-	print("Joining lobby with ID: ", lobby_id)
-	# Załaduj scenę Lobby
-	var lobby_scene = preload("res://scenes/lobby/Lobby.tscn")
-	var lobby_instance = lobby_scene.instantiate()
-	# Ustaw LobbyId w nowej scenie, jeśli metoda istnieje
-	if lobby_instance.has_method("set_lobby_id"):
-		lobby_instance.set_lobby_id(lobby_id)
-	# Usuń bieżącą scenę i dodaj nową
-	var current_scene = get_tree().current_scene
-	# Usuń bieżącą scenę (odroczenie usuwania)
-	if current_scene != null:
-		current_scene.call_deferred("free")
-	# Ustaw nową scenę
-	get_tree().root.add_child(lobby_instance)
-	get_tree().current_scene = lobby_instance
-	
-		
-		
+func change_to_lobby_scene(lobby_id: String) -> void:
+	DataTransferService.CurrentLobbyId = lobby_id
+	print("Setting lobby ID in GameState: ", DataTransferService.CurrentLobbyId)
+	get_tree().change_scene_to_file("res://scenes/lobby/Lobby.tscn")
 
+		
 func _on_join_button_pressed(lobby_id: String, isPrivate: bool) -> void:
 	if !isPrivate:
 		print("Joining public lobby: ", lobby_id)
