@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=18 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -254,7 +254,10 @@ offset_bottom = -0.208069
 
 [node name="ViewDetailsDialog" type="Sprite2D" parent="CanvasLayer/TextureRect"]
 visible = false
+
 [node name="FieldCard" type="Sprite2D" parent="CanvasLayer"]
 
 [node name="Menu" parent="." instance=ExtResource("10_8um66")]
 visible = false
+
+[editable path="NotificationLayer"]
