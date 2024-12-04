@@ -36,35 +36,34 @@ func get_user_id_from_jwt() -> String:
 		return ""
 
 func _on_save_pressed() -> void:
-	#Bug - po ponownych zmianach wyskakuje blad z .text
 	var username_text = str(username.text.strip_edges())
 	var email_text = str(email.text.strip_edges())
 	var current_pass_text = str(current_pass.text.strip_edges())
 	var new_pass_text = str(new_pass.text.strip_edges())
+	var confirm_new_pass_text = str(confirm_new_pass.text.strip_edges())
 	user_id = get_user_id_from_jwt()
-	print("User id: ", user_id)
 	
+	if(new_pass_text != confirm_new_pass_text):
+		error_label.text = "Hasla sa niezgodne!"
 	
-	if username_text != "":
-		var user_data = {
-			"userId": user_id,
-			"userName": username_text,
-			"email": email_text,
-			"CurrentPassword": current_pass_text,
-			"NewPassword": new_pass_text
-			
-		}
-		var json = JSON.new()
-		var json_data = json.stringify(user_data)
-		#DO ZMIANY!
-		var url = SaveManager.url.format({"str": "/edit-profile"})
-		var headers = ["Content-Type: application/json"]
-		var error = http_request.request(url, headers, HTTPClient.METHOD_PATCH, json_data)
-	
-		if error != OK:
-			error_label.text = "Failed to send request."
-			print("Error sending profile change request: ", error)
-	
+	var user_data = {
+		"userId": user_id,
+		"userName": username_text,
+		"email": email_text,
+		"CurrentPassword": current_pass_text,
+		"NewPassword": new_pass_text
+		
+	}
+	var json = JSON.new()
+	var json_data = json.stringify(user_data)
+	#DO ZMIANY!
+	var url = SaveManager.url.format({"str": "/edit-profile"})
+	var headers = ["Content-Type: application/json"]
+	var error = http_request.request(url, headers, HTTPClient.METHOD_PATCH, json_data)
+
+	if error != OK:
+		error_label.text = "Failed to send request."
+		print("Error sending profile change request: ", error)
 
 func _on_edit_request_completed(result: int, response_code: int, headers: Array, body: PackedByteArray):
 	var response_text = body.get_string_from_utf8()
@@ -73,6 +72,7 @@ func _on_edit_request_completed(result: int, response_code: int, headers: Array,
 	if response_code == 200:
 		print("Profile successfully updated.")
 		error_label.text = "Profile updated successfully."
+		exit_account_menu.emit()
 	else:
 		var error_message = response_text if response_text != "" else "Failed to update profile."
 		error_label.text = "Error: " + error_message
