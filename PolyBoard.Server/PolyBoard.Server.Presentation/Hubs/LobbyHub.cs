@@ -47,6 +47,8 @@ namespace PolyBoard.Server.Presentation.Hubs
 
         public async Task CreateLobby(string lobbyName, int? maxPlayers = 4, string? password = null)
         {
+            if (password == string.Empty)
+                password = null;
             var lobby = new Lobby(lobbyName, maxPlayers, password);
             _lobbies[lobby.Id] = lobby;
 
