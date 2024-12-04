@@ -5,14 +5,12 @@ class_name JoinGame
 @onready var lobby_list_container = scroll_container.get_node("VBoxContainer")
 @onready var http_request = $HTTPRequest as HTTPRequest
 @onready var refresh_button = $MarginContainer/VBoxContainer/refresh_button as Button
-@onready var hub_service = preload("res://services/HubConnectionService.cs").new() as Node
 signal join_lobby(lobby_id: String)
 signal exit_joingame_menu
 
 func _ready():
 	handle_connecting_signals()
 	http_request.connect("request_completed", _on_request_completed, 1)
-	
 	set_process(false)
 	fetch_lobbies()
 
@@ -88,31 +86,20 @@ func populate_lobby_list(lobbies: Array) -> void:
 		hseperator.custom_minimum_size = Vector2(0,15)
 		hseperator.modulate = Color(1,1,1,0)
 		lobby_list.add_child(hseperator)
-		
 		join_button.pressed.connect(func() -> void:
 			_on_join_button_pressed(lobby_data["id"], lobby_data["isPrivate"])
 		)
-
 		var privacy_texture = preload("res://assets/images/lock.png")
 		privacy_icon.texture = privacy_texture
 		if !lobby_data["isPrivate"]:
 			privacy_icon.modulate = Color(1, 1, 1, 0)
 		lobby_list_container.add_child(lobby_list)
-		
-func change_to_lobby_scene(lobby_id: String) -> void:
-	DataTransferService.CurrentLobbyId = lobby_id
-	print("Setting lobby ID in GameState: ", DataTransferService.CurrentLobbyId)
-	get_tree().change_scene_to_file("res://scenes/lobby/Lobby.tscn")
 
-		
 func _on_join_button_pressed(lobby_id: String, isPrivate: bool) -> void:
 	if !isPrivate:
-		print("Joining public lobby: ", lobby_id)
-		hub_service.call("JoinLobby", lobby_id, null)  
 		emit_signal("join_lobby", lobby_id)
-		change_to_lobby_scene(lobby_id)
+		print("Joining lobby: ", lobby_id)
 	else:
-		print("Joining private lobby. Requesting password...")
 		var password_popup = Popup.new()
 		password_popup.name = "PasswordPopup"
 		password_popup.title = "Enter Password"
@@ -129,7 +116,6 @@ func _on_join_button_pressed(lobby_id: String, isPrivate: bool) -> void:
 		vbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		panel.add_child(vbox)
 		vbox.custom_minimum_size = Vector2(260, 140)
-
 		var label = Label.new()
 		label.text = "Enter the Lobby Password"
 		label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -152,19 +138,16 @@ func _on_join_button_pressed(lobby_id: String, isPrivate: bool) -> void:
 		ok_button.add_theme_color_override("font_color", Color(0, 1, 0))  
 		ok_button.custom_minimum_size = Vector2(150, 40)
 		ok_button.connect("pressed", func() -> void:
-			var entered_password = password_line_edit.text.strip_edges()
-			if entered_password == "":
+			var entered_password = password_line_edit.text
+			if entered_password.strip_edges() == "":
 				print("Password cannot be empty!")
 			else:
-				print("Joining private lobby: ", lobby_id, " with password: ", entered_password)
-				hub_service.call("JoinLobby", lobby_id, null)
 				emit_signal("join_lobby", lobby_id, entered_password)
-				change_to_lobby_scene(lobby_id)
+				print("Joining private lobby: ", lobby_id, " with password: ", entered_password)
 				password_popup.queue_free()
 		)
 		vbox.add_child(ok_button)
 		password_popup.popup_centered()
-
 
 func _on_back_button_pressed() -> void:
 	exit_joingame_menu.emit()
@@ -174,4 +157,3 @@ func _on_back_button_pressed() -> void:
 func handle_connecting_signals() -> void:
 	back_button.pressed.connect(_on_back_button_pressed)
 	refresh_button.pressed.connect(_on_refresh_button_pressed)
-	
