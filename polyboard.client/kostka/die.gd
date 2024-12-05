@@ -44,10 +44,9 @@ func _roll():
 	is_rolling = true
 
 	# Odtwórz dźwięk rzutu
-	if dice_sound_player != null:
-		dice_sound_player.play()
-	else:
-		print("AudioStreamPlayer nie jest przypisany!")
+	play_dice_sound_with_delay(0.5) 
+
+
 
 
 func _on_sleeping_state_changed() -> void:
@@ -62,3 +61,11 @@ func _on_sleeping_state_changed() -> void:
 					
 		if !landed_on_side:
 					_roll()
+					
+# Odtwórz dźwięk rzutu z opóźnieniem
+func play_dice_sound_with_delay(delay_time: float) -> void:
+	if dice_sound_player != null:
+		await get_tree().create_timer(delay_time).timeout
+		dice_sound_player.play()
+	else:
+		print("AudioStreamPlayer nie jest przypisany!")
