@@ -6,6 +6,7 @@ public partial class Figurehead : CharacterBody3D
 {
 	public int CurrentPositionIndex { get; set; } = 0;
 	private Board board;
+	private AudioStreamPlayer3D moveSoundPlayer; 
 	
 	private Sprite2D textureDisplay;
 	
@@ -23,9 +24,10 @@ public partial class Figurehead : CharacterBody3D
 	public NodePath tpCameraPath;     // Ścieżka do kamery TP
 	[Export]
 	public NodePath diceCameraPath;    // Ścieżka do kamery Kostki
-	
 	[Export]
 	public float moveDuration = 0.5f; // Czas ruchu w sekundach
+	[Export]
+	public AudioStream moveSound; // Dźwięk ruchu pionka
 
 
 	private Camera3D masterCamera;
@@ -47,6 +49,9 @@ public partial class Figurehead : CharacterBody3D
 		textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/FieldCard");
 		notificationLabel = GetNodeOrNull<Label>(notificationLabelPath);
 		notificationPanel = GetNodeOrNull<Panel>(notificationPanelPath);
+		moveSoundPlayer = new AudioStreamPlayer3D();
+		AddChild(moveSoundPlayer);  // Dodaj do sceny
+		moveSoundPlayer.Stream = moveSound;  // Ustaw dźwięk
 		if (masterCamera == null || tpCamera == null || diceCamera == null)
 		{
 			GD.PrintErr("Błąd: Nie znaleziono jednej z kamer. Sprawdź ścieżki.");
@@ -223,6 +228,13 @@ public async void MovePawnSequentially(int steps)
 		}
 		Vector3 nextPosition = nextField.positions[0];
 		GD.Print($"Przemieszczenie pionka na pozycję {CurrentPositionIndex}.");
+
+		// Ustawienie pozycji odtwarzacza dźwięku na pozycji pionka
+		moveSoundPlayer.GlobalPosition = GlobalPosition;
+
+		// Odtwarzanie dźwięku przy każdym ruchu
+		moveSoundPlayer.Play();
+
 		Tween tween = CreateTween();
 		tween.TweenProperty(this, "global_position", nextPosition, moveDuration) // Użycie zmiennej moveDuration
 				.SetTrans(Tween.TransitionType.Linear)
@@ -234,6 +246,7 @@ public async void MovePawnSequentially(int steps)
 	GD.Print("Przełączanie kamery z powrotem na Master shot po zakończeniu ruchu.");
 	SwitchToMasterCamera();
 }
+
 
 
 	private void SwitchToTPCamera()
