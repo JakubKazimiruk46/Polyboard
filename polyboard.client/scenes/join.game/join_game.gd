@@ -150,7 +150,8 @@ func _on_join_button_pressed(lobby_id: String, isPrivate: bool) -> void:
 		password_popup.popup_centered()
 
 func _on_back_button_pressed() -> void:
-	exit_joingame_menu.emit()
+	var main_menu_scene = "res://scenes/main.menu/main_menu.tscn"
+	get_tree().change_scene_to_file(main_menu_scene)
 	print("Going back to main menu...")
 	set_process(false)
 	

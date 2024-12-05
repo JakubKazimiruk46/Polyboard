@@ -46,7 +46,7 @@ public partial class Lobby : Control
 	private List<User> _users;
 
 	private Dictionary<User, Control> _userGuiMap = new Dictionary<User, Control>();
-
+	private TextureButton _backButton;
 	private Button _readyButton;
 	
 	private Button _startGameButton;
@@ -64,6 +64,9 @@ public partial class Lobby : Control
 		
 		_startGameButton = GetNode<Button>("MarginContainer/VBoxContainer/HBoxContainer/StartButton");
 		_startGameButton.Pressed += OnStartButtonPressed;
+		
+		_backButton = GetNode<TextureButton>("MarginContainer/VBoxContainer/HBoxContainer2/BackButton");
+		_backButton.Pressed += OnBackButtonPressed;
 
 		foreach (var user in _users)
 		{
@@ -104,7 +107,15 @@ public partial class Lobby : Control
 	
 	private void OnStartButtonPressed()
 	{
-		if (!(_users.Where(u => u.IsReady == false).Any()))
 			GetTree().ChangeSceneToFile("res://scenes/board/level/level.tscn");
 	}
-}	
+	private void OnBackButtonPressed()
+	{
+		var _previousScenePath = "res://scenes/join.game/join_game.tscn";
+		
+		if (!string.IsNullOrEmpty(_previousScenePath))
+		{
+			GetTree().ChangeSceneToFile(_previousScenePath);
+		}
+}
+}

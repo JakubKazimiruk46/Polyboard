@@ -20,8 +20,22 @@ extends Control
 
 func _ready():
 	handle_connecting_signals()
+	update_menu_visibility()
 	
-
+	
+func update_menu_visibility():
+	if Authentication.token == "":
+		newgame_button.visible = false
+		join_game_button.visible = false
+		account_button.visible = false
+		logout_button.visible = false
+		login_button.visible = true
+	else:
+		account_button.visible = true
+		login_button.visible = false
+		logout_button.visible = true
+		newgame_button.visible = true
+		join_game_button.visible = true
 func on_board_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/board/level/level.tscn")
 
