@@ -68,3 +68,5 @@ custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 text = "START GAME
 "
+
+[node name="HTTPRequest" type="HTTPRequest" parent="MarginContainer/VBoxContainer"]
