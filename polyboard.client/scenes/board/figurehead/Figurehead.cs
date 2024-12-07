@@ -6,9 +6,9 @@ public partial class Figurehead : CharacterBody3D
 {
 	public int CurrentPositionIndex { get; set; } = 0;
 	private Board board;
-	
+
 	private Sprite2D textureDisplay;
-	
+
 	[Export]
 	public NodePath dieNodePath1; // Ścieżka do pierwszej kostki
 	[Export]
@@ -23,16 +23,29 @@ public partial class Figurehead : CharacterBody3D
 	public NodePath tpCameraPath;     // Ścieżka do kamery TP
 	[Export]
 	public NodePath diceCameraPath;    // Ścieżka do kamery Kostki
-	
+
 	[Export]
 	public float moveDuration = 0.5f; // Czas ruchu w sekundach
 
+	// Opcja A: Użycie NodePath
+	[Export]
+	public NodePath walkSoundPlayerPath; // Ścieżka do AudioStreamPlayer3D
+
+	// Opcja B: Bezpośrednie odwołanie
+	// [Export]
+	// public NodePath walkSoundPlayerPath; // Ścieżka do AudioStreamPlayer3D
 
 	private Camera3D masterCamera;
 	private Camera3D tpCamera;
 	private Camera3D diceCamera;
 	private Label notificationLabel;
 	private Panel notificationPanel;
+
+	// Opcja A: Typ AudioStreamPlayer3D
+	private AudioStreamPlayer3D walkSoundPlayer;
+
+	// Opcja B: Typ AudioStreamPlayer3D bez NodePath
+	// private AudioStreamPlayer3D walkSoundPlayer;
 
 	private int? die1Result = null;
 	private int? die2Result = null;
@@ -47,6 +60,31 @@ public partial class Figurehead : CharacterBody3D
 		textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/FieldCard");
 		notificationLabel = GetNodeOrNull<Label>(notificationLabelPath);
 		notificationPanel = GetNodeOrNull<Panel>(notificationPanelPath);
+
+		// Opcja A: Pobierz AudioStreamPlayer3D przez NodePath
+		walkSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>(walkSoundPlayerPath);
+		if (walkSoundPlayer == null)
+		{
+			GD.PrintErr("Błąd: Nie znaleziono AudioStreamPlayer3D. Sprawdź walkSoundPlayerPath.");
+		}
+		else
+		{
+			GD.Print("AudioStreamPlayer3D został poprawnie zlokalizowany.");
+		}
+
+		// Opcja B: Pobierz AudioStreamPlayer3D bezpośrednio
+		/*
+		walkSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("AudioStreamPlayer3D");
+		if (walkSoundPlayer == null)
+		{
+			GD.PrintErr("Błąd: Nie znaleziono AudioStreamPlayer3D. Upewnij się, że węzeł jest poprawnie nazwany i znajduje się jako dziecko Figurehead.");
+		}
+		else
+		{
+			GD.Print("AudioStreamPlayer3D został poprawnie zlokalizowany.");
+		}
+		*/
+
 		if (masterCamera == null || tpCamera == null || diceCamera == null)
 		{
 			GD.PrintErr("Błąd: Nie znaleziono jednej z kamer. Sprawdź ścieżki.");
@@ -91,6 +129,7 @@ public partial class Figurehead : CharacterBody3D
 		{
 			GD.Print("Plansza została poprawnie załadowana.");
 		}
+
 		if (notificationPanel == null)
 		{
 			GD.PrintErr("Nie znaleziono NotificationPanel. Sprawdź ścieżkę");
@@ -104,6 +143,7 @@ public partial class Figurehead : CharacterBody3D
 			GD.PrintErr("Nie znaleziono NotificationLabel. Sprawdź ścieżkę.");
 		}
 	}
+
 	private void ShowNotification(string message, float duration = 3f)
 	{
 		if (notificationLabel == null)
@@ -117,6 +157,7 @@ public partial class Figurehead : CharacterBody3D
 		var timer = GetTree().CreateTimer(duration);
 		timer.Connect("timeout", new Callable(this, nameof(HideNotification)));
 	}
+
 	private void HideNotification()
 	{
 		if (notificationLabel != null)
@@ -125,6 +166,7 @@ public partial class Figurehead : CharacterBody3D
 			notificationLabel.Visible = false;
 		}
 	}
+
 	public override void _Input(InputEvent @event)
 	{
 		if (@event.IsActionPressed("ui_accept"))
@@ -202,39 +244,46 @@ public partial class Figurehead : CharacterBody3D
 		GD.Print("Zakończono turę i zresetowano wartości kostek.");
 	}
 
-public async void MovePawnSequentially(int steps)
-{
-	int targetIndex = CurrentPositionIndex + steps;
-
-	if (targetIndex >= 40)
+	public async void MovePawnSequentially(int steps)
 	{
-		targetIndex = targetIndex % 40;
-	}
+		int targetIndex = CurrentPositionIndex + steps;
 
-	while (CurrentPositionIndex != targetIndex)
-	{
-		CurrentPositionIndex = (CurrentPositionIndex + 1) % 40;
-
-		Field nextField = board.GetFieldById(CurrentPositionIndex);
-		if (nextField == null || nextField.positions.Count == 0)
+		if (targetIndex >= 40)
 		{
-			GD.PrintErr("Błąd: Nie znaleziono pola docelowego lub brak pozycji na polu.");
-			return;
+			targetIndex = targetIndex % 40;
 		}
-		Vector3 nextPosition = nextField.positions[0];
-		GD.Print($"Przemieszczenie pionka na pozycję {CurrentPositionIndex}.");
-		Tween tween = CreateTween();
-		tween.TweenProperty(this, "global_position", nextPosition, moveDuration) // Użycie zmiennej moveDuration
-				.SetTrans(Tween.TransitionType.Linear)
-				.SetEase(Tween.EaseType.InOut);
-		await ToSignal(tween, "finished");
-	}
-	board.ShowFieldTexture(targetIndex);
-	// Przełącz z powrotem na kamerę Master shot po zakończeniu ruchu
-	GD.Print("Przełączanie kamery z powrotem na Master shot po zakończeniu ruchu.");
-	SwitchToMasterCamera();
-}
 
+		// Odtwórz dźwięk chodzenia
+		PlayWalkSound();
+
+		while (CurrentPositionIndex != targetIndex)
+		{
+			CurrentPositionIndex = (CurrentPositionIndex + 1) % 40;
+
+			Field nextField = board.GetFieldById(CurrentPositionIndex);
+			if (nextField == null || nextField.positions.Count == 0)
+			{
+				GD.PrintErr("Błąd: Nie znaleziono pola docelowego lub brak pozycji na polu.");
+				StopWalkSound(); // Zatrzymaj dźwięk w przypadku błędu
+				return;
+			}
+			Vector3 nextPosition = nextField.positions[0];
+			GD.Print($"Przemieszczenie pionka na pozycję {CurrentPositionIndex}.");
+			Tween tween = CreateTween();
+			tween.TweenProperty(this, "global_position", nextPosition, moveDuration) // Użycie zmiennej moveDuration
+					.SetTrans(Tween.TransitionType.Linear)
+					.SetEase(Tween.EaseType.InOut);
+			await ToSignal(tween, "finished");
+		}
+
+		// Zatrzymaj dźwięk chodzenia po zakończeniu ruchu
+		StopWalkSound();
+
+		board.ShowFieldTexture(targetIndex);
+		// Przełącz z powrotem na kamerę Master shot po zakończeniu ruchu
+		GD.Print("Przełączanie kamery z powrotem na Master shot po zakończeniu ruchu.");
+		SwitchToMasterCamera();
+	}
 
 	private void SwitchToTPCamera()
 	{
@@ -273,6 +322,29 @@ public async void MovePawnSequentially(int steps)
 		{
 			GD.PrintErr("Błąd: Kamera Kostki jest nieprawidłowa.");
 		}
-		
+	}
+
+	// Metoda do odtwarzania dźwięku chodzenia
+	private void PlayWalkSound()
+	{
+		if (walkSoundPlayer != null)
+		{
+			walkSoundPlayer.Play();
+			GD.Print("Odtwarzanie dźwięku chodzenia.");
+		}
+		else
+		{
+			GD.PrintErr("Błąd: AudioStreamPlayer3D nie jest zainicjalizowany.");
+		}
+	}
+
+	// Metoda do zatrzymania dźwięku chodzenia
+	private void StopWalkSound()
+	{
+		if (walkSoundPlayer != null && walkSoundPlayer.Playing)
+		{
+			walkSoundPlayer.Stop();
+			GD.Print("Zatrzymanie dźwięku chodzenia.");
+		}
 	}
 }
