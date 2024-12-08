@@ -1,6 +1,4 @@
 ﻿using PolyBoard.Server.Core.Entities;
-using PolyBoard.Server.Core.Entities.BoardSpaces.Property;
-using PolyBoard.Server.Core.Entities.GameEvents;
 
 namespace PolyBoard.Server.Core.Helpers
 {
@@ -13,7 +11,6 @@ namespace PolyBoard.Server.Core.Helpers
         public int Balance { get; set; } = 2000;
         public List<Property> OwnedProperties { get; init; } = [];
         public List<Card> OwnedCards { get; init; } = [];
-        public List<Offer> Offers { get; init; } = [];
         public bool IsInJail { get; set; }
         public bool IsBankrupt { get; set; }
     }

@@ -1,19 +1,16 @@
-﻿using PolyBoard.Server.Core.Entities.GameEvents;
-using PolyBoard.Server.Core.Helpers;
-using PolyBoard.Server.Core.Interfaces;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using PolyBoard.Server.Core.Interfaces;
 
 namespace PolyBoard.Server.Core.Entities
 {
-    [NotMapped]
+    /// <summary>
+    /// This class is a representation of a Player turn in database
+    /// </summary>
     public sealed class Turn : IEntity
     {
         public Guid Id { get; set; }
         public Game Game { get; set; }
-        public int TurnNumber { get; set; }
-        [NotMapped]
-        public Player PlayerOnMove { get; set; }
-        public Guid UserId { get; set; }
+        public int Number { get; set; }
+        public User PlayerOnMove { get; set; }
         public List<GameEvent> Events { get; set; } = [];
     }
 }

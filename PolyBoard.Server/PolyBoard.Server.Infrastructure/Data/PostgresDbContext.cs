@@ -10,11 +10,41 @@ namespace PolyBoard.Server.Infrastructure.Data
         public PostgresDbContext(DbContextOptions<PostgresDbContext> options) : base(options) { }
 
         public override DbSet<User> Users { get; set; }
-        //public DbSet<Game> Games { get; init; }
+        public DbSet<Game> Games { get; set; }
+        public DbSet<Achivement> Achivements { get; set; }
+        public DbSet<Bid> Bids { get; set; }
+        public DbSet<Card> Cards { get; set; }
+        public DbSet<GameEvent> GameEvents { get; set; }
+        public DbSet<Property> Properties { get; set; }
+        public DbSet<RentPrice> RentPrices { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Turn> Turns { get; set; }
+        public DbSet<UserAchivement> UserAchivements { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<GameEvent>()
+                .OwnsOne(
+                    owner => owner.JsonBody, ownedNavigationBuilder =>
+                    {
+                        ownedNavigationBuilder.ToJson();
+                    })
+                .HasDiscriminator(ge => ge.Name);
+            builder.Entity<Transaction>(e =>
+            {
+                // Relacja z Giver
+                e.HasOne(t => t.Giver)
+                    .WithMany(u => u.TransactionsAsGiver) // Jedna kolekcja dla wszystkich transakcji
+                    .HasForeignKey("GiverId")
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // Relacja z Reciver
+                e.HasOne(t => t.Reciver)
+                    .WithMany(u => u.TransactionsAsReciver) // Bez kolekcji dla Reciver, bo używamy tej samej w Giver
+                    .HasForeignKey("ReciverId")
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
         }
     }
 }
