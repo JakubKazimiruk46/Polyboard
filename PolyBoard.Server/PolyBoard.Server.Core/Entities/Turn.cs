@@ -11,6 +11,6 @@ namespace PolyBoard.Server.Core.Entities
         public Game Game { get; set; }
         public int Number { get; set; }
         public User PlayerOnMove { get; set; }
-        public List<GameEvent> Events { get; set; } = [];
+        public ICollection<GameEvent> Events { get; set; } = [];
     }
 }

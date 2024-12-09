@@ -11,7 +11,7 @@ namespace PolyBoard.Server.Infrastructure.Data
 
         public override DbSet<User> Users { get; set; }
         public DbSet<Game> Games { get; set; }
-        public DbSet<Achivement> Achivements { get; set; }
+        public DbSet<Achievement> Achievements { get; set; }
         public DbSet<Bid> Bids { get; set; }
         public DbSet<Card> Cards { get; set; }
         public DbSet<GameEvent> GameEvents { get; set; }
@@ -19,7 +19,7 @@ namespace PolyBoard.Server.Infrastructure.Data
         public DbSet<RentPrice> RentPrices { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Turn> Turns { get; set; }
-        public DbSet<UserAchivement> UserAchivements { get; set; }
+        public DbSet<UserAchievement> UserAchievements { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -35,13 +35,13 @@ namespace PolyBoard.Server.Infrastructure.Data
             {
                 // Relacja z Giver
                 e.HasOne(t => t.Giver)
-                    .WithMany(u => u.TransactionsAsGiver) // Jedna kolekcja dla wszystkich transakcji
+                    .WithMany(u => u.TransactionsAsGiver)
                     .HasForeignKey("GiverId")
                     .OnDelete(DeleteBehavior.Restrict);
 
                 // Relacja z Reciver
                 e.HasOne(t => t.Reciver)
-                    .WithMany(u => u.TransactionsAsReciver) // Bez kolekcji dla Reciver, bo używamy tej samej w Giver
+                    .WithMany(u => u.TransactionsAsReciver)
                     .HasForeignKey("ReciverId")
                     .OnDelete(DeleteBehavior.Restrict);
             });

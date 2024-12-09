@@ -10,7 +10,7 @@ namespace PolyBoard.Server.Core.Entities
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public bool IsStorable { get; set; }
-        public List<Transaction>? InvlovedInTransactions { get; set; }
+        public ICollection<Transaction>? InvlovedInTransactions { get; set; }
     }
 
 }

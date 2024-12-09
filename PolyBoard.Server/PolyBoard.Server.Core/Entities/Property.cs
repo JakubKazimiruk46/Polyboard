@@ -7,9 +7,9 @@ namespace PolyBoard.Server.Core.Entities
         //Main table structure
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public List<RentPrice> Prices { get; set; } = [];
+        public ICollection<RentPrice> Prices { get; set; } = [];
 
         //Secondary Relations
-        public List<Transaction>? InvolvedInTransactions { get; set; }
+        public ICollection<Transaction>? InvolvedInTransactions { get; set; }
     }
 }
