@@ -14,6 +14,8 @@ namespace PolyBoard.Server.Core.Helpers
         public int MaxPlayers { get; private set; } = 4;
         public string? Password { get; private set; }
         public bool IsPrivate => Password != null;
+        public int CurrentTurnIndex { get; private set; } = 0;
+        public List<UserConnection> TurnOrder => Connections;
 
         public Lobby() { }
         public Lobby(string lobbyName, int? maxPlayers = 4, string? password = null)
@@ -45,5 +47,20 @@ namespace PolyBoard.Server.Core.Helpers
 
             Connections.Remove(playerConnection); 
         }
+        public void StartGame()
+        {
+            LobbyStatus = LobbyStatus.InGame;
+            CurrentTurnIndex = 0;
+        }
+        public UserConnection GetCurrentPlayer()
+        {
+            return TurnOrder[CurrentTurnIndex];
+        }
+
+        public void NextTurn()
+        {
+            CurrentTurnIndex = (CurrentTurnIndex + 1) % TurnOrder.Count;
+        }
+        
     }
 }
