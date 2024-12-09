@@ -9,15 +9,13 @@ namespace PolyBoard.Server.Core.Helpers
         public Guid Id { get; init; } // jakieś Id połączenia tu może, to technicznie trzeba sie dowiedziec jak dokładnie powinno to dzialac
         public int CurrentTurn { get; set; } // Numer aktualnej tury
         public ICollection<Player> Players { get; set; } // Lista graczy
-        public Map Map { get; set; }
         public ICollection<Turn> Turns { get; set; } // Lista wszystkich wydarzeń w grze
         public Player CurrentPlayer { get; set; } // Nawigacja do aktualnego gracza
 
         // Metoda do rozpoczęcia nowej gry
-        public void StartGame(List<Player> players, Map map)
+        public void StartGame(List<Player> players)
         {
             Players = players;
-            Map = map;
             CurrentTurn = 1;
         }
 

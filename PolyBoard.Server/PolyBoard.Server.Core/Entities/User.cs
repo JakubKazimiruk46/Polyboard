@@ -6,6 +6,8 @@ namespace PolyBoard.Server.Core.Entities
     public sealed class User : IdentityUser<Guid>, IEntity
     {
         public override Guid Id { get; set; }
-        //public List<Game> Games { get; set; } = [];
+        public List<Game> Games { get; set; } = [];
+        public ICollection<Transaction> TransactionsAsGiver { get; set; } = [];
+        public ICollection<Transaction> TransactionsAsReciver { get; set; } = [];
     }
 }

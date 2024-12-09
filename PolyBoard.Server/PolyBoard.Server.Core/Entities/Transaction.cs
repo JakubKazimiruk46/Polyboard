@@ -1,22 +1,17 @@
-﻿using PolyBoard.Server.Core.Helpers;
-using PolyBoard.Server.Core.Interfaces;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using PolyBoard.Server.Core.Interfaces;
 
 namespace PolyBoard.Server.Core.Entities
 {
-    [NotMapped]
-    public sealed class Transaction : IEntity, IEventSource
+    public sealed class Transaction : IEntity
     {
         public Guid Id { get; set; }
-        [NotMapped]
-        public Player? Giver { get; set; }
-        public Guid? GiverId { get; set; }
-        [NotMapped]
-        public Player? Reciver { get; set; } // null indicates SYSTEM user
-        public Guid? RevicerId { get; set; }
-        public int CashAmount { get; set; } = 0;
-        public List<ICollectable>? Assets { get; set; }
+        public User? Giver { get; set; }
+        public User? Reciver { get; set; } // null indicates SYSTEM user
+        public int? CashAmount { get; set; }
+        public ICollection<Card>? Cards { get; set; }
+        public ICollection<Property>? Properties { get; set; }
         public bool IsComplete { get; set; }
         public Game Game { get; set; }
+        public GameEvent GameEvent { get; set; }
     }
 }
