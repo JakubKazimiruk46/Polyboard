@@ -2,6 +2,8 @@ extends RigidBody3D
 
 
 @onready var raycasts = $Raycasts.get_children()
+@onready var dice_sound_player = $AudioStreamPlayer
+
 
 
 var start_pos
@@ -31,7 +33,7 @@ func _roll():
 	angular_velocity = Vector3.ZERO
 
 	# Randomowa rotacja
-	transform.basis = Basis(Vector3.RIGHT, randf_range(0,2 * PI)) *transform.basis
+	transform.basis = Basis(Vector3.RIGHT, randf_range(0, 2 * PI)) * transform.basis
 	transform.basis = Basis(Vector3.UP, randf_range(0, 2 * PI)) * transform.basis
 	transform.basis = Basis(Vector3.FORWARD, randf_range(0, 2 * PI)) * transform.basis
 
@@ -40,6 +42,13 @@ func _roll():
 	angular_velocity = throw_vector * roll_strength / 2
 	apply_central_impulse(throw_vector * roll_strength)
 	is_rolling = true
+
+	# Odtwórz dźwięk rzutu
+	if dice_sound_player != null:
+		dice_sound_player.play()
+	else:
+		print("AudioStreamPlayer nie jest przypisany!")
+
 
 func _on_sleeping_state_changed() -> void:
 	if sleeping:

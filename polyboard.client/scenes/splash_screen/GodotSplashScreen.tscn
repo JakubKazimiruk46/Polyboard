@@ -5,6 +5,7 @@
 
 [sub_resource type="SystemFont" id="SystemFont_ft8ld"]
 font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
 
 [node name="godot_splash_screen" type="VBoxContainer"]
 script = ExtResource("1_senbr")
