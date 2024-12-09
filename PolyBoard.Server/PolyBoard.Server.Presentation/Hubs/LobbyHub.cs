@@ -237,6 +237,12 @@ namespace PolyBoard.Server.Presentation.Hubs
                 await Clients.Caller.SendAsync("Error", "Lobby not found.");
                 return;
             }
+            var admin = lobby.Connections.FirstOrDefault();
+            if (admin == null || admin.ConnectionId != Context.ConnectionId)
+            {
+                await Clients.Caller.SendAsync("Error", "Only the admin can start the game.");
+                return;
+            }
             
             if (lobby.Connections.Count < 2)
             {
