@@ -14,7 +14,6 @@ namespace PolyBoard.Server.Core.Helpers
         public int MaxPlayers { get; private set; } = 4;
         public string? Password { get; private set; }
         public bool IsPrivate => Password != null;
-        public bool IsGameStarted { get; private set; } = false;
         public int CurrentTurnIndex { get; private set; } = 0;
         public List<UserConnection> TurnOrder => Connections;
 
@@ -24,7 +23,7 @@ namespace PolyBoard.Server.Core.Helpers
             LobbyName = lobbyName;
             Id = Guid.NewGuid();
             LobbyStatus = LobbyStatus.Waiting;
-            Connections = new List<UserConnection>();
+            Connections = [];
             MaxPlayers = maxPlayers ?? 4;
             Password = password;
         }
@@ -50,38 +49,18 @@ namespace PolyBoard.Server.Core.Helpers
         }
         public void StartGame()
         {
-            if (IsGameStarted)
-                throw new InvalidOperationException("Game has already started.");
-
-            if (Connections.Count < 2)
-                throw new InvalidOperationException("Not enough players to start the game.");
-
-            if (Connections.Any(c => !c.IsReady))
-                throw new InvalidOperationException("Not all players are ready.");
-
-            IsGameStarted = true;
+            LobbyStatus = LobbyStatus.InGame;
             CurrentTurnIndex = 0;
         }
         public UserConnection GetCurrentPlayer()
         {
-            if (!IsGameStarted)
-                throw new InvalidOperationException("Game has not started.");
-
             return TurnOrder[CurrentTurnIndex];
         }
 
         public void NextTurn()
         {
-            if (!IsGameStarted)
-                throw new InvalidOperationException("Game has not started.");
-
             CurrentTurnIndex = (CurrentTurnIndex + 1) % TurnOrder.Count;
         }
-
-        public void ResetGame()
-        {
-            IsGameStarted = false;
-            CurrentTurnIndex = 0;
-        }
+        
     }
 }

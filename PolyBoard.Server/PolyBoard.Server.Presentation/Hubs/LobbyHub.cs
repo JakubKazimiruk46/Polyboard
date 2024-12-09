@@ -268,7 +268,7 @@ namespace PolyBoard.Server.Presentation.Hubs
                 return;
             }
 
-            if (!lobby.IsGameStarted)
+            if (lobby.LobbyStatus != LobbyStatus.InGame)
             {
                 await Clients.Caller.SendAsync("Error", "Game not started.");
                 return;
@@ -289,7 +289,7 @@ namespace PolyBoard.Server.Presentation.Hubs
                 return;
             }
 
-            if (!lobby.IsGameStarted)
+            if (lobby.LobbyStatus != LobbyStatus.InGame)
             {
                 await Clients.Caller.SendAsync("Error", "Game not started.");
                 return;
