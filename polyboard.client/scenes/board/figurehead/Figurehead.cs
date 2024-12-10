@@ -8,6 +8,7 @@ public partial class Figurehead : CharacterBody3D
 	private Board board;
 	
 	private Sprite2D textureDisplay;
+	private Sprite2D randomCard;
 	
 	[Export]
 	public NodePath dieNodePath1; // Ścieżka do pierwszej kostki
@@ -44,7 +45,8 @@ public partial class Figurehead : CharacterBody3D
 		masterCamera = GetNodeOrNull<Camera3D>(masterCameraPath);
 		tpCamera = GetNodeOrNull<Camera3D>(tpCameraPath);
 		diceCamera = GetNodeOrNull<Camera3D>(diceCameraPath);
-		textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/FieldCard");
+		textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/FieldCard");
+		randomCard = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/RandomCard");
 		notificationLabel = GetNodeOrNull<Label>(notificationLabelPath);
 		notificationPanel = GetNodeOrNull<Panel>(notificationPanelPath);
 		if (masterCamera == null || tpCamera == null || diceCamera == null)
@@ -131,6 +133,7 @@ public partial class Figurehead : CharacterBody3D
 		{
 			SwitchToDiceCamera(); // Przełącz na kamerę Kostki
 			textureDisplay.Visible = false;
+			randomCard.Visible=false;
 		}
 	}
 
