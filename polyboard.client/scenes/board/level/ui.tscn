@@ -1,0 +1,408 @@
+[gd_scene load_steps=16 format=3 uid="uid://be5o85k4nbeu5"]
+
+[ext_resource type="Script" path="res://scenes/board/level/ui.gd" id="1_e26wc"]
+[ext_resource type="Texture2D" uid="uid://dhxn8lostrjd4" path="res://assets/images/cards.png" id="2_oospi"]
+[ext_resource type="Texture2D" uid="uid://d2lj75ugtvjgi" path="res://assets/images/coin.png" id="2_qslas"]
+[ext_resource type="Texture2D" uid="uid://bgg3f806aptjs" path="res://assets/images/button_view.png" id="3_6jkhu"]
+[ext_resource type="Texture2D" uid="uid://ckbi5x2ob710h" path="res://assets/images/trade_icon.png" id="3_27i78"]
+[ext_resource type="Texture2D" uid="uid://chsamsqbtkijr" path="res://assets/images/build.png" id="4_glt2l"]
+[ext_resource type="Texture2D" uid="uid://bnb0sdm2vdwhu" path="res://assets/images/zastaw.png" id="6_ninoq"]
+[ext_resource type="Texture2D" uid="uid://bof7cx2xbx3k1" path="res://assets/images/question_card.png" id="7_q3a1k"]
+[ext_resource type="PackedScene" uid="uid://d2arsk7nm7cu3" path="res://scenes/board/level/timer.tscn" id="8_8lgx8"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5ptj7"]
+bg_color = Color(1, 0.258617, 0.62817, 1)
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_51ihl"]
+bg_color = Color(0, 0.682449, 0.715222, 1)
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l58ou"]
+bg_color = Color(0.886963, 0.472689, 0.201596, 1)
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ytumh"]
+bg_color = Color(0, 0.715331, 0.4099, 1)
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bbwsu"]
+bg_color = Color(0.6, 0.6, 0.6, 0.215686)
+corner_radius_top_left = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="Theme" id="Theme_2w06e"]
+
+[node name="UI" type="CanvasLayer"]
+script = ExtResource("1_e26wc")
+
+[node name="Players" type="VBoxContainer" parent="."]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -20.0
+offset_right = 40.0
+offset_bottom = 20.0
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="Player" type="PanelContainer" parent="Players"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_5ptj7")
+
+[node name="MarginContainer" type="MarginContainer" parent="Players/Player"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Players/Player/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Players/Player/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "JACEK"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Players/Player/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Players/Player/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("2_qslas")
+
+[node name="Label" type="Label" parent="Players/Player/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "100 ECTS"
+
+[node name="Player2" type="PanelContainer" parent="Players"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_51ihl")
+
+[node name="MarginContainer" type="MarginContainer" parent="Players/Player2"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Players/Player2/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Players/Player2/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "KUBA
+"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Players/Player2/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Players/Player2/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("2_qslas")
+
+[node name="Label" type="Label" parent="Players/Player2/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "150 ECTS"
+
+[node name="Player3" type="PanelContainer" parent="Players"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_l58ou")
+
+[node name="MarginContainer" type="MarginContainer" parent="Players/Player3"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Players/Player3/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Players/Player3/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "ŁUKASZ"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Players/Player3/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Players/Player3/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("2_qslas")
+
+[node name="Label" type="Label" parent="Players/Player3/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "75 ECTS"
+
+[node name="Player4" type="PanelContainer" parent="Players"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ytumh")
+
+[node name="MarginContainer" type="MarginContainer" parent="Players/Player4"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Players/Player4/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Players/Player4/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "DAWID"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Players/Player4/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Players/Player4/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("2_qslas")
+
+[node name="Label" type="Label" parent="Players/Player4/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "150 ECTS"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 0.25
+anchor_right = 1.0
+anchor_bottom = 0.75
+offset_left = 41.376
+offset_top = 0.219994
+offset_bottom = -0.220032
+grow_horizontal = 0
+grow_vertical = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 0
+
+[node name="view_buttons" type="TextureButton" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+texture_normal = ExtResource("3_6jkhu")
+texture_pressed = ExtResource("3_6jkhu")
+
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bbwsu")
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 15
+
+[node name="Buttons" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="card_button" type="TextureButton" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = SubResource("Theme_2w06e")
+texture_normal = ExtResource("2_oospi")
+stretch_mode = 0
+
+[node name="card_label" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "NIERUCHOMOŚCI"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="trade_button" type="TextureButton" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = SubResource("Theme_2w06e")
+texture_normal = ExtResource("3_27i78")
+stretch_mode = 0
+
+[node name="trade_label" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "WYMIANA"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="build_button" type="TextureButton" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = SubResource("Theme_2w06e")
+texture_normal = ExtResource("4_glt2l")
+
+[node name="build_label" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "BUDUJ"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer4" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="mortgage_button" type="TextureButton" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = SubResource("Theme_2w06e")
+texture_normal = ExtResource("6_ninoq")
+
+[node name="mortgage_label" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "ZASTAW"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer5" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="special_card_button" type="TextureButton" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer5"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = SubResource("Theme_2w06e")
+texture_normal = ExtResource("7_q3a1k")
+
+[node name="special_card_label" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer5"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "SPECJALNE KARTY"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Cards" type="PanelContainer" parent="."]
+anchors_preset = -1
+anchor_top = 1.05
+anchor_right = 1.0
+anchor_bottom = 1.2
+offset_top = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_vertical = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Cards"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Cards/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Cards/ScrollContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 50
+
+[node name="ColorRect" type="ColorRect" parent="Cards/ScrollContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+
+[node name="ColorRect2" type="ColorRect" parent="Cards/ScrollContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+
+[node name="ColorRect3" type="ColorRect" parent="Cards/ScrollContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+
+[node name="ColorRect4" type="ColorRect" parent="Cards/ScrollContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+
+[node name="ColorRect5" type="ColorRect" parent="Cards/ScrollContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+
+[node name="ColorRect6" type="ColorRect" parent="Cards/ScrollContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+
+[node name="ColorRect7" type="ColorRect" parent="Cards/ScrollContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+
+[node name="ColorRect8" type="ColorRect" parent="Cards/ScrollContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+
+[node name="ColorRect9" type="ColorRect" parent="Cards/ScrollContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+
+[node name="ColorRect10" type="ColorRect" parent="Cards/ScrollContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+
+[node name="ColorRect11" type="ColorRect" parent="Cards/ScrollContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+
+[node name="ColorRect12" type="ColorRect" parent="Cards/ScrollContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+
+[node name="ColorRect13" type="ColorRect" parent="Cards/ScrollContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+
+[node name="ColorRect14" type="ColorRect" parent="Cards/ScrollContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+
+[node name="ColorRect15" type="ColorRect" parent="Cards/ScrollContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+
+[node name="Timer" parent="." instance=ExtResource("8_8lgx8")]
+anchors_preset = 0
+anchor_left = 0.0
+anchor_right = 0.0
+offset_left = 0.0
+offset_right = 136.0
+grow_horizontal = 1
+
+[connection signal="pressed" from="HBoxContainer/view_buttons" to="." method="on_view_buttons_pressed"]
+[connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer/card_button" to="." method="on_cards_button_pressed"]

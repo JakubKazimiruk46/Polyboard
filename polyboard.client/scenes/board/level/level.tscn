@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://e5m3pfs0fwdx" path="res://scenes/board/level/notification.tscn" id="10_dneql"]
 [ext_resource type="AudioStream" uid="uid://8nca3d2qfr0d" path="res://assets/effects/dice.mp3" id="11_i73ew"]
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="14_u56ja"]
+[ext_resource type="PackedScene" uid="uid://be5o85k4nbeu5" path="res://scenes/board/level/ui.tscn" id="13_ivesl"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]
 size = Vector3(28.5, 0.2, 28.5)
@@ -244,13 +245,12 @@ shape = SubResource("BoxShape3D_8hnxd")
 
 [node name="TextureRect2" type="TextureRect" parent="CanvasLayer"]
 anchors_preset = -1
-anchor_left = 0.885
+anchor_left = 0.5
 anchor_top = 0.25
-anchor_right = 0.96
-anchor_bottom = 0.565
-offset_left = 0.479919
-offset_right = 0.0799561
-offset_bottom = -0.119995
+anchor_right = 0.5
+anchor_bottom = 0.25
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="FieldCard" type="Sprite2D" parent="CanvasLayer/TextureRect2"]
 
@@ -273,4 +273,7 @@ visible = false
 [node name="Menu" parent="." instance=ExtResource("10_8um66")]
 visible = false
 
+[node name="UI" parent="." instance=ExtResource("13_ivesl")]
+
 [editable path="NotificationLayer"]
+[editable path="UI"]
