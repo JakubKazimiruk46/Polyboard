@@ -59,8 +59,8 @@ public partial class Board : StaticBody3D
 			
 			Vector2 viewportSize = GetViewport().GetVisibleRect().Size;
 			
-			float scaleFactorX = viewportSize.X / 2500f;  
-			float scaleFactorY = viewportSize.Y / 1080f;  
+			float scaleFactorX = viewportSize.X / 3000f;  
+			float scaleFactorY = viewportSize.Y / 1250f;  
 			float scaleFactor = Math.Min(scaleFactorX, scaleFactorY);
 			Vector2 scale = new Vector2(scaleFactor, scaleFactor);
 			
