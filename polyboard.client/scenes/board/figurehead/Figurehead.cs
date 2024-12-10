@@ -129,12 +129,14 @@ public partial class Figurehead : CharacterBody3D
 	}
 	public override void _Input(InputEvent @event)
 	{
+		
 		if (@event.IsActionPressed("ui_accept"))
 		{
 			SwitchToDiceCamera(); // Przełącz na kamerę Kostki
 			textureDisplay.Visible = false;
 			randomCard.Visible=false;
 		}
+		
 	}
 
 	private void OnDie1RollFinished(int value)
@@ -153,6 +155,10 @@ public partial class Figurehead : CharacterBody3D
 
 	private void CheckAndMovePawn()
 	{
+		foreach (Field field in board.GetFields())
+	{
+		field.isMouseEventEnabled =false;
+	}
 		if (die1Result.HasValue && die2Result.HasValue)
 		{
 			totalSteps += die1Result.Value + die2Result.Value;
@@ -178,6 +184,7 @@ public partial class Figurehead : CharacterBody3D
 				ResetRoll();
 			}
 		}
+		
 	}
 
 	private void ReRollDice()
@@ -207,6 +214,7 @@ public partial class Figurehead : CharacterBody3D
 
 public async void MovePawnSequentially(int steps)
 {
+	
 	int targetIndex = CurrentPositionIndex + steps;
 
 	if (targetIndex >= 40)
@@ -236,6 +244,7 @@ public async void MovePawnSequentially(int steps)
 	// Przełącz z powrotem na kamerę Master shot po zakończeniu ruchu
 	GD.Print("Przełączanie kamery z powrotem na Master shot po zakończeniu ruchu.");
 	SwitchToMasterCamera();
+	
 }
 
 
@@ -258,6 +267,10 @@ public async void MovePawnSequentially(int steps)
 		{
 			GD.Print("Przełączono na kamerę Master shot.");
 			masterCamera.Current = true;
+			foreach (Field field in board.GetFields())
+			{
+				field.isMouseEventEnabled =true;
+			}
 		}
 		else
 		{

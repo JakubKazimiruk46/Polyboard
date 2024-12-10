@@ -47,6 +47,11 @@ public partial class Board : StaticBody3D
 	}
 	
 }
+
+public List<Field> GetFields()
+	{
+		return fields;
+	}
 	
 	public void ShowFieldTexture(int fieldId)
 	{
