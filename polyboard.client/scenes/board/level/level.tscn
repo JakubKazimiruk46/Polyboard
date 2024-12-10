@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=21 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://uicwwtau32m7" path="res://scenes/board/level/menu.tscn" id="10_8um66"]
 [ext_resource type="PackedScene" uid="uid://e5m3pfs0fwdx" path="res://scenes/board/level/notification.tscn" id="10_dneql"]
 [ext_resource type="AudioStream" uid="uid://8nca3d2qfr0d" path="res://assets/effects/dice.mp3" id="11_i73ew"]
+[ext_resource type="PackedScene" uid="uid://be5o85k4nbeu5" path="res://scenes/board/level/ui.tscn" id="13_ivesl"]
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="14_u56ja"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]
@@ -191,6 +192,7 @@ target = NodePath("..")
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="Figurehead"]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
 stream = ExtResource("14_u56ja")
+bus = &"Sfx"
 
 [node name="MasterShot" type="Camera3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0.397148, -0.917755, 0, 0.917755, 0.397148, 1, 1.73599e-08, -4.01163e-08, -23.9239, 9.10441, -0.0824251)
@@ -205,12 +207,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.86167, 0)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer3D" parent="Die1"]
 stream = ExtResource("11_i73ew")
+bus = &"Sfx"
 
 [node name="Die2" parent="." instance=ExtResource("5_p3toi")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.86167, 0)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer3D" parent="Die2"]
 stream = ExtResource("11_i73ew")
+bus = &"Sfx"
 
 [node name="Ściana1" type="StaticBody3D" parent="."]
 
@@ -244,13 +248,12 @@ shape = SubResource("BoxShape3D_8hnxd")
 
 [node name="TextureRect2" type="TextureRect" parent="CanvasLayer"]
 anchors_preset = -1
-anchor_left = 0.885
+anchor_left = 0.5
 anchor_top = 0.25
-anchor_right = 0.96
-anchor_bottom = 0.565
-offset_left = 0.479919
-offset_right = 0.0799561
-offset_bottom = -0.119995
+anchor_right = 0.5
+anchor_bottom = 0.25
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="FieldCard" type="Sprite2D" parent="CanvasLayer/TextureRect2"]
 
@@ -273,4 +276,7 @@ visible = false
 [node name="Menu" parent="." instance=ExtResource("10_8um66")]
 visible = false
 
+[node name="UI" parent="." instance=ExtResource("13_ivesl")]
+
 [editable path="NotificationLayer"]
+[editable path="UI"]
