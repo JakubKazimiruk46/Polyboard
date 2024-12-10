@@ -1,0 +1,46 @@
+[gd_scene load_steps=3 format=3 uid="uid://dqp4umgdtvdeb"]
+
+[ext_resource type="Texture2D" uid="uid://bkrgvn8tsgr0l" path="res://assets/images/apartment.png" id="1_bkumg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hr7sv"]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[node name="Control" type="Control"]
+custom_minimum_size = Vector2(850, 45)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 850.0
+offset_bottom = 45.0
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(850, 0)
+layout_mode = 1
+offset_right = 850.0
+offset_bottom = 44.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hr7sv")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 36
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("1_bkumg")
+
+[node name="Label" type="Label" parent="PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+text = "Real Estate King"
+
+[node name="Label2" type="Label" parent="PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+text = "100 %"
+
+[node name="Label3" type="Label" parent="PanelContainer/HBoxContainer"]
+layout_mode = 2
+text = "Buy all fields of three colors in one game."
