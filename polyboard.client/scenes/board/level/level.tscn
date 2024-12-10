@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=19 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -12,6 +12,7 @@
 [ext_resource type="Script" path="res://scenes/board/level/MasterShot.cs" id="8_cd8t5"]
 [ext_resource type="PackedScene" uid="uid://uicwwtau32m7" path="res://scenes/board/level/menu.tscn" id="10_8um66"]
 [ext_resource type="PackedScene" uid="uid://e5m3pfs0fwdx" path="res://scenes/board/level/notification.tscn" id="10_dneql"]
+[ext_resource type="PackedScene" uid="uid://be5o85k4nbeu5" path="res://scenes/board/level/ui.tscn" id="13_ivesl"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]
 size = Vector3(28.5, 0.2, 28.5)
@@ -260,4 +261,7 @@ visible = false
 [node name="Menu" parent="." instance=ExtResource("10_8um66")]
 visible = false
 
+[node name="UI" parent="." instance=ExtResource("13_ivesl")]
+
 [editable path="NotificationLayer"]
+[editable path="UI"]
