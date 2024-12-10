@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public partial class Field : Node3D
 {
+	public bool isMouseEventEnabled = true;
 	protected MeshInstance3D fieldMeshInstance;
 	protected Vector3 bRCL; //dolny prawy rog - lokalna pozycja
 	protected Vector3 bRCG; //dolny prawy rog - globalna pozycja
@@ -99,6 +100,7 @@ public partial class Field : Node3D
 	}
 	 protected void OnInputEvent(Node camera, InputEvent @event, Vector3 position, Vector3 normal, int shape_idx) 
 	{ 
+		if (!isMouseEventEnabled) return;
 		if (@event is InputEventMouseButton mouseButton)
 		{
 		if (mouseButton.Pressed && mouseButton.ButtonIndex ==MouseButton.Left)
@@ -136,11 +138,13 @@ public partial class Field : Node3D
 	
 	protected void OnMouseEntered()
 	 { 
+		if (!isMouseEventEnabled) return;
 		_border.Visible = true; 
 	 }
 	
 	 protected void OnMouseExited()
 	{ 
+		if (!isMouseEventEnabled) return;
 		_border.Visible = false;
 		viewDetailsDialog.Visible=false;
 	}
