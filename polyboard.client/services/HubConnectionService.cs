@@ -4,13 +4,16 @@ using Microsoft.AspNetCore.SignalR.Client;
 
 public partial class HubConnectionService : Node
 {
+	virtual token = Authentication.token; //pobiera od klienta
 	public HubConnection Connection { get; set; }
 	public HubConnectionService()
 	{
 		Connection = new HubConnectionBuilder()
 			.WithAutomaticReconnect()
 			.WithKeepAliveInterval(TimeSpan.FromSeconds(25))
-			.WithUrl("ws://localhost:8081/lobby")
+			.WithUrl("ws://localhost:8081/lobby", options => {
+				options.Header.Add("Authorization", "Bearer " + token); //Przesyła token przy dołączaniu do lobby (?)
+			})
 			.Build();
 		Connection.StartAsync();
 	}
