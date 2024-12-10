@@ -8,7 +8,8 @@ public partial class Figurehead : CharacterBody3D
 	private Board board;
 
 	private Sprite2D textureDisplay;
-
+	private Sprite2D randomCard;
+	
 	[Export]
 	public NodePath dieNodePath1; // Ścieżka do pierwszej kostki
 	[Export]
@@ -57,7 +58,8 @@ public partial class Figurehead : CharacterBody3D
 		masterCamera = GetNodeOrNull<Camera3D>(masterCameraPath);
 		tpCamera = GetNodeOrNull<Camera3D>(tpCameraPath);
 		diceCamera = GetNodeOrNull<Camera3D>(diceCameraPath);
-		textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/FieldCard");
+		textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/FieldCard");
+		randomCard = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/RandomCard");
 		notificationLabel = GetNodeOrNull<Label>(notificationLabelPath);
 		notificationPanel = GetNodeOrNull<Panel>(notificationPanelPath);
 
@@ -169,11 +171,14 @@ public partial class Figurehead : CharacterBody3D
 
 	public override void _Input(InputEvent @event)
 	{
+		
 		if (@event.IsActionPressed("ui_accept"))
 		{
 			SwitchToDiceCamera(); // Przełącz na kamerę Kostki
 			textureDisplay.Visible = false;
+			randomCard.Visible=false;
 		}
+		
 	}
 
 	private void OnDie1RollFinished(int value)
@@ -192,6 +197,10 @@ public partial class Figurehead : CharacterBody3D
 
 	private void CheckAndMovePawn()
 	{
+		foreach (Field field in board.GetFields())
+	{
+		field.isMouseEventEnabled =false;
+	}
 		if (die1Result.HasValue && die2Result.HasValue)
 		{
 			totalSteps += die1Result.Value + die2Result.Value;
@@ -217,6 +226,7 @@ public partial class Figurehead : CharacterBody3D
 				ResetRoll();
 			}
 		}
+		
 	}
 
 	private void ReRollDice()
@@ -304,6 +314,10 @@ public partial class Figurehead : CharacterBody3D
 		{
 			GD.Print("Przełączono na kamerę Master shot.");
 			masterCamera.Current = true;
+			foreach (Field field in board.GetFields())
+			{
+				field.isMouseEventEnabled =true;
+			}
 		}
 		else
 		{
