@@ -12,12 +12,13 @@ public partial class Board : StaticBody3D
 	private List<Field> fields = new List<Field>();
 	Figurehead figurehead;
 	private Sprite2D textureDisplay;
+	private Sprite2D randomCard;
 	
 	
 
 	public override void _Ready()
 {
-	
+	randomCard=GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/RandomCard");
 	 textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/FieldCard");
 	if (textureDisplay == null)
 	{
@@ -49,8 +50,20 @@ public partial class Board : StaticBody3D
 	
 	public void ShowFieldTexture(int fieldId)
 	{
-		
+		randomCard.Visible=false;
+		textureDisplay.Visible=false;
+		if(fieldId==2 || fieldId==17 || fieldId==33)
+		{
+			ShowRandomCard("community");
+			return;
+		}
+		else if(fieldId==7 || fieldId==22 || fieldId==36)
+		{
+			ShowRandomCard("chance");
+			return;
+		}
 		string textureName = $"Field{fieldId}";
+	
 		
 		Texture2D fieldTexture = ResourceLoader.Load<Texture2D>($"res://scenes/board/level/textures/{textureName}.png");
 		if (fieldTexture != null)
@@ -71,6 +84,65 @@ public partial class Board : StaticBody3D
 		{
 			GD.PrintErr($"Błąd: Nie udało się załadować tekstury {textureName}.");
 		}
+	}
+	
+	public async Task ShowRandomCard(string cardType)
+	{
+		randomCard.Visible=false;
+		textureDisplay.Visible=false;
+		Vector2 viewportSize = GetViewport().GetVisibleRect().Size;
+		float scaleFactorX = viewportSize.X / 2500f;
+		float scaleFactorY = viewportSize.Y / 1080f;
+		float scaleFactor = Math.Min(scaleFactorX, scaleFactorY);
+		Vector2 scale = new Vector2(scaleFactor, scaleFactor);
+
+		randomCard.Scale = scale;
+		Texture2D cardTexture=null;
+		Random random = new Random();
+		int number = random.Next(2, 17);
+		
+		if(cardType=="community")
+		{
+			cardTexture = ResourceLoader.Load<Texture2D>("res://scenes/board/level/textures/community_chest/community_1.png"); 
+		}
+		else
+		{
+			cardTexture = ResourceLoader.Load<Texture2D>("res://scenes/board/level/textures/chances/chance_1.png"); 
+		}
+		
+		if (cardTexture != null)
+		{
+			randomCard.Texture=cardTexture;
+			randomCard.Visible = true;
+			Tween tween = CreateTween();
+		float duration = 1.2f; 
+	
+		
+	tween.TweenProperty(randomCard, "rotation_degrees", 360*2, duration )
+		.SetTrans(Tween.TransitionType.Circ)
+		.SetEase(Tween.EaseType.InOut);
+	
+
+
+
+			await ToSignal(tween, "finished");
+		
+	randomCard.RotationDegrees=0;	
+			
+	if(cardType=="community")
+		{
+			string textureName = $"community_{number}";
+			 cardTexture = ResourceLoader.Load<Texture2D>($"res://scenes/board/level/textures/community_chest/{textureName}.png");
+		}
+		else
+		{
+			string textureName = $"chance_{number}";
+			 cardTexture = ResourceLoader.Load<Texture2D>($"res://scenes/board/level/textures/chances/{textureName}.png");
+		}
+	randomCard.Texture = cardTexture;
+	randomCard.Visible = true;
+		}
+		
 	}
 	
 
