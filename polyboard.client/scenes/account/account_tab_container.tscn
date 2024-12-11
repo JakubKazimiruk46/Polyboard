@@ -245,55 +245,61 @@ theme_override_constants/margin_top = 24
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 24
 
-[node name="AchievementFilter" parent="TabContainer/Achievements/MarginContainer" instance=ExtResource("2_5diw0")]
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Achievements/MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="AchievementFilter" parent="TabContainer/Achievements/MarginContainer/VBoxContainer" instance=ExtResource("2_5diw0")]
+layout_mode = 2
+size_flags_horizontal = 8
 size_flags_vertical = 0
 
-[node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Achievements/MarginContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Achievements/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 300)
 layout_mode = 2
-size_flags_vertical = 8
+size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Achievements/MarginContainer/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="Control7" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("3_up4g0")]
+[node name="Control7" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("3_up4g0")]
 layout_mode = 2
 
-[node name="Control4" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("3_0aflb")]
+[node name="Control4" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("3_0aflb")]
 layout_mode = 2
 
-[node name="Control2" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("4_gd8wy")]
+[node name="Control2" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("4_gd8wy")]
 layout_mode = 2
 
-[node name="Control9" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("6_mi50q")]
+[node name="Control9" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("6_mi50q")]
 layout_mode = 2
 
-[node name="Control10" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("7_isibt")]
+[node name="Control10" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("7_isibt")]
 layout_mode = 2
 
-[node name="Control11" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("8_xfq4l")]
+[node name="Control11" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("8_xfq4l")]
 layout_mode = 2
 
-[node name="Control" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("3_im1fl")]
+[node name="Control" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("3_im1fl")]
 layout_mode = 2
 
-[node name="Control12" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("10_s8xwi")]
+[node name="Control12" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("10_s8xwi")]
 layout_mode = 2
 
-[node name="Control13" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("11_cam01")]
+[node name="Control13" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("11_cam01")]
 layout_mode = 2
 
-[node name="Control3" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("6_si602")]
+[node name="Control3" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("6_si602")]
 layout_mode = 2
 
-[node name="Control5" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("7_84kbb")]
+[node name="Control5" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("7_84kbb")]
 layout_mode = 2
 
-[node name="Control6" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("8_se2uh")]
+[node name="Control6" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("8_se2uh")]
 layout_mode = 2
 
-[node name="Control8" parent="TabContainer/Achievements/MarginContainer/ScrollContainer/VBoxContainer" instance=ExtResource("15_2bgwl")]
+[node name="Control8" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("15_2bgwl")]
 layout_mode = 2
