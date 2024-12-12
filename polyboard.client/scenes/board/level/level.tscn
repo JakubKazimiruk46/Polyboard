@@ -264,6 +264,17 @@ visible = false
 
 [node name="UI" parent="." instance=ExtResource("13_ivesl")]
 
+[node name="Button" type="Button" parent="UI"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -54.0
+offset_top = 101.0
+offset_right = 55.0
+offset_bottom = 141.0
+grow_horizontal = 2
+text = "Rzut kostami"
+
 [node name="GameManager" type="Node3D" parent="."]
 script = ExtResource("13_yovhc")
 dieNodePath1 = NodePath("../Die1")
@@ -274,6 +285,7 @@ masterCameraPath = NodePath("../MasterShot")
 diceCameraPath = NodePath("../KostkiKamera")
 notificationPanelPath = NodePath("../NotificationLayer/NotificationPanel")
 notificationLabelPath = NodePath("../NotificationLayer/NotificationPanel/NotificationLabel")
+rollButtonPath = NodePath("../UI/Button")
 
 [node name="Players" type="Node3D" parent="GameManager"]
 
