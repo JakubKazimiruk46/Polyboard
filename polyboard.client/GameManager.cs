@@ -14,6 +14,7 @@ public partial class GameManager : Node3D
 	[Export] public NodePath notificationPanelPath;
 	[Export] public NodePath notificationLabelPath;
 	[Export] public NodePath rollButtonPath;
+	[Export] public NodePath endTurnButtonPath;
 
 	private Board board;
 	private Camera3D masterCamera;
@@ -28,15 +29,9 @@ public partial class GameManager : Node3D
 	private int? die2Result = null;
 	private int totalSteps = 0;
 	private Button rollButton;
+	private Button endTurnButton;
 
-	private enum GameState
-	{
-		WaitingForInput,
-		RollingDice,
-		MovingPawn,
-		EndTurn
-	}
-
+	private enum GameState { WaitingForInput, RollingDice, MovingPawn, EndTurn }
 	private GameState currentState = GameState.WaitingForInput;
 
 	public override void _Ready()
@@ -47,6 +42,7 @@ public partial class GameManager : Node3D
 		InitPlayers();
 		InitDice();
 		InitRollButton();
+		InitEndTurnButton();
 		SetAllPlayersOnStart();
 	}
 
@@ -135,6 +131,18 @@ public partial class GameManager : Node3D
 		rollButton.Visible = true;
 	}
 
+	private void InitEndTurnButton()
+	{
+		endTurnButton = GetNodeOrNull<Button>(endTurnButtonPath);
+		if (endTurnButton == null)
+		{
+			GD.PrintErr("Błąd: Nie znaleziono przycisku do zakończenia tury.");
+			return;
+		}
+		endTurnButton.Connect("pressed", new Callable(this, nameof(OnEndTurnButtonPressed)));
+		endTurnButton.Visible = false;
+	}
+
 	private void SetAllPlayersOnStart()
 	{
 		if (board == null)
@@ -166,6 +174,14 @@ public partial class GameManager : Node3D
 		}
 	}
 
+	private void OnEndTurnButtonPressed()
+	{
+		if (currentState == GameState.WaitingForInput)
+		{
+			EndTurn();
+		}
+	}
+
 	private void StartDiceRollForCurrentPlayer()
 	{
 		if (dieNode1 == null || dieNode2 == null)
@@ -177,6 +193,7 @@ public partial class GameManager : Node3D
 		BlockBoardInteractions();
 		SwitchToDiceCamera();
 		rollButton.Visible = false;
+		endTurnButton.Visible = false;
 		GD.Print($"Rzut kostkami dla gracza: {currentPlayerIndex + 1}");
 		ShowNotification($"Gracz {currentPlayerIndex + 1} rzuca kostkami...", 2f);
 		dieNode1.Call("_roll");
@@ -203,19 +220,21 @@ public partial class GameManager : Node3D
 		{
 			return;
 		}
-
 		int rollSum = die1Result.Value + die2Result.Value;
 		totalSteps = rollSum;
 		ShowNotification($"Łączna suma oczek: {totalSteps}", 3f);
 		GD.Print($"Łączna suma oczek: {totalSteps}");
-
 		SwitchToMasterCamera();
 		MoveCurrentPlayerPawnSequentially(totalSteps);
-
 		if (die1Result.Value == die2Result.Value)
 		{
 			GD.Print("Dublet! Kolejny rzut po ruchu.");
 			ShowNotification("Dublet! Powtórz rzut po ruchu.", 5f);
+		}
+		else
+		{
+			endTurnButton.Visible = true;
+			rollButton.Visible = false;
 		}
 	}
 
@@ -226,18 +245,16 @@ public partial class GameManager : Node3D
 			GD.PrintErr("Błąd: Indeks aktualnego gracza poza zakresem.");
 			return;
 		}
-
 		currentState = GameState.MovingPawn;
 		Figurehead currentPlayer = players[currentPlayerIndex];
 		await currentPlayer.MovePawnSequentially(steps, board);
-
 		if (die1Result.Value == die2Result.Value)
 		{
 			PrepareForNextRoll();
 		}
 		else
 		{
-			EndTurn();
+			currentState = GameState.WaitingForInput;
 		}
 	}
 
@@ -249,6 +266,7 @@ public partial class GameManager : Node3D
 		UnblockBoardInteractions();
 		currentState = GameState.WaitingForInput;
 		rollButton.Visible = true;
+		endTurnButton.Visible = false;
 		GD.Print($"Gracz {currentPlayerIndex + 1} może wykonać kolejny rzut.");
 		ShowNotification($"Gracz {currentPlayerIndex + 1}, rzuć ponownie!", 2f);
 	}
@@ -262,6 +280,7 @@ public partial class GameManager : Node3D
 		UnblockBoardInteractions();
 		currentState = GameState.WaitingForInput;
 		rollButton.Visible = true;
+		endTurnButton.Visible = false;
 		GD.Print($"Zakończono turę gracza. Teraz tura gracza: {currentPlayerIndex + 1}");
 		ShowNotification($"Tura gracza: {currentPlayerIndex + 1}", 2f);
 	}
