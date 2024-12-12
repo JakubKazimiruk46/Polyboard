@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=22 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://e5m3pfs0fwdx" path="res://scenes/board/level/notification.tscn" id="10_dneql"]
 [ext_resource type="AudioStream" uid="uid://8nca3d2qfr0d" path="res://assets/effects/dice.mp3" id="11_i73ew"]
 [ext_resource type="PackedScene" uid="uid://be5o85k4nbeu5" path="res://scenes/board/level/ui.tscn" id="13_ivesl"]
+[ext_resource type="Script" path="res://GameManager.cs" id="13_yovhc"]
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="14_u56ja"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]
@@ -172,28 +173,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_7ajdt")
 
-[node name="Figurehead" parent="." instance=ExtResource("3_8t0aq")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
-dieNodePath1 = NodePath("../Die1")
-dieNodePath2 = NodePath("../Die2")
-notificationPanelPath = NodePath("../NotificationLayer/NotificationPanel")
-notificationLabelPath = NodePath("../NotificationLayer/NotificationPanel/NotificationLabel")
-masterCameraPath = NodePath("../MasterShot")
-tpCameraPath = NodePath("Camera3D")
-diceCameraPath = NodePath("../KostkiKamera")
-walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
-
-[node name="Camera3D" type="Camera3D" parent="Figurehead" node_paths=PackedStringArray("target")]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
-fov = 90.0
-script = ExtResource("7_xxuvu")
-target = NodePath("..")
-
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="Figurehead"]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
-stream = ExtResource("14_u56ja")
-bus = &"Sfx"
-
 [node name="MasterShot" type="Camera3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0.397148, -0.917755, 0, 0.917755, 0.397148, 1, 1.73599e-08, -4.01163e-08, -23.9239, 9.10441, -0.0824251)
 current = true
@@ -277,6 +256,50 @@ visible = false
 visible = false
 
 [node name="UI" parent="." instance=ExtResource("13_ivesl")]
+
+[node name="GameManager" type="Node3D" parent="."]
+script = ExtResource("13_yovhc")
+dieNodePath1 = NodePath("../Die1")
+dieNodePath2 = NodePath("../Die2")
+boardPath = NodePath("../Board")
+playersContainerPath = NodePath("Players")
+masterCameraPath = NodePath("../MasterShot")
+tpCameraPath = NodePath("Players/Figurehead/Camera3D")
+diceCameraPath = NodePath("../KostkiKamera")
+notificationPanelPath = NodePath("../NotificationLayer/NotificationPanel")
+notificationLabelPath = NodePath("../NotificationLayer/NotificationPanel/NotificationLabel")
+
+[node name="Players" type="Node3D" parent="GameManager"]
+
+[node name="Figurehead" parent="GameManager/Players" instance=ExtResource("3_8t0aq")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
+walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
+
+[node name="Camera3D" type="Camera3D" parent="GameManager/Players/Figurehead" node_paths=PackedStringArray("target")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+fov = 90.0
+script = ExtResource("7_xxuvu")
+target = NodePath("..")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/Figurehead"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
+stream = ExtResource("14_u56ja")
+bus = &"Sfx"
+
+[node name="Figurehead2" parent="GameManager/Players" instance=ExtResource("3_8t0aq")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
+walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
+
+[node name="Camera3D" type="Camera3D" parent="GameManager/Players/Figurehead2" node_paths=PackedStringArray("target")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+fov = 90.0
+script = ExtResource("7_xxuvu")
+target = NodePath("..")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/Figurehead2"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
+stream = ExtResource("14_u56ja")
+bus = &"Sfx"
 
 [editable path="NotificationLayer"]
 [editable path="UI"]
