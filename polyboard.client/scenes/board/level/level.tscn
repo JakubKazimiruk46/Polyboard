@@ -38,6 +38,7 @@ script = ExtResource("1_djwtq")
 
 [node name="Board" type="StaticBody3D" parent="."]
 script = ExtResource("1_85jf0")
+RollDiceButtonPath = NodePath("../UI/CanvasLayer/RollDiceButton")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Board"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0478573, 0.00241506, 0)
@@ -172,7 +173,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_7ajdt")
 
-[node name="Figurehead" parent="." instance=ExtResource("3_8t0aq")]
+[node name="Figurehead1" parent="." instance=ExtResource("3_8t0aq")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
 dieNodePath1 = NodePath("../Die1")
 dieNodePath2 = NodePath("../Die2")
@@ -183,13 +184,35 @@ tpCameraPath = NodePath("Camera3D")
 diceCameraPath = NodePath("../KostkiKamera")
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
 
-[node name="Camera3D" type="Camera3D" parent="Figurehead" node_paths=PackedStringArray("target")]
+[node name="Camera3D" type="Camera3D" parent="Figurehead1" node_paths=PackedStringArray("target")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 fov = 90.0
 script = ExtResource("7_xxuvu")
 target = NodePath("..")
 
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="Figurehead"]
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="Figurehead1"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
+stream = ExtResource("14_u56ja")
+bus = &"Sfx"
+
+[node name="Figurehead2" parent="." instance=ExtResource("3_8t0aq")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
+dieNodePath1 = NodePath("../Die1")
+dieNodePath2 = NodePath("../Die2")
+notificationPanelPath = NodePath("../NotificationLayer/NotificationPanel")
+notificationLabelPath = NodePath("../NotificationLayer/NotificationPanel/NotificationLabel")
+masterCameraPath = NodePath("../MasterShot")
+tpCameraPath = NodePath("Camera3D")
+diceCameraPath = NodePath("../KostkiKamera")
+walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
+
+[node name="Camera3D" type="Camera3D" parent="Figurehead2" node_paths=PackedStringArray("target")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+fov = 90.0
+script = ExtResource("7_xxuvu")
+target = NodePath("..")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="Figurehead2"]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
 stream = ExtResource("14_u56ja")
 bus = &"Sfx"
@@ -277,6 +300,15 @@ visible = false
 visible = false
 
 [node name="UI" parent="." instance=ExtResource("13_ivesl")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="UI"]
+
+[node name="RollDiceButton" type="Button" parent="UI/CanvasLayer"]
+offset_left = 520.0
+offset_top = 74.0
+offset_right = 621.0
+offset_bottom = 105.0
+text = "Rzuć Kostką"
 
 [editable path="NotificationLayer"]
 [editable path="UI"]

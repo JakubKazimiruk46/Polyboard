@@ -1,31 +1,24 @@
 extends RigidBody3D
 
-
 @onready var raycasts = $Raycasts.get_children()
 @onready var dice_sound_player = $AudioStreamPlayer
-
-
 
 var start_pos
 var roll_strength = 25
 
 var is_rolling = false
 
-
 signal roll_finished(value)
-
 
 func _ready():
 	start_pos = global_position
 
-
 func _input(event):
-	if event.is_action_pressed("ui_accept") && !is_rolling:
+	if event.is_action_pressed("ui_accept") and not is_rolling:
 		_roll()
 
-
 func _roll():
-	# Reset state
+	# Reset stanu
 	sleeping = false
 	freeze = false
 	transform.origin = start_pos
@@ -49,7 +42,6 @@ func _roll():
 	else:
 		print("AudioStreamPlayer nie jest przypisany!")
 
-
 func _on_sleeping_state_changed() -> void:
 	if sleeping:
 		var landed_on_side = false
@@ -58,7 +50,6 @@ func _on_sleeping_state_changed() -> void:
 				roll_finished.emit(raycast.opposite_side)
 				is_rolling = false
 				landed_on_side = true
-					
-					
-		if !landed_on_side:
-					_roll()
+
+		if not landed_on_side:
+			_roll()

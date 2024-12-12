@@ -9,7 +9,7 @@ public partial class Figurehead : CharacterBody3D
 
 	private Sprite2D textureDisplay;
 	private Sprite2D randomCard;
-	
+
 	[Export]
 	public NodePath dieNodePath1; // Ścieżka do pierwszej kostki
 	[Export]
@@ -23,18 +23,13 @@ public partial class Figurehead : CharacterBody3D
 	[Export]
 	public NodePath tpCameraPath;     // Ścieżka do kamery TP
 	[Export]
-	public NodePath diceCameraPath;    // Ścieżka do kamery Kostki
+	public NodePath diceCameraPath;   // Ścieżka do kamery Kostki
 
 	[Export]
 	public float moveDuration = 0.5f; // Czas ruchu w sekundach
 
-	// Opcja A: Użycie NodePath
 	[Export]
 	public NodePath walkSoundPlayerPath; // Ścieżka do AudioStreamPlayer3D
-
-	// Opcja B: Bezpośrednie odwołanie
-	// [Export]
-	// public NodePath walkSoundPlayerPath; // Ścieżka do AudioStreamPlayer3D
 
 	private Camera3D masterCamera;
 	private Camera3D tpCamera;
@@ -42,11 +37,7 @@ public partial class Figurehead : CharacterBody3D
 	private Label notificationLabel;
 	private Panel notificationPanel;
 
-	// Opcja A: Typ AudioStreamPlayer3D
 	private AudioStreamPlayer3D walkSoundPlayer;
-
-	// Opcja B: Typ AudioStreamPlayer3D bez NodePath
-	// private AudioStreamPlayer3D walkSoundPlayer;
 
 	private int? die1Result = null;
 	private int? die2Result = null;
@@ -63,7 +54,7 @@ public partial class Figurehead : CharacterBody3D
 		notificationLabel = GetNodeOrNull<Label>(notificationLabelPath);
 		notificationPanel = GetNodeOrNull<Panel>(notificationPanelPath);
 
-		// Opcja A: Pobierz AudioStreamPlayer3D przez NodePath
+		// Pobierz AudioStreamPlayer3D przez NodePath
 		walkSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>(walkSoundPlayerPath);
 		if (walkSoundPlayer == null)
 		{
@@ -73,19 +64,6 @@ public partial class Figurehead : CharacterBody3D
 		{
 			GD.Print("AudioStreamPlayer3D został poprawnie zlokalizowany.");
 		}
-
-		// Opcja B: Pobierz AudioStreamPlayer3D bezpośrednio
-		/*
-		walkSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("AudioStreamPlayer3D");
-		if (walkSoundPlayer == null)
-		{
-			GD.PrintErr("Błąd: Nie znaleziono AudioStreamPlayer3D. Upewnij się, że węzeł jest poprawnie nazwany i znajduje się jako dziecko Figurehead.");
-		}
-		else
-		{
-			GD.Print("AudioStreamPlayer3D został poprawnie zlokalizowany.");
-		}
-		*/
 
 		if (masterCamera == null || tpCamera == null || diceCamera == null)
 		{
@@ -148,7 +126,7 @@ public partial class Figurehead : CharacterBody3D
 
 	private void ShowNotification(string message, float duration = 3f)
 	{
-		if (notificationLabel == null)
+		if (notificationLabel == null || notificationPanel == null)
 			return;
 
 		notificationLabel.Text = message;
@@ -162,7 +140,7 @@ public partial class Figurehead : CharacterBody3D
 
 	private void HideNotification()
 	{
-		if (notificationLabel != null)
+		if (notificationLabel != null && notificationPanel != null)
 		{
 			notificationPanel.Visible = false;
 			notificationLabel.Visible = false;
@@ -171,14 +149,12 @@ public partial class Figurehead : CharacterBody3D
 
 	public override void _Input(InputEvent @event)
 	{
-		
 		if (@event.IsActionPressed("ui_accept"))
 		{
 			SwitchToDiceCamera(); // Przełącz na kamerę Kostki
 			textureDisplay.Visible = false;
-			randomCard.Visible=false;
+			randomCard.Visible = false;
 		}
-		
 	}
 
 	private void OnDie1RollFinished(int value)
@@ -198,9 +174,10 @@ public partial class Figurehead : CharacterBody3D
 	private void CheckAndMovePawn()
 	{
 		foreach (Field field in board.GetFields())
-	{
-		field.isMouseEventEnabled =false;
-	}
+		{
+			field.IsMouseEventEnabled = false;
+		}
+
 		if (die1Result.HasValue && die2Result.HasValue)
 		{
 			totalSteps += die1Result.Value + die2Result.Value;
@@ -222,11 +199,17 @@ public partial class Figurehead : CharacterBody3D
 			else
 			{
 				// Wykonaj ruch i zresetuj wartości po zakończeniu tury
-				MovePawnSequentially(totalSteps);
+				if (board.Players.Count > board.CurrentPlayerIndex)
+				{
+					board.MovePlayer(board.Players[board.CurrentPlayerIndex], totalSteps);
+				}
+				else
+				{
+					GD.PrintErr("Niepoprawny indeks gracza.");
+				}
 				ResetRoll();
 			}
 		}
-		
 	}
 
 	private void ReRollDice()
@@ -271,18 +254,18 @@ public partial class Figurehead : CharacterBody3D
 			CurrentPositionIndex = (CurrentPositionIndex + 1) % 40;
 
 			Field nextField = board.GetFieldById(CurrentPositionIndex);
-			if (nextField == null || nextField.positions.Count == 0)
+			if (nextField == null || nextField.Positions.Count == 0)
 			{
 				GD.PrintErr("Błąd: Nie znaleziono pola docelowego lub brak pozycji na polu.");
 				StopWalkSound(); // Zatrzymaj dźwięk w przypadku błędu
 				return;
 			}
-			Vector3 nextPosition = nextField.positions[0];
+			Vector3 nextPosition = nextField.Positions[0];
 			GD.Print($"Przemieszczenie pionka na pozycję {CurrentPositionIndex}.");
 			Tween tween = CreateTween();
 			tween.TweenProperty(this, "global_position", nextPosition, moveDuration) // Użycie zmiennej moveDuration
-					.SetTrans(Tween.TransitionType.Linear)
-					.SetEase(Tween.EaseType.InOut);
+				 .SetTrans(Tween.TransitionType.Linear)
+				 .SetEase(Tween.EaseType.InOut);
 			await ToSignal(tween, "finished");
 		}
 
@@ -316,7 +299,7 @@ public partial class Figurehead : CharacterBody3D
 			masterCamera.Current = true;
 			foreach (Field field in board.GetFields())
 			{
-				field.isMouseEventEnabled =true;
+				field.IsMouseEventEnabled = true;
 			}
 		}
 		else
