@@ -140,7 +140,7 @@ public partial class GameManager : Node3D
 			return;
 		}
 		endTurnButton.Connect("pressed", new Callable(this, nameof(OnEndTurnButtonPressed)));
-		endTurnButton.Visible = false;
+		endTurnButton.Visible = false; // Początkowo przycisk jest niewidoczny
 	}
 
 	private void SetAllPlayersOnStart()
@@ -193,7 +193,7 @@ public partial class GameManager : Node3D
 		BlockBoardInteractions();
 		SwitchToDiceCamera();
 		rollButton.Visible = false;
-		endTurnButton.Visible = false;
+		endTurnButton.Visible = false; // Ukrycie przycisku zakończenia tury podczas rzutu
 		GD.Print($"Rzut kostkami dla gracza: {currentPlayerIndex + 1}");
 		ShowNotification($"Gracz {currentPlayerIndex + 1} rzuca kostkami...", 2f);
 		dieNode1.Call("_roll");
@@ -226,15 +226,21 @@ public partial class GameManager : Node3D
 		GD.Print($"Łączna suma oczek: {totalSteps}");
 		SwitchToMasterCamera();
 		MoveCurrentPlayerPawnSequentially(totalSteps);
+
 		if (die1Result.Value == die2Result.Value)
 		{
+			// Jeśli gracz wyrzucił dublet, umożliwiamy kolejny rzut
 			GD.Print("Dublet! Kolejny rzut po ruchu.");
 			ShowNotification("Dublet! Powtórz rzut po ruchu.", 5f);
+			// Upewniamy się, że przycisk zakończenia tury jest ukryty
+			// endTurnButton.Visible = false; // Usunięte z tej lokalizacji
 		}
 		else
 		{
-			endTurnButton.Visible = true;
-			rollButton.Visible = false;
+			// Nie ustawiamy widoczności przycisku tutaj
+			GD.Print("Nie wyrzucono dubletu. Przygotowanie do zakończenia tury.");
+			ShowNotification("Nie wyrzucono dubletu. Możesz zakończyć turę.", 3f);
+			// Przyciski zostaną ustawione po zakończeniu ruchu pionka
 		}
 	}
 
@@ -247,6 +253,7 @@ public partial class GameManager : Node3D
 		}
 		currentState = GameState.MovingPawn;
 		Figurehead currentPlayer = players[currentPlayerIndex];
+		endTurnButton.Visible = false; // Upewniamy się, że przycisk jest ukryty podczas ruchu
 		await currentPlayer.MovePawnSequentially(steps, board);
 		if (die1Result.Value == die2Result.Value)
 		{
@@ -255,6 +262,7 @@ public partial class GameManager : Node3D
 		else
 		{
 			currentState = GameState.WaitingForInput;
+			endTurnButton.Visible = true; // Pokazujemy przycisk zakończenia tury po zakończeniu ruchu
 		}
 	}
 
@@ -265,8 +273,8 @@ public partial class GameManager : Node3D
 		totalSteps = 0;
 		UnblockBoardInteractions();
 		currentState = GameState.WaitingForInput;
-		rollButton.Visible = true;
-		endTurnButton.Visible = false;
+		rollButton.Visible = true; // Pokazujemy przycisk rzutu ponownie
+		endTurnButton.Visible = false; // Ukrywamy przycisk zakończenia tury
 		GD.Print($"Gracz {currentPlayerIndex + 1} może wykonać kolejny rzut.");
 		ShowNotification($"Gracz {currentPlayerIndex + 1}, rzuć ponownie!", 2f);
 	}
@@ -280,7 +288,7 @@ public partial class GameManager : Node3D
 		UnblockBoardInteractions();
 		currentState = GameState.WaitingForInput;
 		rollButton.Visible = true;
-		endTurnButton.Visible = false;
+		endTurnButton.Visible = false; // Upewniamy się, że przycisk zakończenia tury jest ukryty na początku tury następnego gracza
 		GD.Print($"Zakończono turę gracza. Teraz tura gracza: {currentPlayerIndex + 1}");
 		ShowNotification($"Tura gracza: {currentPlayerIndex + 1}", 2f);
 	}
