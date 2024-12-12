@@ -6,7 +6,8 @@ public partial class Figurehead : CharacterBody3D
 {
 	public int CurrentPositionIndex { get; set; } = 0;
 	private Board board;
-
+	
+	private Sprite2D step_on_card;
 	private Sprite2D textureDisplay;
 	private Sprite2D randomCard;
 	
@@ -58,6 +59,7 @@ public partial class Figurehead : CharacterBody3D
 		masterCamera = GetNodeOrNull<Camera3D>(masterCameraPath);
 		tpCamera = GetNodeOrNull<Camera3D>(tpCameraPath);
 		diceCamera = GetNodeOrNull<Camera3D>(diceCameraPath);
+		step_on_card = GetNodeOrNull<Sprite2D>("/root/Level/BuyCard/HBoxContainer/VBoxContainer2/TextureRect/FieldToBuy");
 		textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/FieldCard");
 		randomCard = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/RandomCard");
 		notificationLabel = GetNodeOrNull<Label>(notificationLabelPath);
@@ -96,7 +98,7 @@ public partial class Figurehead : CharacterBody3D
 			GD.Print("Ustawiono kamerę Master shot jako domyślną.");
 			masterCamera.Current = true; // Ustaw kamerę Master shot jako domyślną
 		}
-
+		
 		// Pobierz pierwszą kostkę
 		Node dieNode1 = GetNodeOrNull(dieNodePath1);
 		if (dieNode1 == null)
@@ -288,8 +290,7 @@ public partial class Figurehead : CharacterBody3D
 
 		// Zatrzymaj dźwięk chodzenia po zakończeniu ruchu
 		StopWalkSound();
-
-		board.ShowFieldTexture(targetIndex);
+		board.StepOnField(targetIndex);
 		// Przełącz z powrotem na kamerę Master shot po zakończeniu ruchu
 		GD.Print("Przełączanie kamery z powrotem na Master shot po zakończeniu ruchu.");
 		SwitchToMasterCamera();
