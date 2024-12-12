@@ -36,6 +36,7 @@ public partial class GameManager : Node3D
 		MovingPawn,
 		EndTurn
 	}
+
 	private GameState currentState = GameState.WaitingForInput;
 
 	public override void _Ready()
@@ -202,23 +203,19 @@ public partial class GameManager : Node3D
 		{
 			return;
 		}
+
 		int rollSum = die1Result.Value + die2Result.Value;
-		totalSteps += rollSum;
+		totalSteps = rollSum;
 		ShowNotification($"Łączna suma oczek: {totalSteps}", 3f);
 		GD.Print($"Łączna suma oczek: {totalSteps}");
+
+		SwitchToMasterCamera();
+		MoveCurrentPlayerPawnSequentially(totalSteps);
+
 		if (die1Result.Value == die2Result.Value)
 		{
-			GD.Print("Dublet! Kolejny rzut.");
-			ShowNotification("Dublet! Powtórz rzut.", 5f);
-			die1Result = null;
-			die2Result = null;
-			var timer = GetTree().CreateTimer(2f);
-			timer.Connect("timeout", new Callable(this, nameof(StartDiceRollForCurrentPlayer)));
-		}
-		else
-		{
-			SwitchToMasterCamera();
-			MoveCurrentPlayerPawnSequentially(totalSteps);
+			GD.Print("Dublet! Kolejny rzut po ruchu.");
+			ShowNotification("Dublet! Powtórz rzut po ruchu.", 5f);
 		}
 	}
 
@@ -229,10 +226,31 @@ public partial class GameManager : Node3D
 			GD.PrintErr("Błąd: Indeks aktualnego gracza poza zakresem.");
 			return;
 		}
+
 		currentState = GameState.MovingPawn;
 		Figurehead currentPlayer = players[currentPlayerIndex];
 		await currentPlayer.MovePawnSequentially(steps, board);
-		EndTurn();
+
+		if (die1Result.Value == die2Result.Value)
+		{
+			PrepareForNextRoll();
+		}
+		else
+		{
+			EndTurn();
+		}
+	}
+
+	private void PrepareForNextRoll()
+	{
+		die1Result = null;
+		die2Result = null;
+		totalSteps = 0;
+		UnblockBoardInteractions();
+		currentState = GameState.WaitingForInput;
+		rollButton.Visible = true;
+		GD.Print($"Gracz {currentPlayerIndex + 1} może wykonać kolejny rzut.");
+		ShowNotification($"Gracz {currentPlayerIndex + 1}, rzuć ponownie!", 2f);
 	}
 
 	private void EndTurn()
