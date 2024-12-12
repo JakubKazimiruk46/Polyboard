@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=21 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -8,7 +8,6 @@
 [ext_resource type="PackedScene" uid="uid://dhj5sru57cpw4" path="res://kostka/die.tscn" id="5_p3toi"]
 [ext_resource type="PackedScene" uid="uid://bvlhympj7pq71" path="res://scenes/board/level/field.tscn" id="6_jcf5o"]
 [ext_resource type="PackedScene" uid="uid://cxbg61n0xrbda" path="res://scenes/board/level/corner_field.tscn" id="6_ms3uj"]
-[ext_resource type="Script" path="res://scenes/board/level/kamera_figurehead.gd" id="7_xxuvu"]
 [ext_resource type="Script" path="res://scenes/board/level/MasterShot.cs" id="8_cd8t5"]
 [ext_resource type="PackedScene" uid="uid://uicwwtau32m7" path="res://scenes/board/level/menu.tscn" id="10_8um66"]
 [ext_resource type="PackedScene" uid="uid://e5m3pfs0fwdx" path="res://scenes/board/level/notification.tscn" id="10_dneql"]
@@ -264,7 +263,6 @@ dieNodePath2 = NodePath("../Die2")
 boardPath = NodePath("../Board")
 playersContainerPath = NodePath("Players")
 masterCameraPath = NodePath("../MasterShot")
-tpCameraPath = NodePath("Players/Figurehead/Camera3D")
 diceCameraPath = NodePath("../KostkiKamera")
 notificationPanelPath = NodePath("../NotificationLayer/NotificationPanel")
 notificationLabelPath = NodePath("../NotificationLayer/NotificationPanel/NotificationLabel")
@@ -275,12 +273,6 @@ notificationLabelPath = NodePath("../NotificationLayer/NotificationPanel/Notific
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
 
-[node name="Camera3D" type="Camera3D" parent="GameManager/Players/Figurehead" node_paths=PackedStringArray("target")]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
-fov = 90.0
-script = ExtResource("7_xxuvu")
-target = NodePath("..")
-
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/Figurehead"]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
 stream = ExtResource("14_u56ja")
@@ -289,12 +281,6 @@ bus = &"Sfx"
 [node name="Figurehead2" parent="GameManager/Players" instance=ExtResource("3_8t0aq")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
-
-[node name="Camera3D" type="Camera3D" parent="GameManager/Players/Figurehead2" node_paths=PackedStringArray("target")]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
-fov = 90.0
-script = ExtResource("7_xxuvu")
-target = NodePath("..")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/Figurehead2"]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)

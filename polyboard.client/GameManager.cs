@@ -16,8 +16,6 @@ public partial class GameManager : Node3D
 	[Export]
 	public NodePath masterCameraPath;
 	[Export]
-	public NodePath tpCameraPath;
-	[Export]
 	public NodePath diceCameraPath;
 	[Export]
 	public NodePath notificationPanelPath;
@@ -26,7 +24,6 @@ public partial class GameManager : Node3D
 
 	private Board board;
 	private Camera3D masterCamera;
-	private Camera3D tpCamera;
 	private Camera3D diceCamera;
 	private Label notificationLabel;
 	private Panel notificationPanel;
@@ -45,11 +42,10 @@ public partial class GameManager : Node3D
 
 	public override void _Ready()
 	{
-		// Inicjalizacja kamery
+		// Inicjalizacja kamer
 		masterCamera = GetNodeOrNull<Camera3D>(masterCameraPath);
-		tpCamera = GetNodeOrNull<Camera3D>(tpCameraPath);
 		diceCamera = GetNodeOrNull<Camera3D>(diceCameraPath);
-		if (masterCamera == null || tpCamera == null || diceCamera == null)
+		if (masterCamera == null || diceCamera == null)
 		{
 			GD.PrintErr("Błąd: Nie znaleziono jednej z kamer. Sprawdź ścieżki.");
 		}
@@ -188,8 +184,8 @@ public partial class GameManager : Node3D
 			GD.Print($"Łączna suma oczek: {totalSteps}");
 			ShowNotification($"Łączna suma oczek: {totalSteps}");
 
-			// Przełączenie na kamerę TP po rzucie
-			SwitchToTPCamera();
+			// Opcjonalnie, jeśli wcześniej przełączano na kamerę TP po rzucie, możesz przełączyć na inną kamerę lub pozostawić bieżącą
+			// SwitchToMasterCamera();
 
 			// Sprawdź dublet
 			if (die1Result.Value == die2Result.Value)
@@ -245,19 +241,6 @@ public partial class GameManager : Node3D
 
 		GD.Print("Zakończono turę gracza. Teraz tura gracza: " + (currentPlayerIndex + 1));
 		ShowNotification($"Tura gracza: {currentPlayerIndex + 1}");
-	}
-
-	private void SwitchToTPCamera()
-	{
-		if (tpCamera != null)
-		{
-			GD.Print("Przełączono na kamerę TP.");
-			tpCamera.Current = true;
-		}
-		else
-		{
-			GD.PrintErr("Błąd: Kamera TP jest nieprawidłowa.");
-		}
 	}
 
 	private void SwitchToMasterCamera()
