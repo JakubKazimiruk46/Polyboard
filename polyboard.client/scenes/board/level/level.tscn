@@ -313,7 +313,5 @@ transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
 stream = ExtResource("14_u56ja")
 bus = &"Sfx"
 
-[node name="Niewidzialne ściany" type="Node3D" parent="."]
-
 [editable path="NotificationLayer"]
 [editable path="UI"]
