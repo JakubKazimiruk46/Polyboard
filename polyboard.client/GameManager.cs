@@ -5,15 +5,17 @@ using System.Threading.Tasks;
 
 public partial class GameManager : Node3D
 {
+	// Eksportowane ścieżki do węzłów w edytorze
 	[Export] public NodePath dieNodePath1;
 	[Export] public NodePath dieNodePath2;
-	[Export] public NodePath boardPath; 
+	[Export] public NodePath boardPath;
 	[Export] public NodePath playersContainerPath;
 	[Export] public NodePath masterCameraPath;
 	[Export] public NodePath diceCameraPath;
 	[Export] public NodePath notificationPanelPath;
 	[Export] public NodePath notificationLabelPath;
 
+	// Referencje do komponentów gry
 	private Board board;
 	private Camera3D masterCamera;
 	private Camera3D diceCamera;
@@ -28,8 +30,9 @@ public partial class GameManager : Node3D
 
 	private int? die1Result = null;
 	private int? die2Result = null;
-	private int totalSteps = 0; 
+	private int totalSteps = 0;
 
+	// Definicja stanów gry dla lepszej kontroli logiki
 	private enum GameState { WaitingForInput, RollingDice, MovingPawn, EndTurn }
 	private GameState currentState = GameState.WaitingForInput;
 
@@ -40,7 +43,12 @@ public partial class GameManager : Node3D
 		InitBoard();
 		InitPlayers();
 		InitDice();
+
+		// Ustawienie wszystkich graczy na polu startowym
+		SetAllPlayersOnStart();
 	}
+
+	#region Inicjalizacja
 
 	private void InitCameras()
 	{
@@ -51,9 +59,11 @@ public partial class GameManager : Node3D
 		{
 			GD.PrintErr("Błąd: Nie znaleziono jednej z kamer. Sprawdź ścieżki.");
 		}
-
-		// Ustaw kamerę główną jako domyślną na start
-		SetActiveCamera(masterCamera);
+		else
+		{
+			// Ustaw kamerę główną jako domyślną na start
+			SetActiveCamera(masterCamera);
+		}
 	}
 
 	private void InitNotifications()
@@ -61,7 +71,8 @@ public partial class GameManager : Node3D
 		notificationPanel = GetNodeOrNull<Panel>(notificationPanelPath);
 		notificationLabel = GetNodeOrNull<Label>(notificationLabelPath);
 
-		if (notificationPanel != null) notificationPanel.Visible = false;
+		if (notificationPanel != null)
+			notificationPanel.Visible = false;
 	}
 
 	private void InitBoard()
@@ -69,7 +80,7 @@ public partial class GameManager : Node3D
 		board = GetNodeOrNull<Board>(boardPath);
 		if (board == null)
 		{
-			GD.PrintErr("Nie znaleziono planszy.");
+			GD.PrintErr("Błąd: Nie znaleziono planszy.");
 		}
 		else
 		{
@@ -82,7 +93,7 @@ public partial class GameManager : Node3D
 		Node playersContainer = GetNodeOrNull(playersContainerPath);
 		if (playersContainer == null)
 		{
-			GD.PrintErr("Błąd: Nie znaleziono węzła Players.");
+			GD.PrintErr("Błąd: Nie znaleziono węzła Players. Sprawdź, czy 'playersContainerPath' jest ustawiony w edytorze.");
 			return;
 		}
 
@@ -115,10 +126,48 @@ public partial class GameManager : Node3D
 			return;
 		}
 
+		// Zakładamy, że kostki emitują sygnał 'roll_finished' z wartością oczek
 		dieNode1.Connect("roll_finished", new Callable(this, nameof(OnDie1RollFinished)));
 		dieNode2.Connect("roll_finished", new Callable(this, nameof(OnDie2RollFinished)));
 		GD.Print("Kostki podłączone.");
 	}
+
+	#endregion
+
+	#region Ustawienie Graczy
+
+	private void SetAllPlayersOnStart()
+	{
+		if (board == null)
+		{
+			GD.PrintErr("Board is not initialized. Cannot set players on start.");
+			return;
+		}
+
+		// Pobierz pozycję startową z CornerField0 (FieldId = 0) dla każdego gracza
+		for (int i = 0; i < players.Count; i++)
+		{
+			Figurehead player = players[i];
+			Vector3? startPosition = board.GetPositionForPawn(0, i % board.GetFieldById(0).positions.Count);
+
+			if (!startPosition.HasValue)
+			{
+				GD.PrintErr($"Błąd: Nie znaleziono pozycji startowej dla gracza {i + 1}.");
+				continue;
+			}
+
+			player.CurrentPositionIndex = 0; // Ustawienie logiczne na pole 0
+			player.GlobalPosition = startPosition.Value; // Ustawienie fizycznej pozycji
+
+			GD.Print($"Gracz {i + 1} ustawiony na pozycji startowej: {startPosition.Value}");
+		}
+
+		GD.Print("Wszyscy gracze zostali ustawieni na polu startowym.");
+	}
+
+	#endregion
+
+	#region Obsługa Wejścia
 
 	public override void _Input(InputEvent @event)
 	{
@@ -130,15 +179,26 @@ public partial class GameManager : Node3D
 		}
 	}
 
+	#endregion
+
+	#region Logika Gry
+
 	private void StartDiceRollForCurrentPlayer()
 	{
-		if (dieNode1 == null || dieNode2 == null) return;
+		if (dieNode1 == null || dieNode2 == null)
+		{
+			GD.PrintErr("Nie można rzucić kostkami: kostki nie są zainicjalizowane.");
+			return;
+		}
 
 		currentState = GameState.RollingDice;
 		BlockBoardInteractions();
-		SetActiveCamera(diceCamera);
+		SwitchToDiceCamera();
 
-		GD.Print("Rzut kostkami dla gracza: " + (currentPlayerIndex + 1));
+		GD.Print($"Rzut kostkami dla gracza: {currentPlayerIndex + 1}");
+		ShowNotification($"Gracz {currentPlayerIndex + 1} rzuca kostkami...", 2f);
+
+		// Rzucenie kostkami
 		dieNode1.Call("_roll");
 		dieNode2.Call("_roll");
 	}
@@ -170,8 +230,9 @@ public partial class GameManager : Node3D
 		totalSteps += rollSum;
 
 		ShowNotification($"Łączna suma oczek: {totalSteps}", 3f);
+		GD.Print($"Łączna suma oczek: {totalSteps}");
 
-		// Sprawdź dublet
+		// Sprawdź dublet (podwójny rzut)
 		if (die1Result.Value == die2Result.Value)
 		{
 			GD.Print("Dublet! Kolejny rzut.");
@@ -181,7 +242,7 @@ public partial class GameManager : Node3D
 			die1Result = null;
 			die2Result = null;
 
-			// Po krótkiej przerwie znów rzucamy
+			// Po krótkiej przerwie ponowny rzut
 			var timer = GetTree().CreateTimer(2f);
 			timer.Connect("timeout", new Callable(this, nameof(StartDiceRollForCurrentPlayer)));
 		}
@@ -225,27 +286,47 @@ public partial class GameManager : Node3D
 
 		currentState = GameState.WaitingForInput;
 
-		GD.Print("Zakończono turę gracza. Teraz tura gracza: " + (currentPlayerIndex + 1));
-		ShowNotification($"Tura gracza: {currentPlayerIndex + 1}");
+		GD.Print($"Zakończono turę gracza. Teraz tura gracza: {currentPlayerIndex + 1}");
+		ShowNotification($"Tura gracza: {currentPlayerIndex + 1}", 2f);
 	}
 
-	private void BlockBoardInteractions()
+	#endregion
+
+	#region Kamera
+
+	private void SwitchToMasterCamera()
 	{
-		if (board == null) return;
-		foreach (Field field in board.GetFields())
+		SetActiveCamera(masterCamera);
+	}
+
+	private void SwitchToDiceCamera()
+	{
+		SetActiveCamera(diceCamera);
+	}
+
+	/// <summary>
+	/// Ustawia wskazaną kamerę jako aktywną, dezaktywując inne.
+	/// </summary>
+	/// <param name="cameraToActivate">Kamera, którą chcesz aktywować.</param>
+	private void SetActiveCamera(Camera3D cameraToActivate)
+	{
+		if (masterCamera != null) masterCamera.Current = false;
+		if (diceCamera != null) diceCamera.Current = false;
+
+		if (cameraToActivate != null)
 		{
-			field.isMouseEventEnabled = false;
+			cameraToActivate.Current = true;
+			GD.Print($"Przełączono na kamerę: {cameraToActivate.Name}");
+		}
+		else
+		{
+			GD.PrintErr("Błąd: Próba aktywacji nieistniejącej kamery.");
 		}
 	}
 
-	private void UnblockBoardInteractions()
-	{
-		if (board == null) return;
-		foreach (Field field in board.GetFields())
-		{
-			field.isMouseEventEnabled = true;
-		}
-	}
+	#endregion
+
+	#region Powiadomienia
 
 	private void ShowNotification(string message, float duration = 3f)
 	{
@@ -269,32 +350,27 @@ public partial class GameManager : Node3D
 		notificationLabel.Visible = false;
 	}
 
-	private void SwitchToMasterCamera()
-	{
-		SetActiveCamera(masterCamera);
-	}
+	#endregion
 
-	private void SwitchToDiceCamera()
-	{
-		SetActiveCamera(diceCamera);
-	}
+	#region Blokowanie/Odblokowanie Interakcji z Planszą
 
-	/// <summary>
-	/// Ustawia wskazaną kamerę jako aktywną, dezaktywując inne.
-	/// </summary>
-	private void SetActiveCamera(Camera3D cameraToActivate)
+	private void BlockBoardInteractions()
 	{
-		if (masterCamera != null) masterCamera.Current = false;
-		if (diceCamera != null) diceCamera.Current = false;
-
-		if (cameraToActivate != null)
+		if (board == null) return;
+		foreach (Field field in board.GetFields())
 		{
-			cameraToActivate.Current = true;
-			GD.Print("Przełączono na kamerę: " + cameraToActivate.Name);
-		}
-		else
-		{
-			GD.PrintErr("Błąd: Próba aktywacji nieistniejącej kamery.");
+			field.isMouseEventEnabled = false;
 		}
 	}
+
+	private void UnblockBoardInteractions()
+	{
+		if (board == null) return;
+		foreach (Field field in board.GetFields())
+		{
+			field.isMouseEventEnabled = true;
+		}
+	}
+
+	#endregion
 }
