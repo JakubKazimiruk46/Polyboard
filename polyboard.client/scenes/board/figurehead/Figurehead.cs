@@ -35,6 +35,8 @@ public partial class Figurehead : CharacterBody3D
 	// Metoda wywoływana przez GameManager po obliczeniu kroków
 	public async Task MovePawnSequentially(int steps, Board board)
 	{
+		
+		PlayWalkSound();
 		int initialPosition = CurrentPositionIndex;
 		int targetIndex = CurrentPositionIndex + steps;
 		bool passedCorner = false;
