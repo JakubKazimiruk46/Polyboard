@@ -15,6 +15,7 @@ public partial class GameManager : Node3D
 	[Export] public NodePath notificationLabelPath;
 	[Export] public NodePath rollButtonPath;
 	[Export] public NodePath endTurnButtonPath;
+	[Export] public NodePath ectsUIContainerPath; // Ścieżka do kontenera ECTS w UI
 
 	private Board board;
 	private Camera3D masterCamera;
@@ -30,6 +31,8 @@ public partial class GameManager : Node3D
 	private int totalSteps = 0;
 	private Button rollButton;
 	private Button endTurnButton;
+	private VBoxContainer ectsUIContainer; // Kontener ECTS w UI
+	private List<Label> ectsLabels = new List<Label>(); // Listy Label dla ECTS każdego gracza
 
 	private enum GameState { WaitingForInput, RollingDice, MovingPawn, EndTurn }
 	private GameState currentState = GameState.WaitingForInput;
@@ -43,6 +46,7 @@ public partial class GameManager : Node3D
 		InitDice();
 		InitRollButton();
 		InitEndTurnButton();
+		InitECTSUI();
 		SetAllPlayersOnStart();
 	}
 
@@ -143,6 +147,36 @@ public partial class GameManager : Node3D
 		endTurnButton.Visible = false; // Początkowo przycisk jest niewidoczny
 	}
 
+	private void InitECTSUI()
+	{
+		ectsUIContainer = GetNodeOrNull<VBoxContainer>(ectsUIContainerPath);
+		if (ectsUIContainer == null)
+		{
+			GD.PrintErr("Błąd: Nie znaleziono kontenera ECTS w UI. Sprawdź 'ectsUIContainerPath'.");
+			return;
+		}
+
+		// Tworzenie Label dla każdego gracza
+		foreach (var player in players)
+		{
+			Label ectsLabel = new Label();
+			ectsLabel.Text = $"{player.Name} ECTS: {player.ECTS}";
+			ectsUIContainer.AddChild(ectsLabel);
+			ectsLabels.Add(ectsLabel);
+		}
+	}
+
+	private void UpdateECTSUI(int playerIndex)
+	{
+		if (playerIndex < 0 || playerIndex >= ectsLabels.Count)
+		{
+			GD.PrintErr("Błąd: Indeks gracza poza zakresem podczas aktualizacji ECTS UI.");
+			return;
+		}
+
+		ectsLabels[playerIndex].Text = $"{players[playerIndex].Name} ECTS: {players[playerIndex].ECTS}";
+	}
+
 	private void SetAllPlayersOnStart()
 	{
 		if (board == null)
@@ -162,6 +196,9 @@ public partial class GameManager : Node3D
 			player.CurrentPositionIndex = 0;
 			player.GlobalPosition = startPosition.Value;
 			GD.Print($"Gracz {i + 1} ustawiony na pozycji startowej: {startPosition.Value}");
+
+			// Aktualizacja ECTS UI na starcie
+			UpdateECTSUI(i);
 		}
 		GD.Print("Wszyscy gracze zostali ustawieni na polu startowym.");
 	}
@@ -263,6 +300,9 @@ public partial class GameManager : Node3D
 		{
 			currentState = GameState.WaitingForInput;
 			endTurnButton.Visible = true; // Pokazujemy przycisk zakończenia tury po zakończeniu ruchu
+
+			// Aktualizacja ECTS UI po ruchu
+			UpdateECTSUI(currentPlayerIndex);
 		}
 	}
 
@@ -351,5 +391,17 @@ public partial class GameManager : Node3D
 		{
 			field.isMouseEventEnabled = true;
 		}
+	}
+
+	// Metoda do aktualizacji ECTS w UI
+	public void UpdateECTS(int playerIndex)
+	{
+		UpdateECTSUI(playerIndex);
+	}
+
+	// Metoda wywoływana po zmianie ECTS w Figurehead
+	public override void _Process(double delta)
+	{
+		// Możesz tutaj dodać kod, który będzie reagował na zmiany ECTS, jeśli to konieczne
 	}
 }

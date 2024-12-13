@@ -298,6 +298,7 @@ notificationPanelPath = NodePath("../NotificationLayer/NotificationPanel")
 notificationLabelPath = NodePath("../NotificationLayer/NotificationPanel/NotificationLabel")
 rollButtonPath = NodePath("../UI/RzućKostkami")
 endTurnButtonPath = NodePath("../UI/ZakończTure")
+ectsUIContainerPath = NodePath("../UI/Players")
 
 [node name="Players" type="Node3D" parent="GameManager"]
 
@@ -315,24 +316,6 @@ transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/Figurehead4"]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
-stream = ExtResource("14_u56ja")
-bus = &"Sfx"
-
-[node name="Figurehead3" parent="GameManager/Players" instance=ExtResource("3_8t0aq")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
-walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
-
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/Figurehead3"]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
-stream = ExtResource("14_u56ja")
-bus = &"Sfx"
-
-[node name="Figurehead2" parent="GameManager/Players" instance=ExtResource("3_8t0aq")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
-walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
-
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/Figurehead2"]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
 stream = ExtResource("14_u56ja")
 bus = &"Sfx"
