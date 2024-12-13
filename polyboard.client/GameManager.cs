@@ -255,7 +255,7 @@ public partial class GameManager : Node3D
 			}
 			player.CurrentPositionIndex = 0;
 			player.GlobalPosition = startPosition.Value;
-			GD.Print($"Gracz {i + 1} ustawiony na pozycji startowej: {startPosition.Value}");
+			GD.Print($"Gracz {players[i].Name} ustawiony na pozycji startowej: {startPosition.Value}");
 
 			// Aktualizacja ECTS UI na starcie
 			UpdateECTSUI(i);
@@ -291,8 +291,10 @@ public partial class GameManager : Node3D
 		SwitchToDiceCamera();
 		rollButton.Visible = false;
 		endTurnButton.Visible = false; // Ukrycie przycisku zakończenia tury podczas rzutu
-		GD.Print($"Rzut kostkami dla gracza: {currentPlayerIndex + 1}");
-		ShowNotification($"Gracz {currentPlayerIndex + 1} rzuca kostkami...", 2f);
+
+		string currentPlayerName = GetCurrentPlayerName();
+		ShowNotification($"Gracz {currentPlayerName} rzuca kostkami...", 2f);
+		GD.Print($"Rzut kostkami dla gracza: {currentPlayerName}");
 		dieNode1.Call("_roll");
 		dieNode2.Call("_roll");
 	}
@@ -359,7 +361,7 @@ public partial class GameManager : Node3D
 		else
 		{
 			currentState = GameState.WaitingForInput;
-			endTurnButton.Visible = true; 
+			endTurnButton.Visible = true;
 		}
 	}
 
@@ -371,9 +373,10 @@ public partial class GameManager : Node3D
 		UnblockBoardInteractions();
 		currentState = GameState.WaitingForInput;
 		rollButton.Visible = true; // Kolejny rzut
-		endTurnButton.Visible = false; 
-		GD.Print($"Gracz {currentPlayerIndex + 1} może wykonać kolejny rzut.");
-		ShowNotification($"Gracz {currentPlayerIndex + 1}, rzuć ponownie!", 2f);
+		endTurnButton.Visible = false;
+		string currentPlayerName = GetCurrentPlayerName();
+		ShowNotification($"Gracz {currentPlayerName}, rzuć ponownie!", 2f);
+		GD.Print($"Gracz {currentPlayerName} może wykonać kolejny rzut.");
 	}
 
 	private void EndTurn()
@@ -385,9 +388,10 @@ public partial class GameManager : Node3D
 		UnblockBoardInteractions();
 		currentState = GameState.WaitingForInput;
 		rollButton.Visible = true;
-		endTurnButton.Visible = false; 
-		GD.Print($"Zakończono turę gracza. Teraz tura gracza: {currentPlayerIndex + 1}");
-		ShowNotification($"Tura gracza: {currentPlayerIndex + 1}", 2f);
+		endTurnButton.Visible = false;
+		string nextPlayerName = GetCurrentPlayerName();
+		ShowNotification($"Tura gracza: {nextPlayerName}", 2f);
+		GD.Print($"Zakończono turę gracza. Teraz tura gracza: {nextPlayerName}");
 	}
 
 	private void SwitchToMasterCamera()
@@ -458,5 +462,19 @@ public partial class GameManager : Node3D
 	public override void _Process(double delta)
 	{
 		// Możesz tutaj dodać kod reagujący na zmiany ECTS itp.
+	}
+
+	/// <summary>
+	/// Pobiera nazwę aktualnego gracza.
+	/// </summary>
+	/// <returns>Nazwa aktualnego gracza.</returns>
+	private string GetCurrentPlayerName()
+	{
+		if (currentPlayerIndex < 0 || currentPlayerIndex >= players.Count)
+		{
+			GD.PrintErr("Błąd: Indeks aktualnego gracza poza zakresem podczas pobierania nazwy.");
+			return "Nieznany";
+		}
+		return players[currentPlayerIndex].Name;
 	}
 }

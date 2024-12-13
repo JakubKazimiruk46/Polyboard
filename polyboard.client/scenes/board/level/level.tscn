@@ -330,14 +330,5 @@ transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
 stream = ExtResource("14_u56ja")
 bus = &"Sfx"
 
-[node name="Rusek" parent="GameManager/Players" instance=ExtResource("3_8t0aq")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
-walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
-
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/Rusek"]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
-stream = ExtResource("14_u56ja")
-bus = &"Sfx"
-
 [editable path="NotificationLayer"]
 [editable path="UI"]
