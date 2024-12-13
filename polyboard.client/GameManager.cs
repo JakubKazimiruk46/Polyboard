@@ -1,7 +1,6 @@
 using Godot;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 public partial class GameManager : Node3D
 {
@@ -16,6 +15,7 @@ public partial class GameManager : Node3D
 	[Export] public NodePath rollButtonPath;
 	[Export] public NodePath endTurnButtonPath;
 	[Export] public NodePath ectsUIContainerPath; // Ścieżka do kontenera ECTS w UI
+	[Export] public NodePath playersUIContainerPath; // Ścieżka do UI/Players
 
 	private Board board;
 	private Camera3D masterCamera;
@@ -32,7 +32,10 @@ public partial class GameManager : Node3D
 	private Button rollButton;
 	private Button endTurnButton;
 	private VBoxContainer ectsUIContainer; // Kontener ECTS w UI
-	private List<Label> ectsLabels = new List<Label>(); // Listy Label dla ECTS każdego gracza
+
+	// Listy do przechowywania referencji do labeli w UI odpowiadających graczom:
+	private List<Label> playerNameLabels = new List<Label>();
+	private List<Label> playerECTSLabels = new List<Label>();
 
 	private enum GameState { WaitingForInput, RollingDice, MovingPawn, EndTurn }
 	private GameState currentState = GameState.WaitingForInput;
@@ -46,7 +49,7 @@ public partial class GameManager : Node3D
 		InitDice();
 		InitRollButton();
 		InitEndTurnButton();
-		InitECTSUI();
+		InitPlayersUI();
 		SetAllPlayersOnStart();
 	}
 
@@ -89,7 +92,7 @@ public partial class GameManager : Node3D
 		Node playersContainer = GetNodeOrNull(playersContainerPath);
 		if (playersContainer == null)
 		{
-			GD.PrintErr("Błąd: Nie znaleziono węzła Players. Sprawdź, czy 'playersContainerPath' jest ustawiony w edytorze.");
+			GD.PrintErr("Błąd: Nie znaleziono węzła Players (3D). Sprawdź, czy 'playersContainerPath' jest ustawiony w edytorze.");
 			return;
 		}
 		foreach (Node child in playersContainer.GetChildren())
@@ -147,34 +150,91 @@ public partial class GameManager : Node3D
 		endTurnButton.Visible = false; // Początkowo przycisk jest niewidoczny
 	}
 
-	private void InitECTSUI()
+	private void InitPlayersUI()
 	{
-		ectsUIContainer = GetNodeOrNull<VBoxContainer>(ectsUIContainerPath);
-		if (ectsUIContainer == null)
+		Node playersUIContainer = GetNodeOrNull(playersUIContainerPath);
+		if (playersUIContainer == null)
 		{
-			GD.PrintErr("Błąd: Nie znaleziono kontenera ECTS w UI. Sprawdź 'ectsUIContainerPath'.");
+			GD.PrintErr("Błąd: Nie znaleziono kontenera UI/Players. Sprawdź 'playersUIContainerPath'.");
 			return;
 		}
 
-		// Tworzenie Label dla każdego gracza
-		foreach (var player in players)
+		// Załóżmy, że ilość dzieci w playersUIContainer odpowiada ilości graczy.
+		// Każdy PlayerX ma strukturę MarginContainer > VBoxContainer > Label (nazwa) i HBoxContainer > Label (ECTS).
+		for (int i = 0; i < players.Count; i++)
 		{
-			Label ectsLabel = new Label();
-			ectsLabel.Text = $"{player.Name} ECTS: {player.ECTS}";
-			ectsUIContainer.AddChild(ectsLabel);
-			ectsLabels.Add(ectsLabel);
+			Node playerUINode = playersUIContainer.GetChild(i);
+			if (playerUINode == null)
+			{
+				GD.PrintErr($"Błąd: Nie znaleziono węzła UI dla gracza {i+1}");
+				continue;
+			}
+
+			var marginContainer = playerUINode.GetNodeOrNull<MarginContainer>("MarginContainer");
+			if (marginContainer == null)
+			{
+				GD.PrintErr($"Błąd: Węzeł UI Player{i+1} nie posiada oczekiwanej struktury (MarginContainer).");
+				continue;
+			}
+
+			var vBoxContainer = marginContainer.GetNodeOrNull<VBoxContainer>("VBoxContainer");
+			if (vBoxContainer == null)
+			{
+				GD.PrintErr($"Błąd: Węzeł UI Player{i+1} nie posiada oczekiwanej struktury (VBoxContainer).");
+				continue;
+			}
+
+			// Pierwszy label to nazwa gracza
+			var nameLabel = vBoxContainer.GetNodeOrNull<Label>("Label");
+			if (nameLabel == null)
+			{
+				GD.PrintErr($"Błąd: Nie znaleziono Label z nazwą gracza (Player{i+1}).");
+				continue;
+			}
+
+			// W HBoxContainer mamy TextureRect i Label od ECTS
+			var hBoxContainer = vBoxContainer.GetNodeOrNull<HBoxContainer>("HBoxContainer");
+			if (hBoxContainer == null)
+			{
+				GD.PrintErr($"Błąd: Nie znaleziono HBoxContainer dla ECTS w Player{i+1}.");
+				continue;
+			}
+
+			Label ectsLabel = null;
+			// Szukamy Label w HBoxContainer (może mieć różną nazwę, zakładamy "Label")
+			foreach (Node child in hBoxContainer.GetChildren())
+			{
+				if (child is Label lbl)
+				{
+					ectsLabel = lbl;
+					break;
+				}
+			}
+
+			if (ectsLabel == null)
+			{
+				GD.PrintErr($"Błąd: Nie znaleziono Label ECTS w Player{i+1}.");
+				continue;
+			}
+
+			// Ustawiamy nazwy i ECTS
+			nameLabel.Text = players[i].Name;
+			ectsLabel.Text = players[i].ECTS.ToString();
+
+			playerNameLabels.Add(nameLabel);
+			playerECTSLabels.Add(ectsLabel);
 		}
 	}
 
 	private void UpdateECTSUI(int playerIndex)
 	{
-		if (playerIndex < 0 || playerIndex >= ectsLabels.Count)
+		if (playerIndex < 0 || playerIndex >= playerECTSLabels.Count)
 		{
 			GD.PrintErr("Błąd: Indeks gracza poza zakresem podczas aktualizacji ECTS UI.");
 			return;
 		}
 
-		ectsLabels[playerIndex].Text = $"{players[playerIndex].Name} ECTS: {players[playerIndex].ECTS}";
+		playerECTSLabels[playerIndex].Text = players[playerIndex].ECTS.ToString();
 	}
 
 	private void SetAllPlayersOnStart()
@@ -266,18 +326,14 @@ public partial class GameManager : Node3D
 
 		if (die1Result.Value == die2Result.Value)
 		{
-			// Jeśli gracz wyrzucił dublet, umożliwiamy kolejny rzut
+			// Dublet
 			GD.Print("Dublet! Kolejny rzut po ruchu.");
 			ShowNotification("Dublet! Powtórz rzut po ruchu.", 5f);
-			// Upewniamy się, że przycisk zakończenia tury jest ukryty
-			// endTurnButton.Visible = false; // Usunięte z tej lokalizacji
 		}
 		else
 		{
-			// Nie ustawiamy widoczności przycisku tutaj
 			GD.Print("Nie wyrzucono dubletu. Przygotowanie do zakończenia tury.");
 			ShowNotification("Nie wyrzucono dubletu. Możesz zakończyć turę.", 3f);
-			// Przyciski zostaną ustawione po zakończeniu ruchu pionka
 		}
 	}
 
@@ -292,17 +348,18 @@ public partial class GameManager : Node3D
 		Figurehead currentPlayer = players[currentPlayerIndex];
 		endTurnButton.Visible = false; // Upewniamy się, że przycisk jest ukryty podczas ruchu
 		await currentPlayer.MovePawnSequentially(steps, board);
-		if (die1Result.Value == die2Result.Value)
+
+		// Aktualizacja ECTS UI po ruchu
+		UpdateECTSUI(currentPlayerIndex);
+
+		if (die1Result.HasValue && die2Result.HasValue && die1Result.Value == die2Result.Value)
 		{
 			PrepareForNextRoll();
 		}
 		else
 		{
 			currentState = GameState.WaitingForInput;
-			endTurnButton.Visible = true; // Pokazujemy przycisk zakończenia tury po zakończeniu ruchu
-
-			// Aktualizacja ECTS UI po ruchu
-			UpdateECTSUI(currentPlayerIndex);
+			endTurnButton.Visible = true; 
 		}
 	}
 
@@ -313,8 +370,8 @@ public partial class GameManager : Node3D
 		totalSteps = 0;
 		UnblockBoardInteractions();
 		currentState = GameState.WaitingForInput;
-		rollButton.Visible = true; // Pokazujemy przycisk rzutu ponownie
-		endTurnButton.Visible = false; // Ukrywamy przycisk zakończenia tury
+		rollButton.Visible = true; // Kolejny rzut
+		endTurnButton.Visible = false; 
 		GD.Print($"Gracz {currentPlayerIndex + 1} może wykonać kolejny rzut.");
 		ShowNotification($"Gracz {currentPlayerIndex + 1}, rzuć ponownie!", 2f);
 	}
@@ -328,7 +385,7 @@ public partial class GameManager : Node3D
 		UnblockBoardInteractions();
 		currentState = GameState.WaitingForInput;
 		rollButton.Visible = true;
-		endTurnButton.Visible = false; // Upewniamy się, że przycisk zakończenia tury jest ukryty na początku tury następnego gracza
+		endTurnButton.Visible = false; 
 		GD.Print($"Zakończono turę gracza. Teraz tura gracza: {currentPlayerIndex + 1}");
 		ShowNotification($"Tura gracza: {currentPlayerIndex + 1}", 2f);
 	}
@@ -393,15 +450,13 @@ public partial class GameManager : Node3D
 		}
 	}
 
-	// Metoda do aktualizacji ECTS w UI
 	public void UpdateECTS(int playerIndex)
 	{
 		UpdateECTSUI(playerIndex);
 	}
 
-	// Metoda wywoływana po zmianie ECTS w Figurehead
 	public override void _Process(double delta)
 	{
-		// Możesz tutaj dodać kod, który będzie reagował na zmiany ECTS, jeśli to konieczne
+		// Możesz tutaj dodać kod reagujący na zmiany ECTS itp.
 	}
 }
