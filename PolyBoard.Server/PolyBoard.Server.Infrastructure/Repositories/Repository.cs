@@ -9,19 +9,23 @@ namespace PolyBoard.Server.Infrastructure.Repositories
     public class Repository<E>(PostgresDbContext dbContext) : IRepository<E> where E : class, IEntity, new()
     {
         //TODO implement generic methods
-        public Task CreateAsync(E entity, CancellationToken cancellation = default)
+        public async Task CreateAsync(E entity, CancellationToken cancellation = default)
         {
-            throw new NotImplementedException();
+            await dbContext.Set<E>().AddAsync(entity, cancellation);
+            await dbContext.SaveChangesAsync(cancellation);
         }
 
-        public Task DeleteAsync(E entity, CancellationToken cancellation = default)
+        public async Task DeleteAsync(E entity, CancellationToken cancellation = default)
         {
-            throw new NotImplementedException();
+            dbContext.Set<E>().Remove(entity);
+            await dbContext.SaveChangesAsync(cancellation);
         }
 
-        public Task<ICollection<E>> GetAllAsync(Expression<Func<E, E>>? selector = null, CancellationToken cancellationToken = default)
+        public async Task<ICollection<E>> GetAllAsync(Expression<Func<E, E>>? selector = null, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            return await dbContext.Set<E>()
+                .Select(GetSelector(selector))
+                .ToListAsync(cancellationToken);
         }
 
         public async Task<E?> GetByIdAsync(Guid id, Expression<Func<E, E>>? selector = null, CancellationToken cancellationToken = default)
@@ -40,9 +44,10 @@ namespace PolyBoard.Server.Infrastructure.Repositories
             return selector;
         }
 
-        public Task UpdateAsync(E entity, CancellationToken cancellation = default)
+        public async Task UpdateAsync(E entity, CancellationToken cancellation = default)
         {
-            throw new NotImplementedException();
+            dbContext.Set<E>().Update(entity);
+            await dbContext.SaveChangesAsync(cancellation);
         }
     }
 }

@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using PolyBoard.Server.Application;
+using PolyBoard.Server.Core.Interfaces.Repositories;
 using PolyBoard.Server.Infrastructure;
+using PolyBoard.Server.Infrastructure.Repositories;
 using PolyBoard.Server.Presentation.Hubs;
 using PolyBoard.Server.Presentation.OptionsSetup;
 
@@ -25,7 +27,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredLength = 8;
     options.Password.RequiredUniqueChars = 1;
 });
-
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddSignalR();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer();
