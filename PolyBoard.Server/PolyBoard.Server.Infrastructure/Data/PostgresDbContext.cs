@@ -24,6 +24,9 @@ namespace PolyBoard.Server.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<UserAchievement>()
+                .HasIndex(ua => new { ua.UserId, ua.AchievementId})
+                .IsUnique();
             builder.Entity<GameEvent>()
                 .OwnsOne(
                     owner => owner.JsonBody, ownedNavigationBuilder =>
