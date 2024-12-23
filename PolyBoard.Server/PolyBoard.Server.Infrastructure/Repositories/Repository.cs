@@ -20,6 +20,12 @@ namespace PolyBoard.Server.Infrastructure.Repositories
             dbContext.Set<E>().Remove(entity);
             await dbContext.SaveChangesAsync(cancellation);
         }
+        public async Task<ICollection<E>> GetAsync(Expression<Func<E, bool>> predicate, CancellationToken cancellationToken = default)
+        {
+            return await dbContext.Set<E>()
+                .Where(predicate)
+                .ToListAsync(cancellationToken);
+        }
 
         public async Task<ICollection<E>> GetAllAsync(Expression<Func<E, E>>? selector = null, CancellationToken cancellationToken = default)
         {
