@@ -42,7 +42,6 @@ public partial class Figurehead : CharacterBody3D
 	private Camera3D diceCamera;
 	private Label notificationLabel;
 	private Panel notificationPanel;
-
 	// Opcja A: Typ AudioStreamPlayer3D
 	private AudioStreamPlayer3D walkSoundPlayer;
 
@@ -171,17 +170,6 @@ public partial class Figurehead : CharacterBody3D
 		}
 	}
 
-	public override void _Input(InputEvent @event)
-	{
-		
-		if (@event.IsActionPressed("ui_accept"))
-		{
-			SwitchToDiceCamera(); // Przełącz na kamerę Kostki
-			textureDisplay.Visible = false;
-			randomCard.Visible=false;
-		}
-		
-	}
 
 	private void OnDie1RollFinished(int value)
 	{
@@ -230,10 +218,8 @@ public partial class Figurehead : CharacterBody3D
 		}
 		
 	}
-
 	private void ReRollDice()
 	{
-		SwitchToDiceCamera();
 		Node dieNode1 = GetNodeOrNull(dieNodePath1);
 		Node dieNode2 = GetNodeOrNull(dieNodePath2);
 		if (dieNode1 != null && dieNode2 != null)
@@ -326,18 +312,7 @@ public partial class Figurehead : CharacterBody3D
 		}
 	}
 
-	private void SwitchToDiceCamera()
-	{
-		if (diceCamera != null)
-		{
-			GD.Print("Przełączono na kamerę Kostki.");
-			diceCamera.Current = true;
-		}
-		else
-		{
-			GD.PrintErr("Błąd: Kamera Kostki jest nieprawidłowa.");
-		}
-	}
+	
 
 	// Metoda do odtwarzania dźwięku chodzenia
 	private void PlayWalkSound()

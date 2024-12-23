@@ -8,7 +8,9 @@ private bool isMiddleButtonPressed = false;
 
 private float rotationSpeed = 0.005f; // Smaller value for smooth control
 private float rotationLerpSpeed = 10.0f; // Smoothing speed
-
+private float zoomSpeed = 10.0f;
+private float minFov = 10.0f;
+private float maxFov = 90.0f;
 private float currentYaw = 0f;   // Horizontal rotation (Y axis)
 private float targetYaw = 0f;
 
@@ -30,6 +32,8 @@ public override void _Process(double delta)
 HandleMouseInput();
 SmoothlyUpdateCameraPosition((float)delta);
 }
+
+
 
 private void HandleMouseInput()
 {
@@ -80,4 +84,10 @@ transform.Origin = newCameraPosition;
 transform = transform.LookingAt(boardCenter, Vector3.Up);
 GlobalTransform = transform;
 }
+private void AdjustFov(float amount)
+	{
+		Fov += amount;
+		Fov = Mathf.Clamp(Fov, minFov, maxFov);
+		GD.Print($"Aktualny FOV: {Fov}");
+	}
 }

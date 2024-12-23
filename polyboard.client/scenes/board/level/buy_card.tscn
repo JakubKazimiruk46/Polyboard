@@ -1,6 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://dvogx2n2lhbbd"]
+[gd_scene load_steps=13 format=3 uid="uid://dvogx2n2lhbbd"]
 
 [ext_resource type="Script" path="res://scenes/board/level/buy_card.gd" id="1_mel4x"]
+[ext_resource type="Texture2D" uid="uid://cde4ryndxi5f5" path="res://assets/images/money.png" id="2_e05aa"]
+[ext_resource type="AudioStream" uid="uid://c60qn6h7pxg1d" path="res://assets/Music/cash-register-fake-88639.mp3" id="2_sdkg4"]
+[ext_resource type="AudioStream" uid="uid://dt6b1ddxbfx08" path="res://assets/Music/clock-70484.mp3" id="3_a35wi"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j2360"]
 bg_color = Color(0.868997, 0.50837, 0.128994, 1)
@@ -46,8 +49,32 @@ Button/font_sizes/font_size = 22
 Button/fonts/font = SubResource("SystemFont_m2apk")
 Button/styles/normal = SubResource("StyleBoxFlat_yy1ye")
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_c7xt8"]
+particle_flag_disable_z = true
+emission_shape_offset = Vector3(0, -500, 30)
+emission_shape_scale = Vector3(200, 1, 1)
+emission_shape = 3
+emission_box_extents = Vector3(10, 30, 1)
+inherit_velocity_ratio = 1.0
+velocity_pivot = Vector3(10, 0, 0)
+spread = 180.0
+gravity = Vector3(0, 2000, 0)
+linear_accel_min = 98.18
+linear_accel_max = 100.0
+damping_min = 13.755
+damping_max = 13.83
+
 [node name="BuyCard" type="CanvasLayer"]
 script = ExtResource("1_mel4x")
+
+[node name="Blur" type="ColorRect" parent="."]
+modulate = Color(0.301961, 0.301961, 0.301961, 0.627451)
+self_modulate = Color(0.277528, 0.277528, 0.277528, 1)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 anchors_preset = -1
@@ -89,7 +116,13 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_j2360")
 [node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/BuyPanel"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_right = 12
+
+[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/MarginContainer"]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 size_flags_vertical = 3
@@ -127,7 +160,22 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 text = "VIEW BOARD"
 
+[node name="GPUParticles2D" type="GPUParticles2D" parent="HBoxContainer"]
+position = Vector2(275, 82.5)
+emitting = false
+amount = 300
+process_material = SubResource("ParticleProcessMaterial_c7xt8")
+texture = ExtResource("2_e05aa")
+
 [node name="Timer" type="Timer" parent="."]
+
+[node name="ZakupKarty" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_sdkg4")
+bus = &"Sfx"
+
+[node name="Ticking" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_a35wi")
+bus = &"Sfx"
 
 [connection signal="pressed" from="HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/Buttons/BuyButton" to="." method="on_buyButtonPressed"]
 [connection signal="pressed" from="HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/Buttons/AuctionButton" to="." method="on_auctionButtonPressed"]

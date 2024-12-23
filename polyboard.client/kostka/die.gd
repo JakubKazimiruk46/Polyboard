@@ -3,8 +3,10 @@ extends RigidBody3D
 
 @onready var raycasts = $Raycasts.get_children()
 @onready var dice_sound_player = $AudioStreamPlayer
-
-
+@onready var buyCard = $"../BuyCard"
+@onready var diceCamera = $"../KostkiKamera"
+@onready var textureDisplay = $"../CanvasLayer/TextureRect2/FieldCard"
+@onready var randomCard = $"../CanvasLayer/TextureRect2/RandomCard"
 
 var start_pos
 var roll_strength = 25
@@ -20,7 +22,7 @@ func _ready():
 
 
 func _input(event):
-	if event.is_action_pressed("ui_accept") && !is_rolling:
+	if event.is_action_pressed("ui_accept") && !is_rolling && buyCard.visible==false:
 		_roll()
 
 
@@ -31,7 +33,9 @@ func _roll():
 	transform.origin = start_pos
 	linear_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
-
+	SwitchToDiceCamera()
+	textureDisplay.visible = false
+	randomCard.visible=false
 	# Randomowa rotacja
 	transform.basis = Basis(Vector3.RIGHT, randf_range(0, 2 * PI)) * transform.basis
 	transform.basis = Basis(Vector3.UP, randf_range(0, 2 * PI)) * transform.basis
@@ -48,7 +52,10 @@ func _roll():
 		dice_sound_player.play()
 	else:
 		print("AudioStreamPlayer nie jest przypisany!")
-
+		
+func  SwitchToDiceCamera():
+		if diceCamera != null:
+			diceCamera.make_current()
 
 func _on_sleeping_state_changed() -> void:
 	if sleeping:

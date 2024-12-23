@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+@onready var trade = $"../Trade"
+
 var cards_view = false
 var buttons_view = false
 
@@ -27,6 +29,9 @@ func on_cards_button_pressed():
 		tween.set_parallel(false)
 		cards_view = false
 # Called every frame. 'delta' is the elapsed time since the previous frame.
+func on_trade_button_pressed():
+	trade.visible = true;
+
 func on_view_buttons_pressed():
 	if buttons_view == false:
 		buttons_view = true
