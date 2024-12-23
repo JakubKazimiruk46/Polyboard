@@ -33,7 +33,7 @@ public partial class Board : StaticBody3D
 		GD.PrintErr("Błąd: Nie znaleziono Sprite2D do wyświetlania tekstur.");
 	}
 	targetPosition = GlobalPosition;
-
+	BuyCard = GetTree().Root.GetNode<CanvasLayer>("Level/BuyCard");
 	foreach (Node child in GetChildren()) 
 	{
 		if (child is Field field)  

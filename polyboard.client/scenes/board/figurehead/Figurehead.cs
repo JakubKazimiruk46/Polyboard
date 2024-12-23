@@ -69,7 +69,7 @@ public partial class Figurehead : CharacterBody3D
 		}
 
 		StopWalkSound();
-		board.ShowFieldTexture(CurrentPositionIndex);
+		board.StepOnField(CurrentPositionIndex);
 
 		// Możliwość przyznania ECTS po zakończeniu ruchu
 		OnFieldLanded(board.GetFieldById(CurrentPositionIndex));
