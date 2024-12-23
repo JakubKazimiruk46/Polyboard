@@ -33,13 +33,6 @@ public partial class Board : StaticBody3D
 		GD.PrintErr("Błąd: Nie znaleziono Sprite2D do wyświetlania tekstur.");
 	}
 	targetPosition = GlobalPosition;
-	figurehead = GetTree().Root.GetNode<Figurehead>("Level/Figurehead");
-	BuyCard = GetTree().Root.GetNode<CanvasLayer>("Level/BuyCard");
-	if (figurehead == null)
-	{
-		GD.PrintErr("Nie znaleziono pionka.");
-	}
-	
 
 	foreach (Node child in GetChildren()) 
 	{
@@ -47,12 +40,6 @@ public partial class Board : StaticBody3D
 		{
 			fields.Add(field); 
 		}
-	}
-
-	if (figurehead != null)
-	{
-		MovePawn(figurehead, 0, 0);
-		 
 	}
 	
 }
