@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using PolyBoard.Server.Core.Entities;
+using PolyBoard.Server.Application.DTO;
 
 namespace PolyBoard.Server.Application.Achievements.Queries;
 
-public class GetAchievementsByUserIdQuery : IRequest<IEnumerable<UserAchievement>>
+public class GetAchievementsByUserIdQuery : IRequest<IEnumerable<UserAchievementDTO>>
 {
     public Guid UserId { get; set; }
 }
