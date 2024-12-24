@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://d1pxnnv4quoc0"
-path="res://.godot/imported/House.glb-36ae31ba27fb94c44a539428937a028f.scn"
+uid="uid://dt5idm3yqlmky"
+path="res://.godot/imported/Hotel.glb-c34073f47e0025128de34a034a5f53e7.scn"
 
 [deps]
 
-source_file="res://scenes/board/level/House.glb"
-dest_files=["res://.godot/imported/House.glb-36ae31ba27fb94c44a539428937a028f.scn"]
+source_file="res://scenes/board/level/Hotel.glb"
+dest_files=["res://.godot/imported/Hotel.glb-c34073f47e0025128de34a034a5f53e7.scn"]
 
 [params]
 

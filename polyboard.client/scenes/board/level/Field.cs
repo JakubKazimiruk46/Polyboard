@@ -9,9 +9,9 @@ public partial class Field : Node3D
 	protected Vector3 bRCL; //dolny prawy rog - lokalna pozycja
 	protected Vector3 bRCG; //dolny prawy rog - globalna pozycja
 	public List<Vector3> positions=new List<Vector3>(6);
-	public List<Vector3> buildPositions=new List<Vector3>(4);
+	public List<Vector3> buildPositions=new List<Vector3>(5);
 	public List<bool> occupied= new List<bool>(6);
-	public List<bool> buildOccupied=new List<bool>(4);
+	public List<bool> buildOccupied=new List<bool>(5);
 	protected Sprite3D _border;
 	protected Area3D _area;
 	protected static int nextId = 0;
@@ -26,7 +26,7 @@ public partial class Field : Node3D
 	{
 		occupied.Add(false);
 	}
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		buildOccupied.Add(false);
 	}
@@ -74,10 +74,11 @@ public partial class Field : Node3D
 				positions.Add(new Vector3(bRCG.X+1.5f, 0.5f, bRCG.Z-0.5f));
 				positions.Add(new Vector3(bRCG.X+0.5f, 0.5f, bRCG.Z-1.5f));
 				positions.Add(new Vector3(bRCG.X+0.5f, 0.5f, bRCG.Z-0.5f));
-				buildPositions.Add(new Vector3(bRCG.X+3.55f, 0.28f, bRCG.Z-0.3f));
-				buildPositions.Add(new Vector3(bRCG.X+3.55f, 0.28f, bRCG.Z-0.8f));
-				buildPositions.Add(new Vector3(bRCG.X+3.55f, 0.28f, bRCG.Z-1.3f));
-				buildPositions.Add(new Vector3(bRCG.X+3.55f, 0.28f, bRCG.Z-1.8f));
+				buildPositions.Add(new Vector3(bRCG.X+3.6f, 0.28f, bRCG.Z-0.3f));
+				buildPositions.Add(new Vector3(bRCG.X+3.6f, 0.28f, bRCG.Z-0.8f));
+				buildPositions.Add(new Vector3(bRCG.X+3.6f, 0.28f, bRCG.Z-1.3f));
+				buildPositions.Add(new Vector3(bRCG.X+3.6f, 0.28f, bRCG.Z-1.8f));
+				buildPositions.Add(new Vector3(bRCG.X+3.65f, 0.28f, bRCG.Z-1.0f));
 
 				
 			}
@@ -94,6 +95,7 @@ public partial class Field : Node3D
 				buildPositions.Add(new Vector3(bRCG.X+0.8f, 0.28f, bRCG.Z+3.55f));
 				buildPositions.Add(new Vector3(bRCG.X+1.3f, 0.28f, bRCG.Z+3.55f));
 				buildPositions.Add(new Vector3(bRCG.X+1.8f, 0.28f, bRCG.Z+3.55f));
+				buildPositions.Add(new Vector3(bRCG.X+1.0f, 0.28f, bRCG.Z+3.55f));
 			}
 			else if(FieldId>=21 && FieldId<=30)
 			{
@@ -107,6 +109,7 @@ public partial class Field : Node3D
 				buildPositions.Add(new Vector3(bRCG.X-3.55f, 0.28f, bRCG.Z+1.8f));
 				buildPositions.Add(new Vector3(bRCG.X-3.55f, 0.28f, bRCG.Z+1.3f));
 				buildPositions.Add(new Vector3(bRCG.X-3.55f, 0.28f, bRCG.Z+1.8f));
+				buildPositions.Add(new Vector3(bRCG.X-3.55f, 0.28f, bRCG.Z+1.0f));
 				
 			}
 			else if(FieldId>=31 && FieldId<=40)
@@ -117,10 +120,11 @@ public partial class Field : Node3D
 				positions.Add(new Vector3(bRCG.X-0.5f, 0.5f, bRCG.Z-1.5f));
 				positions.Add(new Vector3(bRCG.X-1.5f, 0.5f, bRCG.Z-0.5f));
 				positions.Add(new Vector3(bRCG.X-0.5f, 0.5f, bRCG.Z-0.5f));
-				buildPositions.Add(new Vector3(bRCG.X-0.3f, 0.28f, bRCG.Z-3.55f));
-				buildPositions.Add(new Vector3(bRCG.X-0.8f, 0.28f, bRCG.Z-3.55f));
-				buildPositions.Add(new Vector3(bRCG.X-1.3f, 0.28f, bRCG.Z-3.55f));
-				buildPositions.Add(new Vector3(bRCG.X-1.8f, 0.28f, bRCG.Z-3.55f));
+				buildPositions.Add(new Vector3(bRCG.X-0.3f, 0.28f, bRCG.Z-3.6f));
+				buildPositions.Add(new Vector3(bRCG.X-0.8f, 0.28f, bRCG.Z-3.6f));
+				buildPositions.Add(new Vector3(bRCG.X-1.3f, 0.28f, bRCG.Z-3.6f));
+				buildPositions.Add(new Vector3(bRCG.X-1.8f, 0.28f, bRCG.Z-3.6f));
+				buildPositions.Add(new Vector3(bRCG.X-1.0f, 0.28f, bRCG.Z-3.6f));
 			}
 				
 				
@@ -167,9 +171,38 @@ public partial class Field : Node3D
 	{
 		
 		homeInstance.RotationDegrees = new Vector3(0, -270, 0);
-		homeInstance.Scale=new Vector3(0.25f,0.25f,0.25f);
+		homeInstance.Scale=new Vector3(0.5f,0.5f,0.5f);
 		AddChild(homeInstance);
 		homeInstance.GlobalPosition = buildPositions[0];
+
+	}
+	else
+	{
+		GD.PrintErr("Nie udało się stworzyć sceny domku.");
+	}
+	}
+	
+	public void BuildHotel(int FieldId)
+	{
+		HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 11, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
+	if (invalidFieldIds.Contains(FieldId))
+	{
+	return;
+	}
+		var hotelScene=GD.Load<PackedScene>("res://scenes/board/buildings/hotel.tscn");
+		if (hotelScene == null)
+	{
+		GD.PrintErr("Nie udało się załadować sceny hotelu.");
+		return;
+	}
+	var hotelInstance = hotelScene.Instantiate() as Node3D;
+	 if (hotelInstance != null)
+	{
+		
+		hotelInstance.RotationDegrees = new Vector3(0, 0, 0);
+		hotelInstance.Scale=new Vector3(0.45f,0.45f,0.45f);
+		AddChild(hotelInstance);
+		hotelInstance.GlobalPosition = buildPositions[4];
 
 	}
 	else
