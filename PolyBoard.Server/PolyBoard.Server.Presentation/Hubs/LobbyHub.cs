@@ -22,7 +22,7 @@ namespace PolyBoard.Server.Presentation.Hubs
 
         public async Task SendLobbyDetails(Guid lobbyId, string? password = null)
         {
-            var lobby = _lobbies.FirstOrDefault(l => l.Value.Id.ToString() == lobbyId.ToString()).Value;
+            var lobby = _lobbies.FirstOrDefault(l => l.Value.Id.Equals(lobbyId)).Value;
 
             if (lobby == null || lobby.Password != password)
                 return;
@@ -45,8 +45,11 @@ namespace PolyBoard.Server.Presentation.Hubs
         }
 
 
-        public async Task CreateLobby(string lobbyName, int? maxPlayers = 4, string? password = null)
+        public async Task CreateLobby(string lobbyName, int? maxPlayers = 6, string? password = null)
         {
+            if (password == string.Empty)
+                password = null;
+
             var lobby = new Lobby(lobbyName, maxPlayers, password);
             _lobbies[lobby.Id] = lobby;
 

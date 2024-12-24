@@ -74,6 +74,7 @@ func _on_request_completed(result: int, response_code: int, headers: Array, body
 		username_input.clear()
 		password_input.clear()
 		exit_login_menu.emit()
+		HubConnectionService.StartConnection()
 		set_process(false)
 	else:
 		error_label.text = "Login failed: " + response_text
