@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=18 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -14,7 +14,6 @@
 [ext_resource type="AudioStream" uid="uid://8nca3d2qfr0d" path="res://assets/effects/dice.mp3" id="11_i73ew"]
 [ext_resource type="PackedScene" uid="uid://be5o85k4nbeu5" path="res://scenes/board/level/ui.tscn" id="13_ivesl"]
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="14_u56ja"]
-[ext_resource type="PackedScene" uid="uid://cq0eseym5bn1d" path="res://scenes/board/buildings/house.tscn" id="16_yl4lh"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]
 size = Vector3(28.5, 0.2, 28.5)
@@ -269,9 +268,6 @@ visible = false
 visible = false
 
 [node name="UI" parent="." instance=ExtResource("13_ivesl")]
-
-[node name="House" parent="." instance=ExtResource("16_yl4lh")]
-transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 10.4221, 0.302601, -8.14075)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_4fcws")

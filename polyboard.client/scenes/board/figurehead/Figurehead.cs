@@ -288,7 +288,9 @@ public partial class Figurehead : CharacterBody3D
 
 		// Zatrzymaj dźwięk chodzenia po zakończeniu ruchu
 		StopWalkSound();
-
+		Field currentField=board.GetFieldById(targetIndex);
+		GD.Print($"Podstawiono domek na pozycji {targetIndex}");
+		currentField.BuildHouse(targetIndex);
 		board.ShowFieldTexture(targetIndex);
 		// Przełącz z powrotem na kamerę Master shot po zakończeniu ruchu
 		GD.Print("Przełączanie kamery z powrotem na Master shot po zakończeniu ruchu.");

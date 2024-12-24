@@ -9,6 +9,9 @@ public partial class Field : Node3D
 	protected Vector3 bRCL; //dolny prawy rog - lokalna pozycja
 	protected Vector3 bRCG; //dolny prawy rog - globalna pozycja
 	public List<Vector3> positions=new List<Vector3>(6);
+	public List<Vector3> buildPositions=new List<Vector3>(4);
+	public List<bool> occupied= new List<bool>(6);
+	public List<bool> buildOccupied=new List<bool>(4);
 	protected Sprite3D _border;
 	protected Area3D _area;
 	protected static int nextId = 0;
@@ -19,6 +22,14 @@ public partial class Field : Node3D
 	{
 		FieldId = nextId;
 		nextId++;
+	for (int i = 0; i < 6; i++)
+	{
+		occupied.Add(false);
+	}
+	for (int i = 0; i < 4; i++)
+	{
+		buildOccupied.Add(false);
+	}
 	}
 	public override void _Ready()
 	{
@@ -63,6 +74,11 @@ public partial class Field : Node3D
 				positions.Add(new Vector3(bRCG.X+1.5f, 0.5f, bRCG.Z-0.5f));
 				positions.Add(new Vector3(bRCG.X+0.5f, 0.5f, bRCG.Z-1.5f));
 				positions.Add(new Vector3(bRCG.X+0.5f, 0.5f, bRCG.Z-0.5f));
+				buildPositions.Add(new Vector3(bRCG.X+3.55f, 0.28f, bRCG.Z-0.3f));
+				buildPositions.Add(new Vector3(bRCG.X+3.55f, 0.28f, bRCG.Z-0.8f));
+				buildPositions.Add(new Vector3(bRCG.X+3.55f, 0.28f, bRCG.Z-1.3f));
+				buildPositions.Add(new Vector3(bRCG.X+3.55f, 0.28f, bRCG.Z-1.8f));
+
 				
 			}
 			else if(FieldId>=11 && FieldId<=19)
@@ -74,6 +90,10 @@ public partial class Field : Node3D
 				positions.Add(new Vector3(bRCG.X+0.5f, 0.5f, bRCG.Z+1.5f));
 				positions.Add(new Vector3(bRCG.X+1.5f, 0.5f, bRCG.Z+0.5f));
 				positions.Add(new Vector3(bRCG.X+0.5f, 0.5f, bRCG.Z+0.5f));
+				buildPositions.Add(new Vector3(bRCG.X+0.3f, 0.28f, bRCG.Z+3.55f));
+				buildPositions.Add(new Vector3(bRCG.X+0.8f, 0.28f, bRCG.Z+3.55f));
+				buildPositions.Add(new Vector3(bRCG.X+1.3f, 0.28f, bRCG.Z+3.55f));
+				buildPositions.Add(new Vector3(bRCG.X+1.8f, 0.28f, bRCG.Z+3.55f));
 			}
 			else if(FieldId>=21 && FieldId<=30)
 			{
@@ -83,6 +103,11 @@ public partial class Field : Node3D
 				positions.Add(new Vector3(bRCG.X-1.5f, 0.5f, bRCG.Z+0.5f));
 				positions.Add(new Vector3(bRCG.X-0.5f, 0.5f, bRCG.Z+1.5f));
 				positions.Add(new Vector3(bRCG.X-0.5f, 0.5f, bRCG.Z+0.5f));
+				buildPositions.Add(new Vector3(bRCG.X-3.55f, 0.28f, bRCG.Z+0.3f));
+				buildPositions.Add(new Vector3(bRCG.X-3.55f, 0.28f, bRCG.Z+1.8f));
+				buildPositions.Add(new Vector3(bRCG.X-3.55f, 0.28f, bRCG.Z+1.3f));
+				buildPositions.Add(new Vector3(bRCG.X-3.55f, 0.28f, bRCG.Z+1.8f));
+				
 			}
 			else if(FieldId>=31 && FieldId<=40)
 			{
@@ -92,6 +117,10 @@ public partial class Field : Node3D
 				positions.Add(new Vector3(bRCG.X-0.5f, 0.5f, bRCG.Z-1.5f));
 				positions.Add(new Vector3(bRCG.X-1.5f, 0.5f, bRCG.Z-0.5f));
 				positions.Add(new Vector3(bRCG.X-0.5f, 0.5f, bRCG.Z-0.5f));
+				buildPositions.Add(new Vector3(bRCG.X-0.3f, 0.28f, bRCG.Z-3.55f));
+				buildPositions.Add(new Vector3(bRCG.X-0.8f, 0.28f, bRCG.Z-3.55f));
+				buildPositions.Add(new Vector3(bRCG.X-1.3f, 0.28f, bRCG.Z-3.55f));
+				buildPositions.Add(new Vector3(bRCG.X-1.8f, 0.28f, bRCG.Z-3.55f));
 			}
 				
 				
@@ -118,6 +147,35 @@ public partial class Field : Node3D
 		_border.Visible = false;
 	}
 	
+	}
+	
+	public void BuildHouse(int FieldId)
+	{
+		HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 11, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
+	if (invalidFieldIds.Contains(FieldId))
+	{
+	return;
+	}
+		var houseScene=GD.Load<PackedScene>("res://scenes/board/buildings/house.tscn");
+		if (houseScene == null)
+	{
+		GD.PrintErr("Nie udało się załadować sceny domu.");
+		return;
+	}
+	var homeInstance = houseScene.Instantiate() as Node3D;
+	 if (homeInstance != null)
+	{
+		
+		homeInstance.RotationDegrees = new Vector3(0, -270, 0);
+		homeInstance.Scale=new Vector3(0.25f,0.25f,0.25f);
+		AddChild(homeInstance);
+		homeInstance.GlobalPosition = buildPositions[0];
+
+	}
+	else
+	{
+		GD.PrintErr("Nie udało się stworzyć sceny domku.");
+	}
 	}
 	
 	public void ShowDetailsDialog()
