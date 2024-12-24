@@ -1,8 +1,7 @@
-[gd_scene load_steps=21 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=19 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" path="res://scenes/board/level/level.gd" id="1_djwtq"]
-[ext_resource type="Texture2D" uid="uid://u6156pm3sx3h" path="res://assets/images/pb_background.jpg" id="1_ymkqo"]
 [ext_resource type="PackedScene" uid="uid://corrmnc7rodeh" path="res://scenes/board/figurehead/figurehead.tscn" id="3_8t0aq"]
 [ext_resource type="PackedScene" uid="uid://cqpmepp30bdrg" path="res://scenes/board/level/MAPA_OBIEKT.glb" id="4_6krdw"]
 [ext_resource type="PackedScene" uid="uid://dhj5sru57cpw4" path="res://kostka/die.tscn" id="5_p3toi"]
@@ -15,23 +14,22 @@
 [ext_resource type="AudioStream" uid="uid://8nca3d2qfr0d" path="res://assets/effects/dice.mp3" id="11_i73ew"]
 [ext_resource type="PackedScene" uid="uid://be5o85k4nbeu5" path="res://scenes/board/level/ui.tscn" id="13_ivesl"]
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="14_u56ja"]
+[ext_resource type="PackedScene" uid="uid://cq0eseym5bn1d" path="res://scenes/board/buildings/house.tscn" id="16_yl4lh"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]
 size = Vector3(28.5, 0.2, 28.5)
 
-[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_6ppou"]
-panorama = ExtResource("1_ymkqo")
-
-[sub_resource type="Sky" id="Sky_6qm8h"]
-sky_material = SubResource("PanoramaSkyMaterial_6ppou")
-
-[sub_resource type="Environment" id="Environment_7ajdt"]
-background_mode = 1
-background_color = Color(0.762404, 0.762404, 0.762404, 1)
-sky = SubResource("Sky_6qm8h")
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_8hnxd"]
 size = Vector3(0.113281, 102.644, 19.4651)
+
+[sub_resource type="Environment" id="Environment_4fcws"]
+background_mode = 1
+background_color = Color(1, 1, 1, 1)
+background_energy_multiplier = 0.85
+ambient_light_source = 3
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_sky_contribution = 0.75
+ambient_light_energy = 0.9
 
 [node name="Level" type="Node3D"]
 script = ExtResource("1_djwtq")
@@ -166,14 +164,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5513, 0, 11.9424)
 [node name="Field39" parent="Board" instance=ExtResource("6_jcf5o")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.73327, 0, 11.8929)
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_7ajdt")
-
 [node name="Figurehead" parent="." instance=ExtResource("3_8t0aq")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.688439, 10.3388)
 dieNodePath1 = NodePath("../Die1")
 dieNodePath2 = NodePath("../Die2")
 notificationPanelPath = NodePath("../NotificationLayer/NotificationPanel")
@@ -200,7 +192,7 @@ current = true
 script = ExtResource("8_cd8t5")
 
 [node name="KostkiKamera" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1.19249e-08, 1, 0, -1, 1.19249e-08, 0, 14, 0)
+transform = Transform3D(1, 0, 0, 0, 1.19249e-08, 1, 0, -1, 1.19249e-08, 0, 15.1216, 0)
 
 [node name="Die1" parent="." instance=ExtResource("5_p3toi")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.86167, 0)
@@ -277,6 +269,19 @@ visible = false
 visible = false
 
 [node name="UI" parent="." instance=ExtResource("13_ivesl")]
+
+[node name="House" parent="." instance=ExtResource("16_yl4lh")]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 10.4221, 0.302601, -8.14075)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_4fcws")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="WorldEnvironment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.22071, 0)
+light_energy = 5.0
+shadow_enabled = true
+omni_range = 30.0
+omni_attenuation = 0.8
 
 [editable path="NotificationLayer"]
 [editable path="UI"]
