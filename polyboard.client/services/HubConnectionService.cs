@@ -12,23 +12,19 @@ public class LobbyDetailsDTO
 
 public partial class HubConnectionService : Node
 {
-    public static HubConnection Connection;
-    private string? _token;
-    private static Guid _curentLobbyId;
+    public static HubConnection? Connection;
+    public static string? Token;
+    private static Guid? _curentLobbyId;
 
     public override void _Ready()
     {
-        // Pobierz token po pełnym załadowaniu drzewa sceny.
-        _token = GD.Load<Script>("res://scenes/authentication/authentication.gd").Get("token").AsString();
-
-        // Inicjalizacja po pobraniu tokena.
         Connection = new HubConnectionBuilder()
             .WithAutomaticReconnect()
             .WithKeepAliveInterval(TimeSpan.FromSeconds(10))
             .WithUrl("ws://localhost:8081/lobby",
                 options =>
                 {
-                    options.AccessTokenProvider = () => Task.FromResult(_token);
+                    options.AccessTokenProvider = () => Task.FromResult(Token);
                 })
             .Build();
         
@@ -52,7 +48,7 @@ public partial class HubConnectionService : Node
         }
     }
 
-    public async void CreateLobby(string lobbyName, int maxPlayers, string password)
+    public async void CreateLobby(string lobbyName, int maxPlayers = 6, string? password = null)
     {
         try
         {
@@ -84,4 +80,24 @@ public partial class HubConnectionService : Node
         await Connection.InvokeAsync("LeaveLobby", _curentLobbyId.ToString());
         _curentLobbyId = Guid.Empty;
     }
+    
+    public static async void UpdateToken(string newToken)
+    {
+        Token = newToken;
+        GD.Print(Token);
+        if (Connection != null)
+        {
+            await Connection.StopAsync();
+            Connection = new HubConnectionBuilder()
+                .WithAutomaticReconnect()
+                .WithKeepAliveInterval(TimeSpan.FromSeconds(10))
+                .WithUrl("ws://localhost:8081/lobby",
+                    options =>
+                    {
+                        options.AccessTokenProvider = () => Task.FromResult(Token);
+                    })
+                .Build();
+        }
+    }
+
 }
