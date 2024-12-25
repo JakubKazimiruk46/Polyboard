@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using PolyBoard.Server.Application.DTO;
 using PolyBoard.Server.Core.Enums;
 using PolyBoard.Server.Core.Helpers;
@@ -22,7 +24,7 @@ namespace PolyBoard.Server.Presentation.Hubs
 
         public async Task SendLobbyDetails(Guid lobbyId, string? password = null)
         {
-            var lobby = _lobbies.FirstOrDefault(l => l.Value.Id.ToString() == lobbyId.ToString()).Value;
+            var lobby = _lobbies.FirstOrDefault(l => l.Value.Id.Equals(lobbyId)).Value;
 
             if (lobby == null || lobby.Password != password)
                 return;
@@ -44,9 +46,12 @@ namespace PolyBoard.Server.Presentation.Hubs
             await Clients.Caller.SendAsync("ReceiveLobbyDetails", lobbyDetails);
         }
 
-
-        public async Task CreateLobby(string lobbyName, int? maxPlayers = 4, string? password = null)
+        [Authorize]
+        public async Task CreateLobby(string lobbyName, int? maxPlayers = 6, string? password = null)
         {
+            if (password == string.Empty)
+                password = null;
+
             var lobby = new Lobby(lobbyName, maxPlayers, password);
             _lobbies[lobby.Id] = lobby;
 

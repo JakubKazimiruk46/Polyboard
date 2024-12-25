@@ -71,9 +71,11 @@ func _on_request_completed(result: int, response_code: int, headers: Array, body
 	if response_code == 200:
 		print("Login successful: ", response_text)
 		Authentication.token = response_text
+		HubConnectionService.UpdateToken(response_text)
 		username_input.clear()
 		password_input.clear()
 		exit_login_menu.emit()
+		HubConnectionService.StartConnection()
 		set_process(false)
 	else:
 		error_label.text = "Login failed: " + response_text

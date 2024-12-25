@@ -21,6 +21,7 @@ func _ready():
 	private_checkbox.pressed.connect(on_private_checkbox_pressed)
 
 func on_back_button_pressed() -> void:
+	HubConnectionService.LeaveLobby()
 	exit_newgame_menu.emit()
 
 func on_public_checkbox_pressed() -> void:
