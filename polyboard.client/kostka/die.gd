@@ -18,11 +18,6 @@ func _ready():
 	start_pos = global_position
 
 
-func _input(event):
-	if event.is_action_pressed("ui_accept") && !is_rolling && buyCard.visible==false:
-		_roll()
-
-
 func _roll():
 	sleeping = false
 	freeze = false

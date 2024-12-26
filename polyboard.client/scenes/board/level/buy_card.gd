@@ -1,4 +1,6 @@
 extends CanvasLayer
+
+@onready var endturnbutton = $"../UI/ZakończTure"
 var board_view = false
 var total_time_in_secs : int = 30
 # Called when the node enters the scene tree for the first time.
@@ -47,6 +49,7 @@ func on_buyButtonPressed():
 	total_time_in_secs = 30
 	$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.text = ''
 	$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.add_theme_color_override("font_color","white")
+	endturnbutton.visible = true;
 
 func on_auctionButtonPressed():
 	self.visible = false
@@ -55,7 +58,7 @@ func on_auctionButtonPressed():
 	total_time_in_secs = 30
 	$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.text = ''
 	$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.add_theme_color_override("font_color","white")
-
+	endturnbutton.visible = true
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass

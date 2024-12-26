@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 
 public partial class Board : StaticBody3D
 {
-	 
+	[Export] public NodePath endTurnButtonPath;
 	private Vector3 targetPosition; 
 	private List<Field> fields = new List<Field>();
 	Figurehead figurehead;
 	private Sprite2D textureDisplay; // widok nieruchomości klikniętej do podglądu
 	private Sprite2D randomCard; // widok karty specjalnej/kasy społecznej do podglądu
 	private Sprite2D step_on_card; // widok karty w panelu zakupu
+	private Button endTurnButton;
+
 	CanvasLayer BuyCard; // widok panelu zakupu karty
 	TextureRect cardView; // tekstura, w której wyświetlana jest karta
 	Timer buyTime;
@@ -21,9 +23,11 @@ public partial class Board : StaticBody3D
 {
 	step_on_card=GetNodeOrNull<Sprite2D>("/root/Level/BuyCard/HBoxContainer/FieldView/TextureRect/FieldToBuy");
 	randomCard=GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/RandomCard");
-	 textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/FieldCard");
+	textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/FieldCard");
 	cardView = GetNodeOrNull<TextureRect>("/root/Level/BuyCard/HBoxContainer/FieldView/TextureRect");
 	buyTime = GetNodeOrNull<Timer>("/root/Level/BuyCard/Timer");
+	endTurnButton = GetNodeOrNull<Button>(endTurnButtonPath);
+
 	if (textureDisplay == null)
 	{
 		GD.PrintErr("Błąd: Nie znaleziono Sprite2D do wyświetlania tekstur.");
@@ -100,6 +104,7 @@ public List<Field> GetFields()
 		}
 		else if(fieldId==4 || fieldId==38 || fieldId==20 || fieldId == 30 || fieldId == 10)
 		{
+			endTurnButton.Visible = true;
 			return;
 		}
 		else
@@ -194,7 +199,6 @@ public List<Field> GetFields()
 	randomCard.Texture = cardTexture;
 	randomCard.Visible = true;
 		}
-		
 	}
 	
 
