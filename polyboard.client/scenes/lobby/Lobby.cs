@@ -2,36 +2,13 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using System.Linq;
 
 public partial class Lobby : Control
 {
-	private readonly string jsonInput = @"[
-		{
-			""id"": ""a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6"",
-			""connectionId"": ""z9y8x7w6-v5u4-t3s2-r1q0-p9o8n7m6l5k4"",
-			""username"": ""exampleUser1"",
-			""isReady"": false
-		},
-		{
-			""id"": ""f1g2h3i4-j5k6-l7m8-n9o0-p1q2r3s4t5u6"",
-			""connectionId"": ""v4w5x6y7-z8a9-b1c2-d3e4-f5g6h7i8j9k0"",
-			""username"": ""exampleUser2"",
-			""isReady"": true
-		},
-		{
-			""id"": ""m1n2o3p4-q5r6-s7t8-u9v0-w1x2y3z4a5b6"",
-			""connectionId"": ""c4d5e6f7-g8h9-i1j2-k3l4-m5n6o7p8q9r0"",
-			""username"": ""exampleUser3"",
-			""isReady"": true
-		},
-		{
-			""id"": ""q1r2s3t4-u5v6-w7x8-y9z0-a1b2c3d4e5f6"",
-			""connectionId"": ""h4i5j6k7-l8m9-n1o2-p3q4-r5s6t7u8v9w0"",
-			""username"": ""exampleUser4"",
-			""isReady"": true
-		}
-	]";
+	//Cale gui na razie takie jak bylo
+	//Zhardcodowane
+	private string lobbypass = "abc";
+	private string lobbyIdString = "6f83ae42-dac4-4d06-8311-e46df2f15d3c";
 
 	public class User
 	{
@@ -42,31 +19,61 @@ public partial class Lobby : Control
 	}
 
 	private PackedScene _lobbyPersonScene;
-
-	private List<User> _users;
-
+	private List<User> _users = new List<User>();
 	private Dictionary<User, Control> _userGuiMap = new Dictionary<User, Control>();
+
 	private TextureButton _backButton;
 	private Button _readyButton;
-	
 	private Button _startGameButton;
 
 	public override void _Ready()
 	{
+		GD.Print("Lobby initialized.\n");
+
 		_lobbyPersonScene = (PackedScene)GD.Load("res://scenes/lobby/lobby_person.tscn");
 
 		var userListContainer = GetNode<VBoxContainer>("MarginContainer/VBoxContainer/UserList");
-
-		_users = JsonConvert.DeserializeObject<List<User>>(jsonInput);
-
 		_readyButton = GetNode<Button>("MarginContainer/VBoxContainer/HBoxContainer/ReadyButton");
-		_readyButton.Pressed += OnReadyButtonPressed;
-		
 		_startGameButton = GetNode<Button>("MarginContainer/VBoxContainer/HBoxContainer/StartButton");
-		_startGameButton.Pressed += OnStartButtonPressed;
-		
 		_backButton = GetNode<TextureButton>("MarginContainer/VBoxContainer/HBoxContainer2/BackButton");
+
+		_readyButton.Pressed += OnReadyButtonPressed;
+		_startGameButton.Pressed += OnStartButtonPressed;
 		_backButton.Pressed += OnBackButtonPressed;
+
+		HubConnectionService.OnLobbyDetailsReceived += UpdateLobbyUsers;
+
+		if (Guid.TryParse(lobbyIdString, out Guid lobbyId))
+		{
+			GD.Print("Fetching lobby details...");
+			var hubConnectionService = new HubConnectionService();
+			hubConnectionService.StartConnection();
+			hubConnectionService.GetLobbyDetails(lobbyId, lobbypass);
+		}
+		else
+		{
+			GD.Print("Invalid lobby ID.");
+		}
+	}
+
+	private void UpdateLobbyUsers(List<User> users)
+	{
+		GD.Print("Received lobby user details.\n");
+
+		_users = users;
+
+		foreach (var user in _users)
+		{
+			GD.Print($"User in lobby: {user.Username}");
+		}
+
+		PopulateUserList();
+	}
+
+	private void PopulateUserList()
+	{
+		var userListContainer = GetNode<VBoxContainer>("MarginContainer/VBoxContainer/UserList");
+		userListContainer.ClearChildren();
 
 		foreach (var user in _users)
 		{
@@ -80,42 +87,61 @@ public partial class Lobby : Control
 			statusLabel.AddThemeColorOverride("font_color", user.IsReady ? Colors.Green : Colors.Red);
 
 			var textureRect = lobbyPersonInstance.GetNode<TextureRect>("PanelContainer/MarginContainer/HBoxContainer/HBoxContainer/TextureRect");
-			textureRect.Visible = user.Username == "exampleUser1"; // Przykład dla "admina"
+			textureRect.Visible = user.Username == "exampleUser1";
 
 			userListContainer.AddChild(lobbyPersonInstance);
 
 			_userGuiMap[user] = lobbyPersonInstance;
 		}
 
-		var firstUser = _users[0];
-		_readyButton.Text = firstUser.IsReady ? "Unready" : "Ready";
+		if (_users.Count > 0)
+		{
+			_readyButton.Text = _users[0].IsReady ? "Unready" : "Ready";
+		}
 	}
 
 	private void OnReadyButtonPressed()
 	{
-		var firstUser = _users[0];
+		if (_users.Count == 0)
+			return;
 
+		var firstUser = _users[0];
 		firstUser.IsReady = !firstUser.IsReady;
 
-		var lobbyPersonInstance = _userGuiMap[firstUser];
-		var statusLabel = lobbyPersonInstance.GetNode<Label>("PanelContainer/MarginContainer/HBoxContainer/HBoxContainer2/Status");
-		statusLabel.Text = firstUser.IsReady ? "READY" : "NOT READY";
-		statusLabel.AddThemeColorOverride("font_color", firstUser.IsReady ? Colors.Green : Colors.Red);
+		if (_userGuiMap.TryGetValue(firstUser, out var lobbyPersonInstance))
+		{
+			var statusLabel = lobbyPersonInstance.GetNode<Label>("PanelContainer/MarginContainer/HBoxContainer/HBoxContainer2/Status");
+			statusLabel.Text = firstUser.IsReady ? "READY" : "NOT READY";
+			statusLabel.AddThemeColorOverride("font_color", firstUser.IsReady ? Colors.Green : Colors.Red);
+		}
 
 		_readyButton.Text = firstUser.IsReady ? "Unready" : "Ready";
+
 	}
-	
+
 	private void OnStartButtonPressed()
 	{
-			GetTree().ChangeSceneToFile("res://scenes/board/level/level.tscn");
+		GetTree().ChangeSceneToFile("res://scenes/board/level/level.tscn");
 	}
+
 	private void OnBackButtonPressed()
 	{
 		var _previousScenePath = "res://scenes/join.game/join_game.tscn";
-		
 		if (!string.IsNullOrEmpty(_previousScenePath))
 		{
 			GetTree().ChangeSceneToFile(_previousScenePath);
 		}
+	}
 }
+
+public static class NodeExtensions
+{
+	public static void ClearChildren(this Node parent)
+	{
+		foreach (var child in parent.GetChildren())
+		{
+			parent.RemoveChild(child);
+			child.QueueFree();
+		}
+	}
 }
