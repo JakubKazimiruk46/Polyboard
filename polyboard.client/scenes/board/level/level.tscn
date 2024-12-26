@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=19 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dhj5sru57cpw4" path="res://kostka/die.tscn" id="5_p3toi"]
 [ext_resource type="PackedScene" uid="uid://bvlhympj7pq71" path="res://scenes/board/level/field.tscn" id="6_jcf5o"]
 [ext_resource type="PackedScene" uid="uid://cxbg61n0xrbda" path="res://scenes/board/level/corner_field.tscn" id="6_ms3uj"]
+[ext_resource type="AudioStream" uid="uid://dweqb2y63ubpj" path="res://assets/Music/construction_sound.mp3" id="6_x8g8b"]
 [ext_resource type="Script" path="res://scenes/board/level/kamera_figurehead.gd" id="7_xxuvu"]
 [ext_resource type="Script" path="res://scenes/board/level/MasterShot.cs" id="8_cd8t5"]
 [ext_resource type="PackedScene" uid="uid://uicwwtau32m7" path="res://scenes/board/level/menu.tscn" id="10_8um66"]
@@ -162,6 +163,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5513, 0, 11.9424)
 
 [node name="Field39" parent="Board" instance=ExtResource("6_jcf5o")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.73327, 0, 11.8929)
+
+[node name="ConstructionSound" type="AudioStreamPlayer3D" parent="Board"]
+stream = ExtResource("6_x8g8b")
+pitch_scale = 1.39
+bus = &"Sfx"
 
 [node name="Figurehead" parent="." instance=ExtResource("3_8t0aq")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.688439, 10.3388)
