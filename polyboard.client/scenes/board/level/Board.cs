@@ -7,43 +7,43 @@ using System.Threading.Tasks;
 
 public partial class Board : StaticBody3D
 {
-	 
+	[Export] public NodePath endTurnButtonPath;
 	private Vector3 targetPosition; 
 	private List<Field> fields = new List<Field>();
 	Figurehead figurehead;
-	private Sprite2D textureDisplay;
-	private Sprite2D randomCard;
-	
-	
+	private Sprite2D textureDisplay; // widok nieruchomości klikniętej do podglądu
+	private Sprite2D randomCard; // widok karty specjalnej/kasy społecznej do podglądu
+	private Sprite2D step_on_card; // widok karty w panelu zakupu
+	private Button endTurnButton;
 
+	CanvasLayer BuyCard; // widok panelu zakupu karty
+	TextureRect cardView; // tekstura, w której wyświetlana jest karta
+	Timer buyTime;
 	public override void _Ready()
 {
+	step_on_card=GetNodeOrNull<Sprite2D>("/root/Level/BuyCard/HBoxContainer/FieldView/TextureRect/FieldToBuy");
 	randomCard=GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/RandomCard");
-	 textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/FieldCard");
+	textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/FieldCard");
+	cardView = GetNodeOrNull<TextureRect>("/root/Level/BuyCard/HBoxContainer/FieldView/TextureRect");
+	buyTime = GetNodeOrNull<Timer>("/root/Level/BuyCard/Timer");
+	endTurnButton = GetNodeOrNull<Button>(endTurnButtonPath);
+
 	if (textureDisplay == null)
 	{
 		GD.PrintErr("Błąd: Nie znaleziono Sprite2D do wyświetlania tekstur.");
 	}
-	targetPosition = GlobalPosition;
-	figurehead = GetTree().Root.GetNode<Figurehead>("Level/Figurehead");
-	if (figurehead == null)
+	if (step_on_card == null)
 	{
-		GD.PrintErr("Nie znaleziono pionka.");
+		GD.PrintErr("Błąd: Nie znaleziono Sprite2D do wyświetlania tekstur.");
 	}
-	
-
+	targetPosition = GlobalPosition;
+	BuyCard = GetTree().Root.GetNode<CanvasLayer>("Level/BuyCard");
 	foreach (Node child in GetChildren()) 
 	{
 		if (child is Field field)  
 		{
 			fields.Add(field); 
 		}
-	}
-
-	if (figurehead != null)
-	{
-		MovePawn(figurehead, 0, 0);
-		 
 	}
 	
 }
@@ -82,8 +82,60 @@ public List<Field> GetFields()
 			float scaleFactor = Math.Min(scaleFactorX, scaleFactorY);
 			Vector2 scale = new Vector2(scaleFactor, scaleFactor);
 			
-			textureDisplay.Scale = scale; 
+			textureDisplay.Scale = scale;
 			textureDisplay.Visible = true;  
+		}
+		else
+		{
+			GD.PrintErr($"Błąd: Nie udało się załadować tekstury {textureName}.");
+		}
+	}
+	public void StepOnField(int fieldId)
+	{
+		if(fieldId==2 || fieldId==17 || fieldId==33)
+		{
+			ShowRandomCard("community");
+			return;
+		}
+		else if(fieldId==7 || fieldId==22 || fieldId==36)
+		{
+			ShowRandomCard("chance");
+			return;
+		}
+		else if(fieldId==4 || fieldId==38 || fieldId==20 || fieldId == 30 || fieldId == 10)
+		{
+			endTurnButton.Visible = true;
+			return;
+		}
+		else
+		{
+			BuyField(fieldId);
+			return;
+		}
+	}
+	public void BuyField(int fieldId)
+	{
+		buyTime.Start();
+		randomCard.Visible=false;
+		
+		string textureName = $"Field{fieldId}";
+	
+		
+		Texture2D fieldTexture = ResourceLoader.Load<Texture2D>($"res://scenes/board/level/textures/{textureName}.png");
+		if (fieldTexture != null)
+		{
+			step_on_card.Texture = fieldTexture;
+			
+			Vector2 viewportSize = GetViewport().GetVisibleRect().Size;
+			
+			float scaleFactorX = viewportSize.X / 3000f;  
+			float scaleFactorY = viewportSize.Y / 1250f;  
+			float scaleFactor = Math.Min(scaleFactorX, scaleFactorY);
+			Vector2 scale = new Vector2(scaleFactor, scaleFactor);
+			
+			step_on_card.Scale = scale;
+			cardView.Scale = scale;
+			BuyCard.Visible = true;
 		}
 		else
 		{
@@ -147,7 +199,6 @@ public List<Field> GetFields()
 	randomCard.Texture = cardTexture;
 	randomCard.Visible = true;
 		}
-		
 	}
 	
 

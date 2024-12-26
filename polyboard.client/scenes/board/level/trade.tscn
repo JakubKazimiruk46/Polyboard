@@ -1,0 +1,263 @@
+[gd_scene load_steps=16 format=3 uid="uid://h1ww7awlbuhf"]
+
+[ext_resource type="Texture2D" uid="uid://b6utbuj146gel" path="res://assets/images/trade.png" id="1_j5epo"]
+[ext_resource type="Script" path="res://scenes/board/level/trade.gd" id="1_o71mw"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6ncgk"]
+bg_color = Color(1, 0.560888, 0.247211, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+
+[sub_resource type="SystemFont" id="SystemFont_vodpx"]
+subpixel_positioning = 0
+
+[sub_resource type="LabelSettings" id="LabelSettings_mdfrh"]
+font = SubResource("SystemFont_vodpx")
+font_size = 22
+
+[sub_resource type="SystemFont" id="SystemFont_s5qps"]
+subpixel_positioning = 0
+
+[sub_resource type="LabelSettings" id="LabelSettings_x6cg4"]
+font = SubResource("SystemFont_s5qps")
+
+[sub_resource type="SystemFont" id="SystemFont_7xje2"]
+font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qorml"]
+bg_color = Color(0.42319, 0, 0, 1)
+border_width_bottom = 3
+border_color = Color(0.215494, 0, 0, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dho4u"]
+bg_color = Color(0.784314, 0, 0, 1)
+border_width_bottom = 8
+border_color = Color(0.339735, 3.33907e-07, 1.08294e-07, 1)
+border_blend = true
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id="Theme_23qmu"]
+Button/fonts/font = SubResource("SystemFont_7xje2")
+Button/styles/hover = SubResource("StyleBoxFlat_qorml")
+Button/styles/normal = SubResource("StyleBoxFlat_dho4u")
+
+[sub_resource type="SystemFont" id="SystemFont_hp020"]
+font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xjcim"]
+bg_color = Color(0.0418908, 0.301007, 0, 1)
+border_width_bottom = 3
+border_color = Color(0.00430043, 0.238645, 7.21961e-08, 1)
+border_blend = true
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ecnyf"]
+bg_color = Color(0.156705, 0.722861, 0, 1)
+border_width_bottom = 8
+border_color = Color(0.00430043, 0.238645, 7.21961e-08, 1)
+border_blend = true
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id="Theme_hnh02"]
+Button/fonts/font = SubResource("SystemFont_hp020")
+Button/styles/hover = SubResource("StyleBoxFlat_xjcim")
+Button/styles/normal = SubResource("StyleBoxFlat_ecnyf")
+
+[node name="Trade" type="CanvasLayer"]
+script = ExtResource("1_o71mw")
+
+[node name="Blur" type="ColorRect" parent="."]
+modulate = Color(0.301961, 0.301961, 0.301961, 0.627451)
+self_modulate = Color(0.277528, 0.277528, 0.277528, 1)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="."]
+anchors_preset = -1
+anchor_left = 0.4
+anchor_top = 0.2
+anchor_right = 0.6
+anchor_bottom = 0.8
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="Panel" type="Panel" parent="MarginContainer2"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_6ncgk")
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer2/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer2/Panel/MarginContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "USERNAME1"
+label_settings = SubResource("LabelSettings_mdfrh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+text = "FIELDS"
+horizontal_alignment = 1
+
+[node name="OptionButton" type="OptionButton" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 31)
+layout_mode = 2
+
+[node name="VSeparator" type="VSeparator" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer/HBoxContainer"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="Label" type="Label" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+text = "MONEY"
+horizontal_alignment = 1
+
+[node name="LineEdit" type="LineEdit" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer"]
+modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(5, 6)
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("1_j5epo")
+
+[node name="HSeparator2" type="HSeparator" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer"]
+modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(5, 6)
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+text = "FIELDS"
+label_settings = SubResource("LabelSettings_x6cg4")
+horizontal_alignment = 1
+
+[node name="OptionButton" type="OptionButton" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
+custom_minimum_size = Vector2(0, 31)
+layout_mode = 2
+
+[node name="VSeparator" type="VSeparator" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer/HBoxContainer2"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="Label" type="Label" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer2"]
+layout_mode = 2
+text = "MONEY"
+horizontal_alignment = 1
+
+[node name="LineEdit" type="LineEdit" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "USERNAME1"
+label_settings = SubResource("LabelSettings_mdfrh")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Button" type="Button" parent="."]
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.925
+anchor_right = 0.5
+anchor_bottom = 0.925
+offset_left = -27.0
+offset_top = -31.0
+offset_right = 27.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme = SubResource("Theme_23qmu")
+text = "BACK "
+
+[node name="Button2" type="Button" parent="."]
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.85
+anchor_right = 0.5
+anchor_bottom = 0.85
+offset_left = -79.0
+offset_top = -31.0
+offset_right = 79.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_vertical = 8
+theme = SubResource("Theme_hnh02")
+text = "SEND TRADE OFFER"
+
+[connection signal="pressed" from="Button" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="Button2" to="." method="_on_trade_button_pressed"]

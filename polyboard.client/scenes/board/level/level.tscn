@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=25 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -8,16 +8,21 @@
 [ext_resource type="PackedScene" uid="uid://dhj5sru57cpw4" path="res://kostka/die.tscn" id="5_p3toi"]
 [ext_resource type="PackedScene" uid="uid://bvlhympj7pq71" path="res://scenes/board/level/field.tscn" id="6_jcf5o"]
 [ext_resource type="PackedScene" uid="uid://cxbg61n0xrbda" path="res://scenes/board/level/corner_field.tscn" id="6_ms3uj"]
-[ext_resource type="Script" path="res://scenes/board/level/kamera_figurehead.gd" id="7_xxuvu"]
 [ext_resource type="Script" path="res://scenes/board/level/MasterShot.cs" id="8_cd8t5"]
 [ext_resource type="PackedScene" uid="uid://uicwwtau32m7" path="res://scenes/board/level/menu.tscn" id="10_8um66"]
 [ext_resource type="PackedScene" uid="uid://e5m3pfs0fwdx" path="res://scenes/board/level/notification.tscn" id="10_dneql"]
 [ext_resource type="AudioStream" uid="uid://8nca3d2qfr0d" path="res://assets/effects/dice.mp3" id="11_i73ew"]
 [ext_resource type="PackedScene" uid="uid://be5o85k4nbeu5" path="res://scenes/board/level/ui.tscn" id="13_ivesl"]
+[ext_resource type="Script" path="res://GameManager.cs" id="13_yovhc"]
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="14_u56ja"]
+[ext_resource type="PackedScene" uid="uid://dvogx2n2lhbbd" path="res://scenes/board/level/buy_card.tscn" id="16_8p6lx"]
+[ext_resource type="PackedScene" uid="uid://h1ww7awlbuhf" path="res://scenes/board/level/trade.tscn" id="17_bq0mx"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]
 size = Vector3(28.5, 0.2, 28.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8hnxd"]
+size = Vector3(0.113281, 102.644, 19.4651)
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_6ppou"]
 panorama = ExtResource("1_ymkqo")
@@ -26,12 +31,13 @@ panorama = ExtResource("1_ymkqo")
 sky_material = SubResource("PanoramaSkyMaterial_6ppou")
 
 [sub_resource type="Environment" id="Environment_7ajdt"]
-background_mode = 1
+background_mode = 2
 background_color = Color(0.762404, 0.762404, 0.762404, 1)
 sky = SubResource("Sky_6qm8h")
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_8hnxd"]
-size = Vector3(0.113281, 102.644, 19.4651)
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_o0qui"]
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_pqnpu"]
 
 [node name="Level" type="Node3D"]
 script = ExtResource("1_djwtq")
@@ -166,36 +172,42 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5513, 0, 11.9424)
 [node name="Field39" parent="Board" instance=ExtResource("6_jcf5o")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.73327, 0, 11.8929)
 
+[node name="Ściana1" type="StaticBody3D" parent="Board"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Board/Ściana1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.67496, 6.51099, -0.0130615)
+shape = SubResource("BoxShape3D_8hnxd")
+
+[node name="Ściana2" type="StaticBody3D" parent="Board"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Board/Ściana2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.647, 44.3112, -0.0130615)
+shape = SubResource("BoxShape3D_8hnxd")
+
+[node name="Ściana3" type="StaticBody3D" parent="Board"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Board/Ściana3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.647, 0, -0.0130615)
+shape = SubResource("BoxShape3D_8hnxd")
+
+[node name="Ściana4" type="StaticBody3D" parent="Board"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Board/Ściana4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.59304, 0, -0.0130624)
+shape = SubResource("BoxShape3D_8hnxd")
+
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_7ajdt")
-
-[node name="Figurehead" parent="." instance=ExtResource("3_8t0aq")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
-dieNodePath1 = NodePath("../Die1")
-dieNodePath2 = NodePath("../Die2")
-notificationPanelPath = NodePath("../NotificationLayer/NotificationPanel")
-notificationLabelPath = NodePath("../NotificationLayer/NotificationPanel/NotificationLabel")
-masterCameraPath = NodePath("../MasterShot")
-tpCameraPath = NodePath("Camera3D")
-diceCameraPath = NodePath("../KostkiKamera")
-walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
-
-[node name="Camera3D" type="Camera3D" parent="Figurehead" node_paths=PackedStringArray("target")]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
-fov = 90.0
-script = ExtResource("7_xxuvu")
-target = NodePath("..")
-
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="Figurehead"]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
-stream = ExtResource("14_u56ja")
-bus = &"Sfx"
+camera_attributes = SubResource("CameraAttributesPractical_o0qui")
 
 [node name="MasterShot" type="Camera3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0.397148, -0.917755, 0, 0.917755, 0.397148, 1, 1.73599e-08, -4.01163e-08, -23.9239, 9.10441, -0.0824251)
+attributes = SubResource("CameraAttributesPractical_pqnpu")
 current = true
 script = ExtResource("8_cd8t5")
 
@@ -216,33 +228,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.86167, 0)
 stream = ExtResource("11_i73ew")
 bus = &"Sfx"
 
-[node name="Ściana1" type="StaticBody3D" parent="."]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ściana1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.67496, 6.51099, -0.0130615)
-shape = SubResource("BoxShape3D_8hnxd")
-
-[node name="Ściana2" type="StaticBody3D" parent="."]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ściana2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.647, 44.3112, -0.0130615)
-shape = SubResource("BoxShape3D_8hnxd")
-
-[node name="Ściana3" type="StaticBody3D" parent="."]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ściana3"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.647, 0, -0.0130615)
-shape = SubResource("BoxShape3D_8hnxd")
-
-[node name="Ściana4" type="StaticBody3D" parent="."]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ściana4"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.59304, 0, -0.0130624)
-shape = SubResource("BoxShape3D_8hnxd")
-
 [node name="NotificationLayer" parent="." instance=ExtResource("10_dneql")]
+
+[node name="NotificationPanel" parent="NotificationLayer" index="0"]
+metadata/_edit_use_anchors_ = true
+
+[node name="NotificationLabel" parent="NotificationLayer/NotificationPanel" index="0"]
+metadata/_edit_use_anchors_ = true
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -254,6 +246,7 @@ anchor_right = 0.5
 anchor_bottom = 0.25
 grow_horizontal = 2
 grow_vertical = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="FieldCard" type="Sprite2D" parent="CanvasLayer/TextureRect2"]
 
@@ -269,6 +262,7 @@ offset_left = -0.376007
 offset_top = -0.160034
 offset_right = 0.567993
 offset_bottom = -0.208069
+metadata/_edit_use_anchors_ = true
 
 [node name="ViewDetailsDialog" type="Sprite2D" parent="CanvasLayer/TextureRect"]
 visible = false
@@ -278,5 +272,87 @@ visible = false
 
 [node name="UI" parent="." instance=ExtResource("13_ivesl")]
 
+[node name="RzućKostkami" type="Button" parent="UI"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -54.0
+offset_top = 101.0
+offset_right = 55.0
+offset_bottom = 141.0
+grow_horizontal = 2
+text = "Rzut kostami"
+
+[node name="ZakończTure" type="Button" parent="UI"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -54.0
+offset_top = 55.0
+offset_right = 55.0
+offset_bottom = 95.0
+grow_horizontal = 2
+text = "Zakończ ture"
+
+[node name="BuyCard" parent="." instance=ExtResource("16_8p6lx")]
+visible = false
+
+[node name="Trade" parent="." instance=ExtResource("17_bq0mx")]
+visible = false
+
+[node name="GameManager" type="Node3D" parent="."]
+script = ExtResource("13_yovhc")
+dieNodePath1 = NodePath("../Die1")
+dieNodePath2 = NodePath("../Die2")
+boardPath = NodePath("../Board")
+playersContainerPath = NodePath("Players")
+masterCameraPath = NodePath("../MasterShot")
+diceCameraPath = NodePath("../KostkiKamera")
+notificationPanelPath = NodePath("../NotificationLayer/NotificationPanel")
+notificationLabelPath = NodePath("../NotificationLayer/NotificationPanel/NotificationLabel")
+rollButtonPath = NodePath("../UI/RzućKostkami")
+endTurnButtonPath = NodePath("../UI/ZakończTure")
+ectsUIContainerPath = NodePath("../UI/Players")
+playersUIContainerPath = NodePath("../UI/Players")
+
+[node name="Players" type="Node3D" parent="GameManager"]
+
+[node name="Jacenty" parent="GameManager/Players" instance=ExtResource("3_8t0aq")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
+walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/Jacenty"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
+stream = ExtResource("14_u56ja")
+bus = &"Sfx"
+
+[node name="Mieszko" parent="GameManager/Players" instance=ExtResource("3_8t0aq")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
+walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/Mieszko"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
+stream = ExtResource("14_u56ja")
+bus = &"Sfx"
+
+[node name="Gerwazy" parent="GameManager/Players" instance=ExtResource("3_8t0aq")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
+walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/Gerwazy"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
+stream = ExtResource("14_u56ja")
+bus = &"Sfx"
+
+[node name="Włodzimierz" parent="GameManager/Players" instance=ExtResource("3_8t0aq")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
+walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/Włodzimierz"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
+stream = ExtResource("14_u56ja")
+bus = &"Sfx"
+
 [editable path="NotificationLayer"]
 [editable path="UI"]
+[editable path="BuyCard"]

@@ -5,360 +5,146 @@ using System.Threading.Tasks;
 public partial class Figurehead : CharacterBody3D
 {
 	public int CurrentPositionIndex { get; set; } = 0;
-	private Board board;
-
-	private Sprite2D textureDisplay;
-	private Sprite2D randomCard;
-	
-	[Export]
-	public NodePath dieNodePath1; // Ścieżka do pierwszej kostki
-	[Export]
-	public NodePath dieNodePath2; // Ścieżka do drugiej kostki
-	[Export]
-	public NodePath notificationPanelPath;
-	[Export]
-	public NodePath notificationLabelPath; // Ścieżka do powiadomień
-	[Export]
-	public NodePath masterCameraPath; // Ścieżka do kamery Master shot
-	[Export]
-	public NodePath tpCameraPath;     // Ścieżka do kamery TP
-	[Export]
-	public NodePath diceCameraPath;    // Ścieżka do kamery Kostki
-
-	[Export]
-	public float moveDuration = 0.5f; // Czas ruchu w sekundach
-
-	// Opcja A: Użycie NodePath
 	[Export]
 	public NodePath walkSoundPlayerPath; // Ścieżka do AudioStreamPlayer3D
 
-	// Opcja B: Bezpośrednie odwołanie
-	// [Export]
-	// public NodePath walkSoundPlayerPath; // Ścieżka do AudioStreamPlayer3D
+	[Export]
+	public int StartingECTS = 100; // Początkowa ilość ECTS
 
-	private Camera3D masterCamera;
-	private Camera3D tpCamera;
-	private Camera3D diceCamera;
-	private Label notificationLabel;
-	private Panel notificationPanel;
-
-	// Opcja A: Typ AudioStreamPlayer3D
 	private AudioStreamPlayer3D walkSoundPlayer;
 
-	// Opcja B: Typ AudioStreamPlayer3D bez NodePath
-	// private AudioStreamPlayer3D walkSoundPlayer;
-
-	private int? die1Result = null;
-	private int? die2Result = null;
-	private int totalSteps = 0; // Przechowuje łączną sumę kroków dla bieżącej tury
+	// Właściwość ECTS
+	public int ECTS { get; private set; }
 
 	public override void _Ready()
 	{
-		// Pobierz kamery
-		masterCamera = GetNodeOrNull<Camera3D>(masterCameraPath);
-		tpCamera = GetNodeOrNull<Camera3D>(tpCameraPath);
-		diceCamera = GetNodeOrNull<Camera3D>(diceCameraPath);
-		textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/FieldCard");
-		randomCard = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/RandomCard");
-		notificationLabel = GetNodeOrNull<Label>(notificationLabelPath);
-		notificationPanel = GetNodeOrNull<Panel>(notificationPanelPath);
-
-		// Opcja A: Pobierz AudioStreamPlayer3D przez NodePath
 		walkSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>(walkSoundPlayerPath);
 		if (walkSoundPlayer == null)
 		{
 			GD.PrintErr("Błąd: Nie znaleziono AudioStreamPlayer3D. Sprawdź walkSoundPlayerPath.");
 		}
-		else
-		{
-			GD.Print("AudioStreamPlayer3D został poprawnie zlokalizowany.");
-		}
 
-		// Opcja B: Pobierz AudioStreamPlayer3D bezpośrednio
-		/*
-		walkSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("AudioStreamPlayer3D");
-		if (walkSoundPlayer == null)
-		{
-			GD.PrintErr("Błąd: Nie znaleziono AudioStreamPlayer3D. Upewnij się, że węzeł jest poprawnie nazwany i znajduje się jako dziecko Figurehead.");
-		}
-		else
-		{
-			GD.Print("AudioStreamPlayer3D został poprawnie zlokalizowany.");
-		}
-		*/
+		// Inicjalizacja ECTS
+		ECTS = StartingECTS;
 
-		if (masterCamera == null || tpCamera == null || diceCamera == null)
-		{
-			GD.PrintErr("Błąd: Nie znaleziono jednej z kamer. Sprawdź ścieżki.");
-		}
-		else
-		{
-			GD.Print("Ustawiono kamerę Master shot jako domyślną.");
-			masterCamera.Current = true; // Ustaw kamerę Master shot jako domyślną
-		}
-
-		// Pobierz pierwszą kostkę
-		Node dieNode1 = GetNodeOrNull(dieNodePath1);
-		if (dieNode1 == null)
-		{
-			GD.PrintErr($"Błąd: Nie znaleziono pierwszej kostki pod ścieżką '{dieNodePath1}'. Upewnij się, że dieNodePath1 jest ustawiony poprawnie.");
-		}
-		else
-		{
-			GD.Print("Pierwsza kostka została wykryta.");
-			dieNode1.Connect("roll_finished", new Callable(this, nameof(OnDie1RollFinished)));
-		}
-
-		// Pobierz drugą kostkę
-		Node dieNode2 = GetNodeOrNull(dieNodePath2);
-		if (dieNode2 == null)
-		{
-			GD.PrintErr($"Błąd: Nie znaleziono drugiej kostki pod ścieżką '{dieNodePath2}'. Upewnij się, że dieNodePath2 jest ustawiony poprawnie.");
-		}
-		else
-		{
-			GD.Print("Druga kostka została wykryta.");
-			dieNode2.Connect("roll_finished", new Callable(this, nameof(OnDie2RollFinished)));
-		}
-
-		// Pobierz planszę
-		board = GetTree().Root.GetNode<Board>("Level/Board");
-		if (board == null)
-		{
-			GD.PrintErr("Nie znaleziono planszy.");
-		}
-		else
-		{
-			GD.Print("Plansza została poprawnie załadowana.");
-		}
-
-		if (notificationPanel == null)
-		{
-			GD.PrintErr("Nie znaleziono NotificationPanel. Sprawdź ścieżkę");
-		}
-		else
-		{
-			notificationPanel.Visible = false;
-		}
-		if (notificationLabel == null)
-		{
-			GD.PrintErr("Nie znaleziono NotificationLabel. Sprawdź ścieżkę.");
-		}
+		// Aktualizacja UI na starcie
+		UpdateECTSUI();
 	}
 
-	private void ShowNotification(string message, float duration = 3f)
-	{
-		if (notificationLabel == null)
-			return;
-
-		notificationLabel.Text = message;
-		notificationPanel.Visible = true;
-		notificationLabel.Visible = true;
-
-		// Ukryj powiadomienie po określonym czasie
-		var timer = GetTree().CreateTimer(duration);
-		timer.Connect("timeout", new Callable(this, nameof(HideNotification)));
-	}
-
-	private void HideNotification()
-	{
-		if (notificationLabel != null)
-		{
-			notificationPanel.Visible = false;
-			notificationLabel.Visible = false;
-		}
-	}
-
-	public override void _Input(InputEvent @event)
+	// Metoda wywoływana przez GameManager po obliczeniu kroków
+	public async Task MovePawnSequentially(int steps, Board board)
 	{
 		
-		if (@event.IsActionPressed("ui_accept"))
-		{
-			SwitchToDiceCamera(); // Przełącz na kamerę Kostki
-			textureDisplay.Visible = false;
-			randomCard.Visible=false;
-		}
-		
-	}
-
-	private void OnDie1RollFinished(int value)
-	{
-		GD.Print($"Wylosowano dla pierwszej kostki: {value}");
-		die1Result = value;
-		CheckAndMovePawn();
-	}
-
-	private void OnDie2RollFinished(int value)
-	{
-		GD.Print($"Wylosowano dla drugiej kostki: {value}");
-		die2Result = value;
-		CheckAndMovePawn();
-	}
-
-	private void CheckAndMovePawn()
-	{
-		foreach (Field field in board.GetFields())
-	{
-		field.isMouseEventEnabled =false;
-	}
-		if (die1Result.HasValue && die2Result.HasValue)
-		{
-			totalSteps += die1Result.Value + die2Result.Value;
-			GD.Print($"Łączna suma oczek: {totalSteps}");
-			ShowNotification($"Łączna suma oczek: {totalSteps}");
-
-			// Przełączenie kamery na TP po rzucie
-			SwitchToTPCamera();
-
-			// Jeśli obie kostki mają tę samą wartość, wykonaj dodatkowy rzut
-			if (die1Result.Value == die2Result.Value)
-			{
-				GD.Print("Wylosowano tę samą wartość na obu kostkach! Powtórzenie rzutu.");
-				ShowNotification("Dublet! Powtórz rzut.", 5f);
-				die1Result = null;
-				die2Result = null;
-				ReRollDice(); // Powtórz rzut, aby dodać do sumy
-			}
-			else
-			{
-				// Wykonaj ruch i zresetuj wartości po zakończeniu tury
-				MovePawnSequentially(totalSteps);
-				ResetRoll();
-			}
-		}
-		
-	}
-
-	private void ReRollDice()
-	{
-		SwitchToDiceCamera();
-		Node dieNode1 = GetNodeOrNull(dieNodePath1);
-		Node dieNode2 = GetNodeOrNull(dieNodePath2);
-		if (dieNode1 != null && dieNode2 != null)
-		{
-			GD.Print("Rozpoczęcie powtórnego rzutu kostkami.");
-			dieNode1.Call("_roll");
-			dieNode2.Call("_roll");
-		}
-		else
-		{
-			GD.PrintErr("Błąd: Nie można wykonać powtórnego rzutu. Jedna z kostek jest nieprawidłowa.");
-		}
-	}
-
-	private void ResetRoll()
-	{
-		die1Result = null;
-		die2Result = null;
-		totalSteps = 0; // Zresetuj sumę kroków po zakończeniu tury
-		GD.Print("Zakończono turę i zresetowano wartości kostek.");
-	}
-
-	public async void MovePawnSequentially(int steps)
-	{
-		int targetIndex = CurrentPositionIndex + steps;
-
-		if (targetIndex >= 40)
-		{
-			targetIndex = targetIndex % 40;
-		}
-
-		// Odtwórz dźwięk chodzenia
 		PlayWalkSound();
+		int initialPosition = CurrentPositionIndex;
+		int targetIndex = CurrentPositionIndex + steps;
+		bool passedCorner = false;
 
-		while (CurrentPositionIndex != targetIndex)
+		// Zakładamy, że plansza ma 40 pól
+		for (int i = 1; i <= steps; i++)
 		{
-			CurrentPositionIndex = (CurrentPositionIndex + 1) % 40;
+			CurrentPositionIndex = (initialPosition + i) % 40;
+
+			// Sprawdzenie, czy gracz przeszedł przez CornerField0
+			if (CurrentPositionIndex == 0)
+			{
+				AddECTS(200);
+				GD.Print($"Gracz {Name} przeszedł przez CornerField0 i otrzymał 200 ECTS.");
+				ShowECTSUpdate();
+			}
 
 			Field nextField = board.GetFieldById(CurrentPositionIndex);
 			if (nextField == null || nextField.positions.Count == 0)
 			{
 				GD.PrintErr("Błąd: Nie znaleziono pola docelowego lub brak pozycji na polu.");
-				StopWalkSound(); // Zatrzymaj dźwięk w przypadku błędu
+				StopWalkSound();
 				return;
 			}
 			Vector3 nextPosition = nextField.positions[0];
-			GD.Print($"Przemieszczenie pionka na pozycję {CurrentPositionIndex}.");
 			Tween tween = CreateTween();
-			tween.TweenProperty(this, "global_position", nextPosition, moveDuration) // Użycie zmiennej moveDuration
-					.SetTrans(Tween.TransitionType.Linear)
-					.SetEase(Tween.EaseType.InOut);
+			tween.TweenProperty(this, "global_position", nextPosition, 0.5f)
+				 .SetTrans(Tween.TransitionType.Linear)
+				 .SetEase(Tween.EaseType.InOut);
 			await ToSignal(tween, "finished");
 		}
 
-		// Zatrzymaj dźwięk chodzenia po zakończeniu ruchu
 		StopWalkSound();
+		board.StepOnField(CurrentPositionIndex);
 
-		board.ShowFieldTexture(targetIndex);
-		// Przełącz z powrotem na kamerę Master shot po zakończeniu ruchu
-		GD.Print("Przełączanie kamery z powrotem na Master shot po zakończeniu ruchu.");
-		SwitchToMasterCamera();
+		// Możliwość przyznania ECTS po zakończeniu ruchu
+		OnFieldLanded(board.GetFieldById(CurrentPositionIndex));
 	}
 
-	private void SwitchToTPCamera()
-	{
-		if (tpCamera != null)
-		{
-			GD.Print("Przełączono na kamerę TP.");
-			tpCamera.Current = true;
-		}
-		else
-		{
-			GD.PrintErr("Błąd: Kamera TP jest nieprawidłowa.");
-		}
-	}
-
-	private void SwitchToMasterCamera()
-	{
-		if (masterCamera != null)
-		{
-			GD.Print("Przełączono na kamerę Master shot.");
-			masterCamera.Current = true;
-			foreach (Field field in board.GetFields())
-			{
-				field.isMouseEventEnabled =true;
-			}
-		}
-		else
-		{
-			GD.PrintErr("Błąd: Kamera Master shot jest nieprawidłowa.");
-		}
-	}
-
-	private void SwitchToDiceCamera()
-	{
-		if (diceCamera != null)
-		{
-			GD.Print("Przełączono na kamerę Kostki.");
-			diceCamera.Current = true;
-		}
-		else
-		{
-			GD.PrintErr("Błąd: Kamera Kostki jest nieprawidłowa.");
-		}
-	}
-
-	// Metoda do odtwarzania dźwięku chodzenia
 	private void PlayWalkSound()
 	{
 		if (walkSoundPlayer != null)
 		{
 			walkSoundPlayer.Play();
-			GD.Print("Odtwarzanie dźwięku chodzenia.");
-		}
-		else
-		{
-			GD.PrintErr("Błąd: AudioStreamPlayer3D nie jest zainicjalizowany.");
 		}
 	}
 
-	// Metoda do zatrzymania dźwięku chodzenia
 	private void StopWalkSound()
 	{
 		if (walkSoundPlayer != null && walkSoundPlayer.Playing)
 		{
 			walkSoundPlayer.Stop();
-			GD.Print("Zatrzymanie dźwięku chodzenia.");
 		}
+	}
+
+	// Metoda obsługująca zdarzenia po lądowaniu na polu
+	private void OnFieldLanded(Field field)
+	{
+		// Przykład: Przyznaj ECTS za lądowanie na określonych polach
+		if (field.ECTSReward > 0)
+		{
+			AddECTS(field.ECTSReward);
+			GD.Print($"Gracz {Name} otrzymał {field.ECTSReward} ECTS za lądowanie na polu {field.Name}.");
+			ShowECTSUpdate();
+		}
+
+		// Możesz również obsługiwać wydatki ECTS tutaj
+		// np. jeśli gracz kupuje coś na polu
+	}
+
+	// Metody do zarządzania ECTS
+	public void AddECTS(int amount)
+	{
+		ECTS += amount;
+		GD.Print($"Gracz {Name} otrzymał {amount} ECTS. Łączna ilość: {ECTS}");
+		// Aktualizacja UI
+		UpdateECTSUI();
+	}
+
+	public bool SpendECTS(int amount)
+	{
+		if (ECTS >= amount)
+		{
+			ECTS -= amount;
+			GD.Print($"Gracz {Name} wydał {amount} ECTS. Pozostało: {ECTS}");
+			// Aktualizacja UI
+			UpdateECTSUI();
+			return true;
+		}
+		else
+		{
+			GD.Print($"Gracz {Name} nie ma wystarczającej ilości ECTS.");
+			return false;
+		}
+	}
+
+	// Metody do aktualizacji UI
+	private void UpdateECTSUI()
+	{
+		// Zakładamy, że masz referencję do GameManager lub innego komponentu odpowiedzialnego za UI
+		// Możesz użyć sygnałów lub innej metody komunikacji, aby poinformować GameManager o zmianie ECTS
+		// Przykład:
+		// EmitSignal(nameof(ECTSChanged), ECTS);
+	}
+
+	private void ShowECTSUpdate()
+	{
+		// Możesz dodać animację lub powiadomienie o aktualizacji ECTS
+		// Przykład:
+		// ShowNotification($"ECTS: {ECTS}", 2f);
 	}
 }
