@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=21 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -8,7 +8,6 @@
 [ext_resource type="PackedScene" uid="uid://bvlhympj7pq71" path="res://scenes/board/level/field.tscn" id="6_jcf5o"]
 [ext_resource type="PackedScene" uid="uid://cxbg61n0xrbda" path="res://scenes/board/level/corner_field.tscn" id="6_ms3uj"]
 [ext_resource type="AudioStream" uid="uid://dweqb2y63ubpj" path="res://assets/Music/construction_sound.mp3" id="6_x8g8b"]
-[ext_resource type="Script" path="res://scenes/board/level/kamera_figurehead.gd" id="7_xxuvu"]
 [ext_resource type="Script" path="res://scenes/board/level/MasterShot.cs" id="8_cd8t5"]
 [ext_resource type="PackedScene" uid="uid://uicwwtau32m7" path="res://scenes/board/level/menu.tscn" id="10_8um66"]
 [ext_resource type="PackedScene" uid="uid://e5m3pfs0fwdx" path="res://scenes/board/level/notification.tscn" id="10_dneql"]
@@ -193,27 +192,20 @@ transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.59304, 0, -0.0130624)
 shape = SubResource("BoxShape3D_8hnxd")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
 [node name="ConstructionSound" type="AudioStreamPlayer3D" parent="Board"]
 stream = ExtResource("6_x8g8b")
 pitch_scale = 1.39
 bus = &"Sfx"
 
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
+
 [node name="Figurehead" parent="." instance=ExtResource("3_8t0aq")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.688439, 10.3388)
-dieNodePath1 = NodePath("../Die1")
-dieNodePath2 = NodePath("../Die2")
-notificationPanelPath = NodePath("../NotificationLayer/NotificationPanel")
-notificationLabelPath = NodePath("../NotificationLayer/NotificationPanel/NotificationLabel")
-masterCameraPath = NodePath("../MasterShot")
-tpCameraPath = NodePath("Camera3D")
-diceCameraPath = NodePath("../KostkiKamera")
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
 
 [node name="MasterShot" type="Camera3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0.397148, -0.917755, 0, 0.917755, 0.397148, 1, 1.73599e-08, -4.01163e-08, -23.9239, 9.10441, -0.0824251)
-attributes = SubResource("CameraAttributesPractical_pqnpu")
 current = true
 script = ExtResource("8_cd8t5")
 
