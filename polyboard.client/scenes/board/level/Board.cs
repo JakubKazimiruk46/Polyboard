@@ -53,7 +53,7 @@ public List<Field> GetFields()
 		return fields;
 	}
 	
-	public void ShowFieldTexture(int fieldId)
+	public async void ShowFieldTexture(int fieldId)
 	{
 		randomCard.Visible=false;
 		textureDisplay.Visible=false;
@@ -82,8 +82,17 @@ public List<Field> GetFields()
 			float scaleFactor = Math.Min(scaleFactorX, scaleFactorY);
 			Vector2 scale = new Vector2(scaleFactor, scaleFactor);
 			
-			textureDisplay.Scale = scale;
+			
+			
+			textureDisplay.Scale = new Vector2(0, 0); 
 			textureDisplay.Visible = true;  
+			Tween tween = CreateTween();
+			tween.TweenProperty(textureDisplay, "scale", scale, 0.15f)
+			.SetTrans(Tween.TransitionType.Linear)
+			.SetEase(Tween.EaseType.InOut);
+			
+			await ToSignal(tween, "finished");
+			
 		}
 		else
 		{
