@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 public partial class Board : StaticBody3D
 {
-	[Export] public NodePath endTurnButtonPath;
 	private Vector3 targetPosition; 
 	private List<Field> fields = new List<Field>();
 	Figurehead figurehead;
@@ -26,7 +25,7 @@ public partial class Board : StaticBody3D
 	textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/FieldCard");
 	cardView = GetNodeOrNull<TextureRect>("/root/Level/BuyCard/HBoxContainer/FieldView/TextureRect");
 	buyTime = GetNodeOrNull<Timer>("/root/Level/BuyCard/Timer");
-	endTurnButton = GetNodeOrNull<Button>(endTurnButtonPath);
+	endTurnButton = GetNodeOrNull<Button>("/root/Level/UI/ZakończTure");
 
 	if (textureDisplay == null)
 	{
@@ -53,7 +52,7 @@ public List<Field> GetFields()
 		return fields;
 	}
 	
-	public void ShowFieldTexture(int fieldId)
+	public async void ShowFieldTexture(int fieldId)
 	{
 		randomCard.Visible=false;
 		textureDisplay.Visible=false;
@@ -82,8 +81,17 @@ public List<Field> GetFields()
 			float scaleFactor = Math.Min(scaleFactorX, scaleFactorY);
 			Vector2 scale = new Vector2(scaleFactor, scaleFactor);
 			
-			textureDisplay.Scale = scale;
+			
+			
+			textureDisplay.Scale = new Vector2(0, 0); 
 			textureDisplay.Visible = true;  
+			Tween tween = CreateTween();
+			tween.TweenProperty(textureDisplay, "scale", scale, 0.15f)
+			.SetTrans(Tween.TransitionType.Linear)
+			.SetEase(Tween.EaseType.InOut);
+			
+			await ToSignal(tween, "finished");
+			
 		}
 		else
 		{
