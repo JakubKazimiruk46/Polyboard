@@ -1,0 +1,58 @@
+[gd_scene load_steps=12 format=3 uid="uid://dv08algj62mex"]
+
+[ext_resource type="Shader" uid="uid://dh24wmyffmv4r" path="res://scenes/board/level/s_puff.tres" id="1_enik6"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_f6bi3"]
+render_priority = 0
+shader = ExtResource("1_enik6")
+shader_parameter/Distance_fade = 0.3
+
+[sub_resource type="Curve" id="Curve_pjou8"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.594203, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_eaoph"]
+curve = SubResource("Curve_pjou8")
+
+[sub_resource type="Curve" id="Curve_4ergp"]
+_data = [Vector2(0, 0.241758), 0.0, 0.0, 0, 0, Vector2(0.478261, 0.604396), 0.0, 0.0, 0, 0, Vector2(1, 0.989011), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_6lbw8"]
+curve = SubResource("Curve_4ergp")
+
+[sub_resource type="Curve" id="Curve_fonac"]
+_data = [Vector2(0, 0.769231), 0.0, 0.0, 0, 0, Vector2(1, 0.32967), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_1fgmt"]
+curve = SubResource("Curve_fonac")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_tid4b"]
+radial_velocity_min = 0.499978
+radial_velocity_max = 0.599978
+radial_velocity_curve = SubResource("CurveTexture_6lbw8")
+gravity = Vector3(0, 0, 0)
+scale_max = 2.0
+scale_curve = SubResource("CurveTexture_1fgmt")
+alpha_curve = SubResource("CurveTexture_eaoph")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fuwuo"]
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="SphereMesh" id="SphereMesh_nmemq"]
+material = SubResource("StandardMaterial3D_fuwuo")
+
+[node name="Node3D" type="Node3D"]
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+material_override = SubResource("ShaderMaterial_f6bi3")
+amount = 12
+lifetime = 3.0
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_tid4b")
+draw_pass_1 = SubResource("SphereMesh_nmemq")

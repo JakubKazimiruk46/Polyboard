@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://f54chackskk5"]
+
+[ext_resource type="PackedScene" uid="uid://c4eqhedr1ul6v" path="res://scenes/board/level/Hotel.glb" id="1_mvcx3"]
+
+[node name="Hotel" type="Node3D"]
+
+[node name="Hotel" parent="." instance=ExtResource("1_mvcx3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00425059, 0, -0.0222166)
