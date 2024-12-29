@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://f54chackskk5"]
 
-[ext_resource type="PackedScene" uid="uid://dt5idm3yqlmky" path="res://scenes/board/level/Hotel.glb" id="1_mvcx3"]
+[ext_resource type="PackedScene" uid="uid://c4eqhedr1ul6v" path="res://scenes/board/level/Hotel.glb" id="1_mvcx3"]
 
 [node name="Hotel" type="Node3D"]
 

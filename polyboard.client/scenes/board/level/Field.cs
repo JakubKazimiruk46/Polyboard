@@ -173,6 +173,13 @@ public partial class Field : Node3D
 	{
 		return;
 	}
+	
+	 int freeIndex = buildOccupied.FindIndex(occupied => !occupied);
+	if (freeIndex == -1)
+	{
+		GD.Print("Nie ma wolnego miejsca na budowę domku.");
+		return;
+	}
 
 	var houseScene = GD.Load<PackedScene>("res://scenes/board/buildings/house.tscn");
 	var puffScene = GD.Load<PackedScene>("res://scenes/board/buildings/puff.tscn");
@@ -199,6 +206,8 @@ public partial class Field : Node3D
 		homeInstance.GlobalPosition = buildPositions[0];
 		puffInstance.GlobalPosition = buildPositions[0];
 		puffInstance.Scale = new Vector3(1.0f, 1.0f, 1.0f);
+		
+		buildOccupied[freeIndex] = true;
 
 		Timer timer = new Timer();
 		timer.WaitTime = 3.0f;
@@ -208,7 +217,7 @@ public partial class Field : Node3D
 		var buildCamera = new Camera3D();
 		GetTree().Root.AddChild(buildCamera);
 		buildCamera.GlobalPosition = buildCameraPosition;
-		buildCamera.LookAt(buildPositions[0], Vector3.Up);
+		buildCamera.LookAt(buildPositions[freeIndex], Vector3.Up);
 		buildCamera.Current = true;
 
 		timer.Start();
@@ -223,7 +232,6 @@ public partial class Field : Node3D
 		await ToSignal(timer, "timeout");
 		StopConstructionSound();
 		
-		RemoveChild(puffInstance);
 		puffInstance.QueueFree();
 		
 		timer.WaitTime=1.5f;
@@ -232,7 +240,7 @@ public partial class Field : Node3D
 		
 		
 		
-		RemoveChild(buildCamera);
+		
 		buildCamera.QueueFree();
 		return;
 	}
@@ -243,7 +251,7 @@ public partial class Field : Node3D
 	}
 }
 
-	public void BuildHotel(int FieldId)
+	public async Task BuildHotel(int FieldId)
 	{
 		HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 11, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
 	if (invalidFieldIds.Contains(FieldId))
@@ -252,30 +260,74 @@ public partial class Field : Node3D
 	}
 		var hotelScene=GD.Load<PackedScene>("res://scenes/board/buildings/hotel.tscn");
 		var puffScene = GD.Load<PackedScene>("res://scenes/board/buildings/puff.tscn");
-		if (hotelScene == null)
+		
+	if (hotelScene == null)
 	{
 		GD.PrintErr("Nie udało się załadować sceny hotelu.");
 		return;
 	}
+	
 	if (puffScene == null)
 	{
 		GD.PrintErr("Nie udało się załadować sceny efektu");
 		return;
 	}
-	var hotelInstance = hotelScene.Instantiate() as Node3D;
 	
-	 if (hotelInstance != null)
+	var hotelInstance = hotelScene.Instantiate() as Node3D;
+	var puffInstance = puffScene.Instantiate<Node3D>();
+	
+	 if (hotelInstance != null && puffInstance != null)
 	{
 		
 		hotelInstance.RotationDegrees = new Vector3(0, 0, 0);
-		hotelInstance.Scale=new Vector3(0.45f,0.45f,0.45f);
+		hotelInstance.Scale=new Vector3(0.01f,0.01f,0.01f);
+		Vector3 defaultHotelScale = new Vector3(0.45f, 0.45f, 0.45f);
 		AddChild(hotelInstance);
+		AddChild(puffInstance);
 		hotelInstance.GlobalPosition = buildPositions[4];
+		puffInstance.GlobalPosition = buildPositions[4];
+		puffInstance.Scale = new Vector3(2.0f, 2.0f, 2.0f);
+
+		
+		Timer timer = new Timer();
+		timer.WaitTime = 3.0f;
+		timer.OneShot = true;
+		GetTree().Root.AddChild(timer);
+
+		var buildCamera = new Camera3D();
+		GetTree().Root.AddChild(buildCamera);
+		buildCamera.GlobalPosition = buildCameraPosition;
+		buildCamera.LookAt(buildPositions[4], Vector3.Up);
+		buildCamera.Current = true;
+
+		timer.Start();
+		PlayConstructionSound();
+		Tween tween = CreateTween();
+		tween.TweenProperty(hotelInstance, "scale", defaultHotelScale, 1.5f)
+			 .SetTrans(Tween.TransitionType.Linear)
+			 .SetEase(Tween.EaseType.InOut);
+
+		
+		await ToSignal(tween, "finished");
+		await ToSignal(timer, "timeout");
+		StopConstructionSound();
+		
+		puffInstance.QueueFree();
+		
+		timer.WaitTime=1.5f;
+		timer.Start();
+		await ToSignal(timer, "timeout");
+		
+		
+		
+		
+		buildCamera.QueueFree();
+		return;
 
 	}
 	else
 	{
-		GD.PrintErr("Nie udało się stworzyć sceny domku.");
+		GD.PrintErr("Nie udało się stworzyć sceny hotelu.");
 	}
 	}
 
