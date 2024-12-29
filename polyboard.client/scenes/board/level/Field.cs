@@ -243,7 +243,41 @@ public partial class Field : Node3D
 	}
 }
 
+	public void BuildHotel(int FieldId)
+	{
+		HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 11, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
+	if (invalidFieldIds.Contains(FieldId))
+	{
+	return;
+	}
+		var hotelScene=GD.Load<PackedScene>("res://scenes/board/buildings/hotel.tscn");
+		var puffScene = GD.Load<PackedScene>("res://scenes/board/buildings/puff.tscn");
+		if (hotelScene == null)
+	{
+		GD.PrintErr("Nie udało się załadować sceny hotelu.");
+		return;
+	}
+	if (puffScene == null)
+	{
+		GD.PrintErr("Nie udało się załadować sceny efektu");
+		return;
+	}
+	var hotelInstance = hotelScene.Instantiate() as Node3D;
 	
+	 if (hotelInstance != null)
+	{
+		
+		hotelInstance.RotationDegrees = new Vector3(0, 0, 0);
+		hotelInstance.Scale=new Vector3(0.45f,0.45f,0.45f);
+		AddChild(hotelInstance);
+		hotelInstance.GlobalPosition = buildPositions[4];
+
+	}
+	else
+	{
+		GD.PrintErr("Nie udało się stworzyć sceny domku.");
+	}
+	}
 
 	public void ShowDetailsDialog()
 	{

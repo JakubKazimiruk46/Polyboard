@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=3 uid="uid://dv08algj62mex"]
 
-[ext_resource type="Shader" uid="uid://bvclpepx33jpp" path="res://scenes/board/level/s_puff.tres" id="1_enik6"]
+[ext_resource type="Shader" uid="uid://dh24wmyffmv4r" path="res://scenes/board/level/s_puff.tres" id="1_enik6"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_f6bi3"]
 render_priority = 0
