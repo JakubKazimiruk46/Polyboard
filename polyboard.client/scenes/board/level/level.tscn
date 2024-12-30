@@ -361,7 +361,7 @@ bus = &"Sfx"
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.5043, 0)
-light_energy = 5.0
+light_energy = 8.0
 shadow_enabled = true
 omni_range = 30.0
 omni_attenuation = 0.8

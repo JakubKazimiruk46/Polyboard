@@ -60,7 +60,9 @@ public partial class Figurehead : CharacterBody3D
 				StopWalkSound();
 				return;
 			}
-			Vector3 nextPosition = nextField.positions[0];
+			int freeIndex = nextField.occupied.FindIndex(occupied => !occupied);
+			Vector3 nextPosition = nextField.positions[freeIndex];
+			nextField.occupied[freeIndex]=true;
 			Tween tween = CreateTween();
 			tween.TweenProperty(this, "global_position", nextPosition, 0.5f)
 				 .SetTrans(Tween.TransitionType.Linear)
