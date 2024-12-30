@@ -1,6 +1,8 @@
 extends CanvasLayer
 
 @onready var endturnbutton = $"../UI/ZakończTure"
+@onready var tradebutton = $"../UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2/trade_button" as Button
+@onready var buildbutton = $"../UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3/build_button" as Button
 var board_view = false
 var total_time_in_secs : int = 30
 # Called when the node enters the scene tree for the first time.
@@ -36,6 +38,8 @@ func on_timer_timeout():
 		total_time_in_secs = 30
 		$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.add_theme_color_override("font_color","white")
 		$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.text = ''
+		endturnbutton.visible = true;
+
 
 func on_buyButtonPressed():
 	$Timer.stop()

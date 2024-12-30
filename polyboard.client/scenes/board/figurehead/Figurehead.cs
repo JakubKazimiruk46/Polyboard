@@ -69,15 +69,15 @@ public partial class Figurehead : CharacterBody3D
 		}
 
 		StopWalkSound();
-		Field currentField=board.GetFieldById(targetIndex);
-		GD.Print($"Podstawiono domek na pozycji {targetIndex}");
-		await currentField.BuildHouse(targetIndex);
 		board.StepOnField(CurrentPositionIndex);
 
 		// Możliwość przyznania ECTS po zakończeniu ruchu
 		OnFieldLanded(board.GetFieldById(CurrentPositionIndex));
 	}
-
+	public int GetCurrentPositionIndex()
+	{
+		return CurrentPositionIndex;
+	}
 	private void PlayWalkSound()
 	{
 		if (walkSoundPlayer != null)
@@ -150,4 +150,5 @@ public partial class Figurehead : CharacterBody3D
 		// Przykład:
 		// ShowNotification($"ECTS: {ECTS}", 2f);
 	}
+	
 }

@@ -165,8 +165,11 @@ public partial class Field : Node3D
 			_border.Visible = false;
 		}
 	}
-
-	public async Task BuildHouse(int FieldId)
+	public async void BuildingHouse(int FieldId)
+	{
+		await BuildHouse(FieldId);
+	}
+	private async Task BuildHouse(int FieldId)
 {
 	HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
 	if (invalidFieldIds.Contains(FieldId))
@@ -175,12 +178,13 @@ public partial class Field : Node3D
 	}
 	
 	 int freeIndex = buildOccupied.FindIndex(occupied => !occupied);
-	if (freeIndex == -1)
+	if (freeIndex == -1 || freeIndex == 4)
 	{
+		homeInstance.QueueFree();
+		BuildHotel(FieldId);
 		GD.Print("Nie ma wolnego miejsca na budowę domku.");
 		return;
 	}
-
 	var houseScene = GD.Load<PackedScene>("res://scenes/board/buildings/house.tscn");
 	var puffScene = GD.Load<PackedScene>("res://scenes/board/buildings/puff.tscn");
 	if (houseScene == null)
@@ -203,8 +207,8 @@ public partial class Field : Node3D
 		Vector3 defaultHouseScale = new Vector3(0.5f, 0.5f, 0.5f);
 		AddChild(homeInstance);
 		AddChild(puffInstance);
-		homeInstance.GlobalPosition = buildPositions[0];
-		puffInstance.GlobalPosition = buildPositions[0];
+		homeInstance.GlobalPosition = buildPositions[freeIndex];
+		puffInstance.GlobalPosition = buildPositions[freeIndex];
 		puffInstance.Scale = new Vector3(1.0f, 1.0f, 1.0f);
 		
 		buildOccupied[freeIndex] = true;

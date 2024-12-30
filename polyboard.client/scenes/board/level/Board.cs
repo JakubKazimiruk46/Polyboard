@@ -206,6 +206,8 @@ public List<Field> GetFields()
 		}
 	randomCard.Texture = cardTexture;
 	randomCard.Visible = true;
+	endTurnButton.Visible = true;
+
 		}
 	}
 	

@@ -52,7 +52,17 @@ public partial class GameManager : Node3D
 		InitPlayersUI();
 		SetAllPlayersOnStart();
 	}
-
+	
+	public Figurehead getCurrentPlayer()
+	{
+		return players[currentPlayerIndex];
+	}
+	
+	public Field getCurrentField(int position)
+	{
+		return board.GetFieldById(position);
+	}
+	
 	private void InitCameras()
 	{
 		masterCamera = GetNodeOrNull<Camera3D>(masterCameraPath);
@@ -361,7 +371,6 @@ public partial class GameManager : Node3D
 		else
 		{
 			currentState = GameState.WaitingForInput;
-			endTurnButton.Visible = true;
 		}
 	}
 
