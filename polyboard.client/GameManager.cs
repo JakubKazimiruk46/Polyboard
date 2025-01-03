@@ -477,4 +477,19 @@ public partial class GameManager : Node3D
 		}
 		return players[currentPlayerIndex].Name;
 	}
+	
+		// Do kart
+	public int GetCurrentPlayerIndex()
+	{
+		return currentPlayerIndex;
+	}
+
+	public void AddEctsToPlayer(int playerIndex, int amount)
+	{
+		if (playerIndex >= 0 && playerIndex < players.Count)
+		{
+			players[playerIndex].AddECTS(amount);
+			UpdateECTSUI(playerIndex);
+		}
+	}
 }
