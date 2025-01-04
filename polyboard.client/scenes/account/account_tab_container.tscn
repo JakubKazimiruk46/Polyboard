@@ -1,20 +1,9 @@
-[gd_scene load_steps=21 format=3 uid="uid://caml7se6mxf4i"]
+[gd_scene load_steps=10 format=3 uid="uid://caml7se6mxf4i"]
 
 [ext_resource type="PackedScene" uid="uid://by1k0ckydbvmy" path="res://scenes/account/match_history.tscn" id="1_hcews"]
+[ext_resource type="Script" path="res://scenes/account/tab_container.gd" id="1_x3biu"]
 [ext_resource type="PackedScene" uid="uid://bioeyv8t6aq7g" path="res://scenes/account/achievement_filter.tscn" id="2_5diw0"]
-[ext_resource type="PackedScene" uid="uid://5r6af2kj1g6g" path="res://scenes/account/achievements/achievement1.tscn" id="3_0aflb"]
-[ext_resource type="PackedScene" uid="uid://pqq8f6ycwv18" path="res://scenes/account/achievements/achievement.tscn" id="3_im1fl"]
-[ext_resource type="PackedScene" uid="uid://cuar4atnnqmai" path="res://scenes/account/achievements/achievement6.tscn" id="3_up4g0"]
-[ext_resource type="PackedScene" uid="uid://c4unvxrqwinte" path="res://scenes/account/achievements/achievement2.tscn" id="4_gd8wy"]
-[ext_resource type="PackedScene" uid="uid://bx1pfknw84dk3" path="res://scenes/account/achievements/achievement8.tscn" id="6_mi50q"]
-[ext_resource type="PackedScene" uid="uid://ypiospbmlf1n" path="res://scenes/account/achievements/achievement3.tscn" id="6_si602"]
-[ext_resource type="PackedScene" uid="uid://dqp4umgdtvdeb" path="res://scenes/account/achievements/achievement4.tscn" id="7_84kbb"]
-[ext_resource type="PackedScene" uid="uid://k3d4kg4v3rn6" path="res://scenes/account/achievements/achievement9.tscn" id="7_isibt"]
-[ext_resource type="PackedScene" uid="uid://ndapeg1rovjb" path="res://scenes/account/achievements/achievement5.tscn" id="8_se2uh"]
-[ext_resource type="PackedScene" uid="uid://c451qu57dfoyp" path="res://scenes/account/achievements/achievement10.tscn" id="8_xfq4l"]
-[ext_resource type="PackedScene" uid="uid://dkiso1kjx44em" path="res://scenes/account/achievements/achievement11.tscn" id="10_s8xwi"]
-[ext_resource type="PackedScene" uid="uid://bolty2g1bqbn7" path="res://scenes/account/achievements/achievement12.tscn" id="11_cam01"]
-[ext_resource type="PackedScene" uid="uid://ocvnl4nifnhc" path="res://scenes/account/achievements/achievement7.tscn" id="15_2bgwl"]
+[ext_resource type="Script" path="res://scenes/account/achievements.gd" id="2_wts8v"]
 
 [sub_resource type="SystemFont" id="SystemFont_7t8lt"]
 font_names = PackedStringArray("Serif")
@@ -58,6 +47,7 @@ grow_vertical = 2
 theme_override_font_sizes/font_size = 25
 tab_alignment = 1
 current_tab = 2
+script = ExtResource("1_x3biu")
 
 [node name="Account" type="TabBar" parent="TabContainer"]
 visible = false
@@ -231,6 +221,7 @@ layout_mode = 2
 
 [node name="Achievements" type="TabBar" parent="TabContainer"]
 layout_mode = 2
+script = ExtResource("2_wts8v")
 metadata/_tab_index = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="TabContainer/Achievements"]
@@ -265,41 +256,4 @@ size_flags_horizontal = 4
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="Control7" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("3_up4g0")]
-layout_mode = 2
-
-[node name="Control4" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("3_0aflb")]
-layout_mode = 2
-
-[node name="Control2" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("4_gd8wy")]
-layout_mode = 2
-
-[node name="Control9" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("6_mi50q")]
-layout_mode = 2
-
-[node name="Control10" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("7_isibt")]
-layout_mode = 2
-
-[node name="Control11" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("8_xfq4l")]
-layout_mode = 2
-
-[node name="Control" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("3_im1fl")]
-layout_mode = 2
-
-[node name="Control12" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("10_s8xwi")]
-layout_mode = 2
-
-[node name="Control13" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("11_cam01")]
-layout_mode = 2
-
-[node name="Control3" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("6_si602")]
-layout_mode = 2
-
-[node name="Control5" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("7_84kbb")]
-layout_mode = 2
-
-[node name="Control6" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("8_se2uh")]
-layout_mode = 2
-
-[node name="Control8" parent="TabContainer/Achievements/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("15_2bgwl")]
-layout_mode = 2
+[node name="HTTPRequest" type="HTTPRequest" parent="TabContainer/Achievements/MarginContainer"]
