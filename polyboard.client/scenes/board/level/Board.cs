@@ -14,6 +14,8 @@ public partial class Board : StaticBody3D
 	private Sprite2D randomCard; // widok karty specjalnej/kasy społecznej do podglądu
 	private Sprite2D step_on_card; // widok karty w panelu zakupu
 	private Button endTurnButton;
+	private TextureButton tradeButton;
+	private TextureButton buildButton;
 
 	CanvasLayer BuyCard; // widok panelu zakupu karty
 	TextureRect cardView; // tekstura, w której wyświetlana jest karta
@@ -26,7 +28,8 @@ public partial class Board : StaticBody3D
 	cardView = GetNodeOrNull<TextureRect>("/root/Level/BuyCard/HBoxContainer/FieldView/TextureRect");
 	buyTime = GetNodeOrNull<Timer>("/root/Level/BuyCard/Timer");
 	endTurnButton = GetNodeOrNull<Button>("/root/Level/UI/ZakończTure");
-
+	tradeButton = GetNodeOrNull<TextureButton>("/root/Level/UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2/trade_button");
+	buildButton = GetNodeOrNull<TextureButton>("/root/Level/UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3/build_button");
 	if (textureDisplay == null)
 	{
 		GD.PrintErr("Błąd: Nie znaleziono Sprite2D do wyświetlania tekstur.");
@@ -123,9 +126,11 @@ public List<Field> GetFields()
 	}
 	public void BuyField(int fieldId)
 	{
+
 		buyTime.Start();
 		randomCard.Visible=false;
-		
+		tradeButton.Disabled=true;
+		buildButton.Disabled=true;
 		string textureName = $"Field{fieldId}";
 	
 		

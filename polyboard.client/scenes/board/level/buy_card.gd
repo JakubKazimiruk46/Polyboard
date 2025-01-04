@@ -1,8 +1,8 @@
 extends CanvasLayer
 
 @onready var endturnbutton = $"../UI/ZakończTure"
-@onready var tradebutton = $"../UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2/trade_button" as Button
-@onready var buildbutton = $"../UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3/build_button" as Button
+@onready var tradeButton = $"../UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2/trade_button" as TextureButton
+@onready var buildButton = $"../UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3/build_button" as TextureButton
 var board_view = false
 var total_time_in_secs : int = 30
 # Called when the node enters the scene tree for the first time.
@@ -39,6 +39,8 @@ func on_timer_timeout():
 		$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.add_theme_color_override("font_color","white")
 		$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.text = ''
 		endturnbutton.visible = true;
+		tradeButton.disabled = false;
+		buildButton.disabled = false;
 
 
 func on_buyButtonPressed():
@@ -54,6 +56,8 @@ func on_buyButtonPressed():
 	$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.text = ''
 	$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.add_theme_color_override("font_color","white")
 	endturnbutton.visible = true;
+	tradeButton.disabled = false;
+	buildButton.disabled = false;
 
 func on_auctionButtonPressed():
 	self.visible = false
@@ -63,6 +67,8 @@ func on_auctionButtonPressed():
 	$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.text = ''
 	$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.add_theme_color_override("font_color","white")
 	endturnbutton.visible = true
+	tradeButton.disabled = false;
+	buildButton.disabled = false;
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass

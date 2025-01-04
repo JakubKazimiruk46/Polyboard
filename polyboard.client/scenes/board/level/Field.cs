@@ -18,6 +18,8 @@ public partial class Field : Node3D
 	protected Area3D _area;
 	protected static int nextId = 0;
 	public int FieldId;
+	public List<Node3D> builtHouses = new List<Node3D>();
+	public bool isHotel = false;
 	public string Name; // Dodano nazwę pola
 	public int ECTSReward = 0; // Ilość ECTS przyznawana za lądowanie na tym polu
 	protected Sprite2D viewDetailsDialog;
@@ -165,22 +167,41 @@ public partial class Field : Node3D
 			_border.Visible = false;
 		}
 	}
+	public void RemoveAllHouses()
+	{
+	foreach (var house in builtHouses)
+	{
+		if (house != null)
+		{
+			house.QueueFree(); // Usuwanie obiektu z gry
+		}
+	}
+	builtHouses.Clear(); // Wyczyszczenie listy
+	for (int i = 0; i < buildOccupied.Count; i++)
+	{
+		buildOccupied[i] = false; // Resetowanie stanu zajętości
+	}
+	}
 	public async void BuildingHouse(int FieldId)
 	{
 		await BuildHouse(FieldId);
 	}
+	
 	private async Task BuildHouse(int FieldId)
-{
+	{
 	HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
 	if (invalidFieldIds.Contains(FieldId))
 	{
 		return;
 	}
-	
+	if (isHotel)
+	{
+		GD.Print("Hotel już jest zbudowany. Nie można budować więcej domków.");
+		return;
+	}
 	 int freeIndex = buildOccupied.FindIndex(occupied => !occupied);
 	if (freeIndex == -1 || freeIndex == 4)
 	{
-		homeInstance.QueueFree();
 		BuildHotel(FieldId);
 		GD.Print("Nie ma wolnego miejsca na budowę domku.");
 		return;
@@ -202,6 +223,7 @@ public partial class Field : Node3D
 	var puffInstance = puffScene.Instantiate<Node3D>();
 	if (homeInstance != null && puffInstance != null)
 	{
+		builtHouses.Add(homeInstance);
 		homeInstance.RotationDegrees = new Vector3(0, -270, 0);
 		homeInstance.Scale = new Vector3(0.01f, 0.01f, 0.01f);
 		Vector3 defaultHouseScale = new Vector3(0.5f, 0.5f, 0.5f);
@@ -253,10 +275,11 @@ public partial class Field : Node3D
 		GD.PrintErr("Nie udało się stworzyć sceny domku.");
 		return;
 	}
-}
+	}
 
 	public async Task BuildHotel(int FieldId)
 	{
+		RemoveAllHouses();
 		HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 11, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
 	if (invalidFieldIds.Contains(FieldId))
 	{
@@ -290,6 +313,7 @@ public partial class Field : Node3D
 		AddChild(puffInstance);
 		hotelInstance.GlobalPosition = buildPositions[4];
 		puffInstance.GlobalPosition = buildPositions[4];
+		isHotel = true;
 		puffInstance.Scale = new Vector3(2.0f, 2.0f, 2.0f);
 
 		

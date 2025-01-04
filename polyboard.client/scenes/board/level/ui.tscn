@@ -241,6 +241,8 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 theme = SubResource("Theme_2w06e")
 texture_normal = ExtResource("3_27i78")
+texture_pressed = ExtResource("3_27i78")
+texture_disabled = ExtResource("3_27i78")
 stretch_mode = 0
 
 [node name="trade_label" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2"]
@@ -262,6 +264,8 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 theme = SubResource("Theme_2w06e")
 texture_normal = ExtResource("4_glt2l")
+texture_pressed = ExtResource("4_glt2l")
+texture_disabled = ExtResource("4_glt2l")
 
 [node name="build_label" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3"]
 layout_mode = 2
