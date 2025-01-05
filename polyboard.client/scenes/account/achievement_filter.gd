@@ -7,6 +7,7 @@ const FILTER_MODE_ARRAY : Array[String] = [
 	"Achieved",
 	"Not achieved"
 ]
+signal filter_changed(new_filter: String)
 
 func _ready():
 	add_filter_mode_items()
@@ -17,4 +18,6 @@ func add_filter_mode_items() -> void:
 		option_button.add_item(window_mode)
 
 func on_filter_mode_selected(index: int) -> void:
-	pass
+	var selected_filter = FILTER_MODE_ARRAY[index]
+	emit_signal("filter_changed", selected_filter)
+	

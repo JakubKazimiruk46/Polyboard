@@ -3,13 +3,23 @@ class_name Achievements
 @onready var tab_container = $".."
 @onready var http_request = $MarginContainer/HTTPRequest
 @onready var vbox_container = $MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer
+@onready var filter = $MarginContainer/VBoxContainer/AchievementFilter
 var user_id = ""
+var current_filter : String = "All"
 func _ready() -> void:
 	tab_container.current_tab=0
 	http_request.connect("request_completed", _on_request_completed,1)
+	filter.connect("filter_changed", _on_filter_changed)
 func _process(delta):
 	if not self.visible:
 		clear_achievements()
+func set_filter(filter: String) -> void:
+	current_filter = filter
+func _on_filter_changed(new_filter: String) -> void:
+	print("Filter changed to: ", new_filter)
+	set_filter(new_filter)
+	clear_achievements()
+	load_achievements()
 func _visibility_changed() -> void:
 	if self.visible:
 		print("Achievements tab is now visible")
@@ -61,6 +71,10 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 
 func display_user_achievements(achievements: Array) -> void:
 	for achievement in achievements:
+		if current_filter == "Achieved" and achievement.get("progress", 0.0) < 100.0:
+			continue
+		elif current_filter == "Not achieved" and achievement.get("progress", 0.0) == 100.0:
+			continue
 		var hbox = HBoxContainer.new()
 		var texture_rect = TextureRect.new()
 		var name_label = Label.new()
