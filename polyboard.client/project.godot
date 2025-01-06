@@ -32,6 +32,10 @@ HubConnectionService="*res://services/HubConnectionService.cs"
 
 project/assembly_name="PolyBoard.Client"
 
+[filesystem]
+
+import/blender/enabled=false
+
 [input]
 
 ui_space={

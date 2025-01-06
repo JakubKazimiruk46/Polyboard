@@ -67,6 +67,21 @@ namespace PolyBoard.Server.Presentation.Hubs
             }
 
             await Groups.AddToGroupAsync(Context.ConnectionId, lobby.Id.ToString());
+                var lobbyDetails = new
+    {
+        id = lobby.Id,
+        lobbyName = lobby.LobbyName,
+        status = lobby.LobbyStatus,
+        connectedUsers = lobby.Connections.Select(c => new LobbyUserDTO
+        {
+            Id = c.UserId,
+            ConnectionId = c.ConnectionId,
+            Username = c.Username,
+            IsReady = c.IsReady
+        }).ToList()
+    };
+
+    await Clients.Caller.SendAsync("ReceiveLobbyDetails", lobbyDetails);
             await Clients.Caller.SendAsync("LobbyCreated", lobby.Id);
         }
 
