@@ -5,6 +5,7 @@ class_name JoinGame
 @onready var lobby_list_container = scroll_container.get_node("VBoxContainer")
 @onready var http_request = $HTTPRequest as HTTPRequest
 @onready var refresh_button = $MarginContainer/VBoxContainer/refresh_button as Button
+@onready var click_sound = $ClickSound as AudioStreamPlayer
 signal join_lobby(lobby_id: String)
 signal exit_joingame_menu
 
@@ -42,6 +43,7 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 		print("HTTP Error: ", response_code, " Response: ", response_text)
 
 func _on_refresh_button_pressed() -> void:
+	click_sound.play()
 	print("Refreshing scene...")
 	fetch_lobbies()
 
@@ -96,6 +98,7 @@ func populate_lobby_list(lobbies: Array) -> void:
 		lobby_list_container.add_child(lobby_list)
 
 func _on_join_button_pressed(lobby_id: String, isPrivate: bool) -> void:
+	click_sound.play()
 	if !isPrivate:
 		emit_signal("join_lobby", lobby_id)
 		print("Joining lobby: ", lobby_id)

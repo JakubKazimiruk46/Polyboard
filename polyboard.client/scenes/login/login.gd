@@ -11,6 +11,9 @@ class_name Login
 @onready var error_label = $MarginContainer/HBoxContainer/VBoxContainer/error_label as Label
 @onready var register_menu = $register as Register
 @onready var margin_container = $MarginContainer as MarginContainer
+@onready var click_sound = $ClickSound as AudioStreamPlayer
+@onready var login_sound = $LoginSuccesfull as AudioStreamPlayer
+@onready var login_rejected_sound = $LoginRejected as AudioStreamPlayer
 
 @onready var http_request = $HTTPRequest as HTTPRequest
 
@@ -22,11 +25,13 @@ func _ready():
 	set_process(false)
 
 func on_register_pressed() -> void:
+	click_sound.play()
 	margin_container.visible = false
 	register_menu.set_process(true)
 	register_menu.visible = true
 
 func on_login_pressed() -> void:
+	click_sound.play()
 	error_label.text = ""
 
 	var username = username_input.text.strip_edges()
@@ -46,7 +51,6 @@ func on_login_pressed() -> void:
 		
 	var json = JSON.new()
 	var json_data = json.stringify(login_data)
-	#TODO URL DO ZMIANY!
 	var url = SaveManager.url.format({"str":"/login"})
 	
 	var headers = ["Content-Type: application/json"]
@@ -64,12 +68,15 @@ func _on_request_completed(result: int, response_code: int, headers: Array, body
 	#print("Raw response text: ", response_text)
 	
 	if response_code != 200:
+		login_rejected_sound.play()
 		error_label.text = "Failed to parse response."
 		print("Error parsing response: ", response_text)
 		return
 
 	if response_code == 200:
+		login_sound.play()
 		print("Login successful: ", response_text)
+		
 		Authentication.token = response_text
 		HubConnectionService.UpdateToken(response_text)
 		username_input.clear()
@@ -85,6 +92,7 @@ func on_exit_register_menu() -> void:
 	register_menu.visible = false
 
 func on_back_button_pressed() -> void:
+	click_sound.play()
 	exit_login_menu.emit()
 	set_process(false)
 

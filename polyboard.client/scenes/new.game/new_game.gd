@@ -10,6 +10,7 @@ extends Control
 @onready var error_label = $MarginContainer/HBoxContainer/VBoxContainer/VBoxContainer2/error_label as Label
 @onready var margin_container = $MarginContainer
 @onready var lobby = $Lobby
+@onready var click_sound = $MarginContainer/HBoxContainer/ClickSound
 
 
 signal exit_newgame_menu
@@ -21,18 +22,22 @@ func _ready():
 	private_checkbox.pressed.connect(on_private_checkbox_pressed)
 
 func on_back_button_pressed() -> void:
+	click_sound.play()
 	HubConnectionService.LeaveLobby()
 	exit_newgame_menu.emit()
 
 func on_public_checkbox_pressed() -> void:
+	click_sound.play()
 	password_input.visible = false
 	private_checkbox.set_pressed(false)
 
 func on_private_checkbox_pressed() -> void:
+	click_sound.play()
 	password_input.visible = true
 	public_checkbox.set_pressed(false)
 
 func on_create_button_pressed() -> void:
+	click_sound.play()
 	var lobby_name = lobby_name_input.text.strip_edges()
 	var is_public = public_checkbox.is_pressed()
 	var is_private = private_checkbox.is_pressed()

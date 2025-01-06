@@ -1,7 +1,6 @@
 class_name Register
 extends Control
 
-
 #zmienne z przycisków
 @onready var back_button = $MarginContainer/HBoxContainer/VBoxContainer/back_button as Button
 @onready var username_input = $MarginContainer/HBoxContainer/VBoxContainer/username_input as TextEdit
@@ -10,6 +9,7 @@ extends Control
 @onready var confirm_password_input = $MarginContainer/HBoxContainer/VBoxContainer/confirm_password_input as LineEdit
 @onready var register_button = $MarginContainer/HBoxContainer/VBoxContainer/register_button as Button
 @onready var error_label = $MarginContainer/HBoxContainer/VBoxContainer/error_label as Label
+@onready var click_sound = $MarginContainer/HBoxContainer/VBoxContainer/ClickSound
 #Kontaktowanie sie z serwerem
 @onready var http_request = $HTTPRequest as HTTPRequest
 #Walidacja
@@ -25,10 +25,12 @@ func _ready():
 	set_process(false)
 	
 func on_back_button_pressed() -> void:
+	click_sound.play()
 	exit_register_menu.emit()
 	set_process(false)
 
 func on_register_button_pressed() -> void:
+	click_sound.play()
 	#Zmienne z pól. strip_edges usuwa białe znaki z końca
 	var username = username_input.text.strip_edges()
 	var email = email_input.text.strip_edges()
