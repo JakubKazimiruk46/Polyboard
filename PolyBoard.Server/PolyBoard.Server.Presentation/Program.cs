@@ -1,14 +1,13 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PolyBoard.Server.Application;
-using PolyBoard.Server.Core.Interfaces.Repositories;
+using PolyBoard.Server.Application.Abstractions;
 using PolyBoard.Server.Infrastructure;
-using PolyBoard.Server.Infrastructure.Repositories;
+using PolyBoard.Server.Infrastructure.Authentication;
+using PolyBoard.Server.Presentation.Helpers;
 using PolyBoard.Server.Presentation.Hubs;
 using PolyBoard.Server.Presentation.OptionsSetup;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,28 +28,24 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredLength = 8;
     options.Password.RequiredUniqueChars = 1;
 });
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+builder.Services.AddScoped<IGameEventNotifier, SignalRGameEventNotifier>();
 builder.Services.AddSignalR();
+builder.Services.ConfigureOptions<JwtOptionsSetup>();
+builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("PolyBoard9Gx2Lz!3QfV4#WnY$Jb5@7Xz")),
-            ValidateIssuer = true,
-            ValidIssuer = "PolyBoardServer",
-            ValidateAudience = true,
-            ValidAudience = "PolyBoardClient",
-            ValidateLifetime = true
-        };
+        var jwtOptions = new JwtOptions();
+        options.TokenValidationParameters = new JwtBearerOptions().TokenValidationParameters;
 
         options.Events = new JwtBearerEvents
         {
             OnMessageReceived = context =>
             {
+                var path = context.HttpContext.Request.Path;
                 var accessToken = context.Request.Query["access_token"];
-                if (!string.IsNullOrEmpty(accessToken))
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/lobby"))
                 {
                     context.Token = accessToken;
                 }
@@ -58,9 +53,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             }
         };
     });
-
-builder.Services.ConfigureOptions<JwtOptionsSetup>();
-builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 
 //Enable Controllers
 builder.Services.AddControllers()
@@ -89,7 +81,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapHub<LobbyHub>("/lobby");
+app.MapHub<PolyBoardHub>("/lobby");
 
 //TODO
 //app.UseHttpsRedirection();

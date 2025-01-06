@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using PolyBoard.Server.Application.DTO;
 using PolyBoard.Server.Core.Enums;
@@ -8,10 +7,12 @@ using System.Collections.Concurrent;
 
 namespace PolyBoard.Server.Presentation.Hubs
 {
-    public class LobbyHub : Hub
+    [Authorize]
+    public partial class PolyBoardHub : Hub
     {
         private static readonly ConcurrentDictionary<Guid, Lobby> _lobbies = new();
 
+        [AllowAnonymous]
         public static List<LobbyListItemDTO> GetAvailableLobbies()
         {
             var availableLobbies = _lobbies
@@ -46,7 +47,6 @@ namespace PolyBoard.Server.Presentation.Hubs
             await Clients.Caller.SendAsync("ReceiveLobbyDetails", lobbyDetails);
         }
 
-        [Authorize]
         public async Task CreateLobby(string lobbyName, int? maxPlayers = 6, string? password = null)
         {
             if (password == string.Empty)
@@ -58,9 +58,10 @@ namespace PolyBoard.Server.Presentation.Hubs
             var userConnection = new UserConnection
             {
                 ConnectionId = Context.ConnectionId,
-                UserId = Context.UserIdentifier ?? Guid.NewGuid().ToString()
+                UserId = Context.UserIdentifier ?? Guid.NewGuid().ToString(),
+                Username = Context.User?.Identity?.Name ?? $"New user {lobby.Connections.Count}"
             };
-            if(!lobby.AddConnection(userConnection, password))
+            if (!lobby.AddConnection(userConnection, password))
             {
                 await Clients.Caller.SendAsync("Error", "Failed Joinin Lobby! Try JoinLobby function...");
                 return;
@@ -80,13 +81,13 @@ namespace PolyBoard.Server.Presentation.Hubs
                 return;
             }
 
-            if(lobby.Password != password)
+            if (lobby.Password != password)
             {
                 await Clients.Caller.SendAsync("Error", "Wrong password!");
                 return;
             }
 
-            if(lobby.Connections
+            if (lobby.Connections
                 .Where(uc => uc.ConnectionId == Context.ConnectionId)
                 .Any())
             {
@@ -97,11 +98,11 @@ namespace PolyBoard.Server.Presentation.Hubs
             {
                 UserId = Context.UserIdentifier ?? Guid.NewGuid().ToString(),
                 ConnectionId = Context.ConnectionId,
-                Username = Context.UserIdentifier ?? "User",
+                Username = Context.User?.Identity?.Name ?? $"User {lobby.Connections.Count}",
                 IsReady = false
             };
 
-            if(!lobby.AddConnection(userConnection, password))
+            if (!lobby.AddConnection(userConnection, password))
             {
                 await Clients.Caller.SendAsync("Error", "Failed joining lobby.");
                 return;
@@ -235,99 +236,5 @@ namespace PolyBoard.Server.Presentation.Hubs
 
             await base.OnDisconnectedAsync(exception);
         }
-        public async Task StartGame(Guid lobbyId)
-        {
-            if (!_lobbies.TryGetValue(lobbyId, out var lobby))
-            {
-                await Clients.Caller.SendAsync("Error", "Lobby not found.");
-                return;
-            }
-            var admin = lobby.Connections.FirstOrDefault();
-            if (admin == null || admin.ConnectionId != Context.ConnectionId)
-            {
-                await Clients.Caller.SendAsync("Error", "Only the admin can start the game.");
-                return;
-            }
-            
-            if (lobby.Connections.Count < 2)
-            {
-                await Clients.Caller.SendAsync("Error", "Not enough players in the lobby. At least 2 players are required.");
-                return;
-            }
-            if (!lobby.Connections.All(c => c.IsReady))
-            {
-                await Clients.Caller.SendAsync("Error", "Not all players are ready.");
-                return;
-            }
-            
-            await ChangeLobbyStatus(lobbyId, LobbyStatus.InGame);
-            
-            lobby.StartGame();
-            await Clients.Group(lobbyId.ToString()).SendAsync("GameStarted", lobby.GetCurrentPlayer().UserId);
-        }
-        public async Task GetCurrentTurn(Guid lobbyId)
-        {
-            if (!_lobbies.TryGetValue(lobbyId, out var lobby))
-            {
-                await Clients.Caller.SendAsync("Error", "Lobby not found.");
-                return;
-            }
-
-            if (lobby.LobbyStatus != LobbyStatus.InGame)
-            {
-                await Clients.Caller.SendAsync("Error", "Game not started.");
-                return;
-            }
-
-            var currentPlayer = lobby.GetCurrentPlayer();
-            await Clients.Caller.SendAsync("CurrentTurn", new 
-            {
-                userId = currentPlayer.UserId,
-                username = currentPlayer.Username
-            });
-        }
-        public async Task EndTurn(Guid lobbyId)
-        {
-            if (!_lobbies.TryGetValue(lobbyId, out var lobby))
-            {
-                await Clients.Caller.SendAsync("Error", "Lobby not found.");
-                return;
-            }
-
-            if (lobby.LobbyStatus != LobbyStatus.InGame)
-            {
-                await Clients.Caller.SendAsync("Error", "Game not started.");
-                return;
-            }
-
-            var currentPlayer = lobby.GetCurrentPlayer();
-            if (currentPlayer.ConnectionId != Context.ConnectionId)
-            {
-                await Clients.Caller.SendAsync("Error", "Not your turn.");
-                return;
-            }
-
-            lobby.NextTurn();
-            await Clients.Group(lobbyId.ToString()).SendAsync("TurnChanged", lobby.GetCurrentPlayer().UserId);
-        }
-        private async Task NotifyGameState(Guid lobbyId)
-        {
-            if (!_lobbies.TryGetValue(lobbyId, out var lobby))
-                return;
-
-            var gameState = new
-            {
-                CurrentPlayerId = lobby.GetCurrentPlayer().UserId,
-                PlayerOrder = lobby.Connections.Select(c => new
-                {
-                    c.UserId,
-                    c.Username,
-                    IsReady = c.IsReady
-                }).ToList()
-            };
-
-            await Clients.Group(lobbyId.ToString()).SendAsync("GameStateUpdated", gameState);
-        }
-        
     }
 }

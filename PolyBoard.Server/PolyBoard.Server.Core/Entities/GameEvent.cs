@@ -9,5 +9,6 @@ namespace PolyBoard.Server.Core.Entities
         public string Name { get; set; } = string.Empty;
         public object? JsonBody { get; set; }
         public ICollection<Bid>? Bids { get; set; }
+        public Game Game { get; set; }
     }
 }

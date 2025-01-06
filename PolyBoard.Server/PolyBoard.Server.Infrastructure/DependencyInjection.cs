@@ -16,7 +16,7 @@ public static class DependencyInjection
 {
     public  static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<IRepository<User>, Repository<User>>();
+        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IJwtProvider, JwtProvider>();
         //Mediator Pattern Setup
         services.AddMediatR(cfg => 
