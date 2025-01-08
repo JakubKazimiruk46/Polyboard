@@ -122,7 +122,7 @@ public partial class Field : Node3D
 				positions.Add(new Vector3(bRCG.X - 0.5f, 0.5f, bRCG.Z + 1.5f));
 				positions.Add(new Vector3(bRCG.X - 0.5f, 0.5f, bRCG.Z + 0.5f));
 				buildPositions.Add(new Vector3(bRCG.X-3.55f, 0.28f, bRCG.Z+0.3f));
-				buildPositions.Add(new Vector3(bRCG.X-3.55f, 0.28f, bRCG.Z+1.8f));
+				buildPositions.Add(new Vector3(bRCG.X-3.55f, 0.28f, bRCG.Z+0.8f));
 				buildPositions.Add(new Vector3(bRCG.X-3.55f, 0.28f, bRCG.Z+1.3f));
 				buildPositions.Add(new Vector3(bRCG.X-3.55f, 0.28f, bRCG.Z+1.8f));
 				buildPositions.Add(new Vector3(bRCG.X-3.65f, 0.28f, bRCG.Z+1.0f));
@@ -280,7 +280,7 @@ public partial class Field : Node3D
 	public async Task BuildHotel(int FieldId)
 	{
 		RemoveAllHouses();
-		HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 11, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
+		HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
 	if (invalidFieldIds.Contains(FieldId))
 	{
 	return;
