@@ -39,6 +39,7 @@ public partial class Figurehead : CharacterBody3D
 		int initialPosition = CurrentPositionIndex;
 		int targetIndex = CurrentPositionIndex + steps;
 		bool passedCorner = false;
+	
 
 		// Zakładamy, że plansza ma 40 pól
 		for (int i = 1; i <= steps; i++)
