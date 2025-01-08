@@ -278,6 +278,21 @@ visible = false
 
 [node name="UI" parent="." instance=ExtResource("13_ivesl")]
 
+[node name="card_button" parent="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer" index="0"]
+tooltip_text = "Kliknij, aby zobaczyć swoje nieruchomości"
+
+[node name="trade_button" parent="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2" index="0"]
+tooltip_text = "Kliknij, aby dokonać wymiany z innym graczem"
+
+[node name="build_button" parent="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3" index="0"]
+tooltip_text = "Kliknij, aby zbudować domek lub hotel"
+
+[node name="mortgage_button" parent="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer4" index="0"]
+tooltip_text = "Kliknij, aby zastawić daną nieruchomość. Otrzymasz natychmiast pieniądze, ale nie będziesz miał możliwości pobierać czynszu od graczy "
+
+[node name="special_card_button" parent="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer5" index="0"]
+tooltip_text = "Kliknij, aby zobaczyć swoje karty szansy i kasy społecznej"
+
 [node name="RzućKostkami" type="Button" parent="UI"]
 anchors_preset = 5
 anchor_left = 0.5
@@ -365,6 +380,8 @@ light_energy = 8.0
 shadow_enabled = true
 omni_range = 30.0
 omni_attenuation = 0.8
+
+[connection signal="pressed" from="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3/build_button" to="UI" method="on_build_button_pressed"]
 
 [editable path="NotificationLayer"]
 [editable path="UI"]

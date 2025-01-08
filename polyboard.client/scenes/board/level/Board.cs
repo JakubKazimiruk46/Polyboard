@@ -11,6 +11,8 @@ public partial class Board : StaticBody3D
 	private Sprite2D randomCard;
 	private Sprite2D step_on_card;
 	private Button endTurnButton;
+	private TextureButton tradeButton;
+	private TextureButton buildButton;
 	private GameManager gameManager;
 	private CanvasLayer BuyCard;
 	private TextureRect cardView;
@@ -137,9 +139,11 @@ public partial class Board : StaticBody3D
 
 	public void BuyField(int fieldId)
 	{
-		buyTime.Start();
-		randomCard.Visible = false;
 
+		buyTime.Start();
+		randomCard.Visible=false;
+		tradeButton.Disabled=true;
+		buildButton.Disabled=true;
 		string textureName = $"Field{fieldId}";
 		Texture2D fieldTexture = ResourceLoader.Load<Texture2D>($"res://scenes/board/level/textures/{textureName}.png");
 
