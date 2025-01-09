@@ -10,7 +10,7 @@ public class LobbyController : ControllerBase
     [HttpGet("lobbies")]
     public ActionResult<List<LobbyListItemDTO>> GetAvailableLobbies()
     {
-        var availableLobbies = LobbyHub.GetAvailableLobbies();
+        var availableLobbies = PolyBoardHub.GetAvailableLobbies();
         return Ok(availableLobbies);
     }
 }
