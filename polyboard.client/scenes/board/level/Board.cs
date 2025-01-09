@@ -11,6 +11,8 @@ public partial class Board : StaticBody3D
 	private Sprite2D randomCard;
 	private Sprite2D step_on_card;
 	private Button endTurnButton;
+	private TextureButton tradeButton;
+	private TextureButton buildButton;
 	private GameManager gameManager;
 	private CanvasLayer BuyCard;
 	private TextureRect cardView;
@@ -50,6 +52,8 @@ public partial class Board : StaticBody3D
 		cardView = GetNodeOrNull<TextureRect>("/root/Level/BuyCard/HBoxContainer/FieldView/TextureRect");
 		buyTime = GetNodeOrNull<Timer>("/root/Level/BuyCard/Timer");
 		endTurnButton = GetNodeOrNull<Button>("/root/Level/UI/ZakończTure");
+		tradeButton = GetNodeOrNull<TextureButton>("/root/Level/UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2/trade_button");
+		buildButton = GetNodeOrNull<TextureButton>("/root/Level/UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3/build_button");
 		gameManager = GetNode<GameManager>("/root/Level/GameManager");
 
 		if (textureDisplay == null || step_on_card == null)
@@ -120,10 +124,14 @@ public partial class Board : StaticBody3D
 		if (fieldId == 2 || fieldId == 17 || fieldId == 33)
 		{
 			ShowRandomCard("community");
+			endTurnButton.Visible = true;
+
 		}
 		else if (fieldId == 7 || fieldId == 22 || fieldId == 36)
 		{
 			ShowRandomCard("chance");
+			endTurnButton.Visible = true;
+
 		}
 		else if (fieldId == 4 || fieldId == 38 || fieldId == 20 || fieldId == 30 || fieldId == 10)
 		{
@@ -137,9 +145,11 @@ public partial class Board : StaticBody3D
 
 	public void BuyField(int fieldId)
 	{
-		buyTime.Start();
-		randomCard.Visible = false;
 
+		buyTime.Start();
+		randomCard.Visible=false;
+		tradeButton.Disabled=true;
+		buildButton.Disabled=true;
 		string textureName = $"Field{fieldId}";
 		Texture2D fieldTexture = ResourceLoader.Load<Texture2D>($"res://scenes/board/level/textures/{textureName}.png");
 
