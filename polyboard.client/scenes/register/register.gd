@@ -10,6 +10,8 @@ extends Control
 @onready var register_button = $MarginContainer/HBoxContainer/VBoxContainer/register_button as Button
 @onready var error_label = $MarginContainer/HBoxContainer/VBoxContainer/error_label as Label
 @onready var click_sound = $MarginContainer/HBoxContainer/VBoxContainer/ClickSound
+@onready var register_succesful = $MarginContainer/HBoxContainer/VBoxContainer/ClickSound
+@onready var register_unsuccesful = $MarginContainer/HBoxContainer/VBoxContainer/ClickSound
 #Kontaktowanie sie z serwerem
 @onready var http_request = $HTTPRequest as HTTPRequest
 #Walidacja
@@ -84,14 +86,17 @@ func _on_request_completed(result: int, response_code: int, headers: Array, body
 	var response = json.parse(response_text)
 	
 	if response_code != 200:
+		register_unsuccesful.play()
 		error_label.text = "Failed to parse response."
 		print("Error parsing response: ", response)
 		return
 
 	if response_code == 200:
+		register_succesful.play()
 		print("Registration successful: ", response)
 		error_label.text = "Registration successful!"
 		exit_register_menu.emit()
 		set_process(false)
 	else:
+		register_unsuccesful.play()
 		error_label.text = "Registration failed: " + response.result["message"]

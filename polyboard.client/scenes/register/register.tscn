@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://dfrtt3my526sn"]
+[gd_scene load_steps=7 format=3 uid="uid://dfrtt3my526sn"]
 
 [ext_resource type="Script" path="res://scenes/register/register.gd" id="1_5xa4g"]
 [ext_resource type="Texture2D" uid="uid://e56daf0rtn6l" path="res://assets/images/background.jpg" id="1_sn7k2"]
 [ext_resource type="Texture2D" uid="uid://dw4jaa57o58m5" path="res://assets/images/logo.png" id="2_2qdbv"]
 [ext_resource type="AudioStream" uid="uid://de3u564nysnh" path="res://assets/effects/click_2.wav" id="4_bgltu"]
+[ext_resource type="AudioStream" uid="uid://s4kwtih2tsdl" path="res://assets/effects/positive_login.wav" id="5_8i86a"]
+[ext_resource type="AudioStream" uid="uid://dfh64vbemug4f" path="res://assets/effects/negative_login.wav" id="6_fxnvj"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -116,3 +118,9 @@ layout_mode = 2
 
 [node name="ClickSound" type="AudioStreamPlayer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 stream = ExtResource("4_bgltu")
+
+[node name="register_succesful" type="AudioStreamPlayer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+stream = ExtResource("5_8i86a")
+
+[node name="register_unsuccesful" type="AudioStreamPlayer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+stream = ExtResource("6_fxnvj")
