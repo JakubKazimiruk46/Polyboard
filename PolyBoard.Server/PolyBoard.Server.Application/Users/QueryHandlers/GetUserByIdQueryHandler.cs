@@ -20,7 +20,7 @@ namespace PolyBoard.Server.Application.Users.QueryHandlers
             var user = await _userRepository.GetByIdAsync(request.Id, u => new User
             {
                 Id = u.Id,
-                //Games = u.Games,
+                UserName = u.UserName,
                 //etc, needed fields to select
             }, 
             cancellationToken);
@@ -33,7 +33,7 @@ namespace PolyBoard.Server.Application.Users.QueryHandlers
             return new User // map to DTO if needed (preffered!) or simply return the user variable here
             {
                 Id = user.Id,
-                // Map other properties
+                UserName = user.UserName,
             };
         }
     }
