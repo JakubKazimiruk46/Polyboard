@@ -11,6 +11,7 @@ extends Control
 @onready var save_button = account_tab_container.get_node("TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/save_button") as Button
 @onready var error_label = account_tab_container.get_node("TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/error_label") as Label
 @onready var http_request = account_tab_container.get_node("TabContainer/Account/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HTTPRequest") as HTTPRequest
+@onready var click_sound = $MarginContainer/VBoxContainer/ClickSound as AudioStreamPlayer
 
 var user_id = ""
 
@@ -36,6 +37,7 @@ func get_user_id_from_jwt() -> String:
 		return ""
 
 func _on_save_pressed() -> void:
+	click_sound.play()
 	var username_text = str(username.text.strip_edges())
 	var email_text = str(email.text.strip_edges())
 	var current_pass_text = str(current_pass.text.strip_edges())
@@ -78,6 +80,7 @@ func _on_edit_request_completed(result: int, response_code: int, headers: Array,
 		error_label.text = "Error: " + error_message
 
 func on_back_button_pressed() -> void:
+	click_sound.play()
 	exit_account_menu.emit()
 	set_process(false)
 	
