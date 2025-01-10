@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PolyBoard.Server.Application;
 using PolyBoard.Server.Application.Abstractions;
@@ -8,6 +9,7 @@ using PolyBoard.Server.Infrastructure.Authentication;
 using PolyBoard.Server.Presentation.Helpers;
 using PolyBoard.Server.Presentation.Hubs;
 using PolyBoard.Server.Presentation.OptionsSetup;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,8 +38,16 @@ builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        var jwtOptions = new JwtOptions();
-        options.TokenValidationParameters = new JwtBearerOptions().TokenValidationParameters;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("PolyBoard9Gx2Lz!3QfV4#WnY$Jb5@7Xz")),
+            ValidateIssuer = true,
+            ValidIssuer = "PolyBoardServer",
+            ValidateAudience = true,
+            ValidAudience = "PolyBoardClient",
+            ValidateLifetime = true
+        };
 
         options.Events = new JwtBearerEvents
         {
