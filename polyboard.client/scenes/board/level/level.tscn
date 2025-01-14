@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=30 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -17,7 +17,11 @@
 [ext_resource type="Script" path="res://GameManager.cs" id="13_yovhc"]
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="14_u56ja"]
 [ext_resource type="PackedScene" uid="uid://dvogx2n2lhbbd" path="res://scenes/board/level/buy_card.tscn" id="16_8p6lx"]
+[ext_resource type="PackedScene" uid="uid://bgdyps5dc54tx" path="res://scenes/board/figurehead/pizza_pionek.tscn" id="17_1m425"]
 [ext_resource type="PackedScene" uid="uid://h1ww7awlbuhf" path="res://scenes/board/level/trade.tscn" id="17_bq0mx"]
+[ext_resource type="PackedScene" uid="uid://gp7nt0o21wam" path="res://scenes/board/figurehead/czapka_absolwenta_pionek.tscn" id="17_gaapt"]
+[ext_resource type="Script" path="res://scenes/board/figurehead/Figurehead.cs" id="18_gkn4w"]
+[ext_resource type="PackedScene" uid="uid://b2til4lqp6c80" path="res://scenes/board/figurehead/xbox_controller_pionek.tscn" id="21_1ulqv"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]
 size = Vector3(28.5, 0.2, 28.5)
@@ -338,39 +342,34 @@ playersUIContainerPath = NodePath("../UI/Players")
 
 [node name="Players" type="Node3D" parent="GameManager"]
 
+[node name="xbox-controller-pionek" parent="GameManager/Players" instance=ExtResource("21_1ulqv")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 11.023, 0.5, 12.048)
+script = ExtResource("18_gkn4w")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/xbox-controller-pionek"]
+stream = ExtResource("14_u56ja")
+bus = &"Sfx"
+
+[node name="pizza-pionek" parent="GameManager/Players" instance=ExtResource("17_1m425")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 13.0028, 0.529029, 10.9497)
+script = ExtResource("18_gkn4w")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/pizza-pionek"]
+stream = ExtResource("14_u56ja")
+bus = &"Sfx"
+
+[node name="czapka-absolwenta-pionek" parent="GameManager/Players" instance=ExtResource("17_gaapt")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 11.2924, 0.569427, 10.8537)
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/czapka-absolwenta-pionek"]
+stream = ExtResource("14_u56ja")
+bus = &"Sfx"
+
 [node name="Jacenty" parent="GameManager/Players" instance=ExtResource("3_8t0aq")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
-walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 12.7377, 0.5, 12.4487)
+walkSoundPlayerPath = NodePath("../czapka-absolwenta-pionek/AudioStreamPlayer3D")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/Jacenty"]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
-stream = ExtResource("14_u56ja")
-bus = &"Sfx"
-
-[node name="Mieszko" parent="GameManager/Players" instance=ExtResource("3_8t0aq")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
-walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
-
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/Mieszko"]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
-stream = ExtResource("14_u56ja")
-bus = &"Sfx"
-
-[node name="Gerwazy" parent="GameManager/Players" instance=ExtResource("3_8t0aq")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
-walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
-
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/Gerwazy"]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
-stream = ExtResource("14_u56ja")
-bus = &"Sfx"
-
-[node name="Włodzimierz" parent="GameManager/Players" instance=ExtResource("3_8t0aq")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.0225, 0.5, 10.3388)
-walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
-
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/Włodzimierz"]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -22.045, -1, -20.6776)
 stream = ExtResource("14_u56ja")
 bus = &"Sfx"
 

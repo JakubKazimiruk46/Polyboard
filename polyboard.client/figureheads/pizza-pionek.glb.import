@@ -13,8 +13,8 @@ dest_files=["res://.godot/imported/pizza-pionek.glb-4bdc528c7565ce8065d13fe8c51c
 
 [params]
 
-nodes/root_type=""
-nodes/root_name=""
+nodes/root_type="CharacterBody3D"
+nodes/root_name="pizza-pionek"
 nodes/apply_root_scale=true
 nodes/root_scale=1.0
 nodes/import_as_skeleton_bones=false
