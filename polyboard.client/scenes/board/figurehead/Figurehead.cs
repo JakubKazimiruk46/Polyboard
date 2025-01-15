@@ -6,15 +6,17 @@ public partial class Figurehead : CharacterBody3D
 {
 	public int CurrentPositionIndex { get; set; } = 0;
 	[Export]
-	public NodePath walkSoundPlayerPath; // Ścieżka do AudioStreamPlayer3D
+	public NodePath walkSoundPlayerPath;
 
 	[Export]
-	public int StartingECTS = 100; // Początkowa ilość ECTS
+	public int StartingECTS = 100;
 
 	private AudioStreamPlayer3D walkSoundPlayer;
-
-	// Właściwość ECTS
 	public int ECTS { get; private set; }
+
+	// Dodane stałe do obsługi planszy
+	private const int TOTAL_FIELDS = 40;
+	private const int START_FIELD = 0;
 
 	public override void _Ready()
 	{
@@ -24,46 +26,66 @@ public partial class Figurehead : CharacterBody3D
 			GD.PrintErr("Błąd: Nie znaleziono AudioStreamPlayer3D. Sprawdź walkSoundPlayerPath.");
 		}
 
-		// Inicjalizacja ECTS
 		ECTS = StartingECTS;
-
-		// Aktualizacja UI na starcie
 		UpdateECTSUI();
 	}
 
-	// Metoda wywoływana przez GameManager po obliczeniu kroków
-	public async Task MovePawnSequentially(int steps, Board board)
+	// Nowa metoda do przesuwania pionka o określoną liczbę pól (może być ujemna)
+	public async Task MoveByFields(int fieldCount, Board board)
 	{
-		
 		PlayWalkSound();
 		int initialPosition = CurrentPositionIndex;
-		int targetIndex = CurrentPositionIndex + steps;
-		bool passedCorner = false;
-	
+		int steps = Math.Abs(fieldCount); // Ilość kroków do wykonania
+		int direction = Math.Sign(fieldCount); // 1 dla ruchu w przód, -1 dla ruchu w tył
 
-		// Zakładamy, że plansza ma 40 pól
+		// Dla każdego kroku
 		for (int i = 1; i <= steps; i++)
 		{
-			CurrentPositionIndex = (initialPosition + i) % 40;
-
-			// Sprawdzenie, czy gracz przeszedł przez CornerField0
-			if (CurrentPositionIndex == 0)
+			// Obliczanie nowej pozycji z uwzględnieniem kierunku i zawijania planszy
+			int newPosition = initialPosition + (i * direction);
+			
+			// Obsługa przekroczenia granic planszy
+			if (newPosition >= TOTAL_FIELDS)
 			{
-				AddECTS(200);
-				GD.Print($"Gracz {Name} przeszedł przez CornerField0 i otrzymał 200 ECTS.");
-				ShowECTSUpdate();
+				newPosition %= TOTAL_FIELDS;
+				// Przyznawanie ECTS za przejście przez start przy ruchu w przód
+				if (direction > 0)
+				{
+					AddECTS(200);
+					GD.Print($"Gracz {Name} przeszedł przez pole startowe i otrzymał 200 ECTS.");
+					ShowECTSUpdate();
+				}
+			}
+			else if (newPosition < 0)
+			{
+				newPosition = TOTAL_FIELDS + (newPosition % TOTAL_FIELDS);
 			}
 
+			CurrentPositionIndex = newPosition;
+
+			// Aktualizacja pozycji na planszy
 			Field nextField = board.GetFieldById(CurrentPositionIndex);
 			if (nextField == null || nextField.positions.Count == 0)
 			{
-				GD.PrintErr("Błąd: Nie znaleziono pola docelowego lub brak pozycji na polu.");
+				GD.PrintErr($"Błąd: Nie znaleziono pola docelowego lub brak pozycji na polu {CurrentPositionIndex}.");
 				StopWalkSound();
 				return;
 			}
+
+			// Znajdź wolną pozycję na polu
 			int freeIndex = nextField.occupied.FindIndex(occupied => !occupied);
+			if (freeIndex == -1)
+			{
+				GD.PrintErr($"Błąd: Brak wolnych pozycji na polu {CurrentPositionIndex}.");
+				StopWalkSound();
+				return;
+			}
+
+			// Oznacz pozycję jako zajętą i wykonaj ruch
+			nextField.occupied[freeIndex] = true;
 			Vector3 nextPosition = nextField.positions[freeIndex];
-			nextField.occupied[freeIndex]=true;
+
+			// Animacja ruchu
 			Tween tween = CreateTween();
 			tween.TweenProperty(this, "global_position", nextPosition, 0.5f)
 				 .SetTrans(Tween.TransitionType.Linear)
@@ -72,15 +94,42 @@ public partial class Figurehead : CharacterBody3D
 		}
 
 		StopWalkSound();
+		
+		// Wywołaj odpowiednie akcje po zakończeniu ruchu
 		board.StepOnField(CurrentPositionIndex);
-
-		// Możliwość przyznania ECTS po zakończeniu ruchu
 		OnFieldLanded(board.GetFieldById(CurrentPositionIndex));
 	}
-	public int GetCurrentPositionIndex()
+
+	// Zmodyfikowana metoda MovePawnSequentially, która teraz wykorzystuje MoveByFields
+	public async Task MovePawnSequentially(int steps, Board board)
 	{
-		return CurrentPositionIndex;
+		await MoveByFields(steps, board);
 	}
+
+	// Metoda pomocnicza do cofania pionka
+	public async Task MoveBackward(int steps, Board board)
+	{
+		await MoveByFields(-steps, board);
+	}
+
+	// Metoda do przenoszenia pionka na konkretne pole
+	public async Task MoveToField(int targetFieldId, Board board)
+	{
+		int currentPos = CurrentPositionIndex;
+		int stepsForward = (targetFieldId - currentPos + TOTAL_FIELDS) % TOTAL_FIELDS;
+		int stepsBackward = (currentPos - targetFieldId + TOTAL_FIELDS) % TOTAL_FIELDS;
+
+		// Wybierz krótszą drogę
+		if (stepsForward <= stepsBackward)
+		{
+			await MoveByFields(stepsForward, board);
+		}
+		else
+		{
+			await MoveByFields(-stepsBackward, board);
+		}
+	}
+
 	private void PlayWalkSound()
 	{
 		if (walkSoundPlayer != null)
@@ -97,27 +146,20 @@ public partial class Figurehead : CharacterBody3D
 		}
 	}
 
-	// Metoda obsługująca zdarzenia po lądowaniu na polu
 	private void OnFieldLanded(Field field)
 	{
-		// Przykład: Przyznaj ECTS za lądowanie na określonych polach
 		if (field.ECTSReward > 0)
 		{
 			AddECTS(field.ECTSReward);
 			GD.Print($"Gracz {Name} otrzymał {field.ECTSReward} ECTS za lądowanie na polu {field.Name}.");
 			ShowECTSUpdate();
 		}
-
-		// Możesz również obsługiwać wydatki ECTS tutaj
-		// np. jeśli gracz kupuje coś na polu
 	}
 
-	// Metody do zarządzania ECTS
 	public void AddECTS(int amount)
 	{
 		ECTS += amount;
 		GD.Print($"Gracz {Name} otrzymał {amount} ECTS. Łączna ilość: {ECTS}");
-		// Aktualizacja UI
 		UpdateECTSUI();
 	}
 
@@ -127,31 +169,25 @@ public partial class Figurehead : CharacterBody3D
 		{
 			ECTS -= amount;
 			GD.Print($"Gracz {Name} wydał {amount} ECTS. Pozostało: {ECTS}");
-			// Aktualizacja UI
 			UpdateECTSUI();
 			return true;
 		}
-		else
-		{
-			GD.Print($"Gracz {Name} nie ma wystarczającej ilości ECTS.");
-			return false;
-		}
+		GD.Print($"Gracz {Name} nie ma wystarczającej ilości ECTS.");
+		return false;
 	}
 
-	// Metody do aktualizacji UI
 	private void UpdateECTSUI()
 	{
-		// Zakładamy, że masz referencję do GameManager lub innego komponentu odpowiedzialnego za UI
-		// Możesz użyć sygnałów lub innej metody komunikacji, aby poinformować GameManager o zmianie ECTS
-		// Przykład:
-		// EmitSignal(nameof(ECTSChanged), ECTS);
+		// Implementacja aktualizacji UI
 	}
 
 	private void ShowECTSUpdate()
 	{
-		// Możesz dodać animację lub powiadomienie o aktualizacji ECTS
-		// Przykład:
-		// ShowNotification($"ECTS: {ECTS}", 2f);
+		// Implementacja pokazywania aktualizacji ECTS
 	}
-	
+
+	public int GetCurrentPositionIndex()
+	{
+		return CurrentPositionIndex;
+	}
 }
