@@ -18,7 +18,6 @@ public partial class Board : StaticBody3D
 	private TextureRect cardView;
 	private Timer buyTime;
 
-	// Słownik efektów kart z dodatkowymi akcjami
 	private readonly Dictionary<(string type, int number), (int ectsEffect, Func<Task> specialEffect)> cardEffects;
 
 	public Board()
@@ -105,9 +104,12 @@ public partial class Board : StaticBody3D
 	{
 		if (cardEffects.TryGetValue((cardType, cardNumber), out var effect))
 		{
+			// Hide end turn button during effect processing
+			endTurnButton.Visible = false;
+			
 			var currentPlayerIndex = gameManager.GetCurrentPlayerIndex();
 
-			// Zastosuj efekt ECTS
+			// Apply ECTS effect
 			if (effect.ectsEffect != 0)
 			{
 				gameManager.AddEctsToPlayer(currentPlayerIndex, effect.ectsEffect);
@@ -120,42 +122,61 @@ public partial class Board : StaticBody3D
 				{
 					GD.Print($"Karta {cardType} {cardNumber}: Gracz stracił {-effect.ectsEffect} ECTS");
 				}
+
+				// Small delay for visual feedback
+				await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
 			}
 
-			// Wykonaj specjalny efekt karty (ruch pionka), jeśli istnieje
+			// Execute special card effect (pawn movement) if it exists
 			if (effect.specialEffect != null)
 			{
 				try
 				{
 					await effect.specialEffect();
+					// Add delay after special effect
+					await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
 				}
 				catch (Exception e)
 				{
 					GD.PrintErr($"Błąd podczas wykonywania specjalnego efektu karty: {e.Message}");
 				}
 			}
+
+			// Show end turn button after all effects are processed
+			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
+			endTurnButton.Visible = true;
 		}
 	}
 
-	public void StepOnField(int fieldId)
+	public async void StepOnField(int fieldId)
 	{
+		// Wait for any animations to complete
+		await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
+
+		// Hide end turn button initially
+		endTurnButton.Visible = false;
+
 		if (fieldId == 2 || fieldId == 17 || fieldId == 33)
 		{
-			ShowRandomCard("community");
+			await ShowRandomCard("community");
+			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
 			endTurnButton.Visible = true;
 		}
 		else if (fieldId == 7 || fieldId == 22 || fieldId == 36)
 		{
-			ShowRandomCard("chance");
+			await ShowRandomCard("chance");
+			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
 			endTurnButton.Visible = true;
 		}
 		else if (fieldId == 4 || fieldId == 38 || fieldId == 20 || fieldId == 30 || fieldId == 10)
 		{
+			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
 			endTurnButton.Visible = true;
 		}
 		else
 		{
 			BuyField(fieldId);
+			// End turn button visibility is handled by BuyCard timer in this case
 		}
 	}
 
@@ -224,7 +245,7 @@ public partial class Board : StaticBody3D
 		}
 	}
 
-	public async void ShowFieldTexture(int fieldId)
+public async void ShowFieldTexture(int fieldId)
 	{
 		randomCard.Visible = false;
 		textureDisplay.Visible = false;
