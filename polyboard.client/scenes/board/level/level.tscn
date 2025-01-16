@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=31 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -18,6 +18,7 @@
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="14_u56ja"]
 [ext_resource type="PackedScene" uid="uid://dvogx2n2lhbbd" path="res://scenes/board/level/buy_card.tscn" id="16_8p6lx"]
 [ext_resource type="PackedScene" uid="uid://bgdyps5dc54tx" path="res://scenes/board/figurehead/pizza_pionek.tscn" id="17_1m425"]
+[ext_resource type="Script" path="res://scenes/board/level/players.gd" id="17_6omuv"]
 [ext_resource type="PackedScene" uid="uid://h1ww7awlbuhf" path="res://scenes/board/level/trade.tscn" id="17_bq0mx"]
 [ext_resource type="PackedScene" uid="uid://gp7nt0o21wam" path="res://scenes/board/figurehead/czapka_absolwenta_pionek.tscn" id="17_gaapt"]
 [ext_resource type="Script" path="res://scenes/board/figurehead/Figurehead.cs" id="18_gkn4w"]
@@ -341,10 +342,16 @@ ectsUIContainerPath = NodePath("../UI/Players")
 playersUIContainerPath = NodePath("../UI/Players")
 
 [node name="Players" type="Node3D" parent="GameManager"]
+script = ExtResource("17_6omuv")
 
 [node name="xbox-controller-pionek" parent="GameManager/Players" instance=ExtResource("21_1ulqv")]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 11.023, 0.5, 12.048)
 script = ExtResource("18_gkn4w")
+
+[node name="Label3D" type="Label3D" parent="GameManager/Players/xbox-controller-pionek"]
+billboard = 2
+modulate = Color(1, 0.258824, 0.627451, 1)
+outline_modulate = Color(1, 0.258824, 0.627451, 1)
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/xbox-controller-pionek"]
 stream = ExtResource("14_u56ja")
@@ -354,12 +361,22 @@ bus = &"Sfx"
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 13.0028, 0.529029, 10.9497)
 script = ExtResource("18_gkn4w")
 
+[node name="Label3D" type="Label3D" parent="GameManager/Players/pizza-pionek"]
+billboard = 2
+modulate = Color(0, 0.682353, 0.713726, 1)
+outline_modulate = Color(0, 0.682353, 0.713726, 1)
+
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/pizza-pionek"]
 stream = ExtResource("14_u56ja")
 bus = &"Sfx"
 
 [node name="czapka-absolwenta-pionek" parent="GameManager/Players" instance=ExtResource("17_gaapt")]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 11.2924, 0.569427, 10.8537)
+
+[node name="Label3D" type="Label3D" parent="GameManager/Players/czapka-absolwenta-pionek"]
+billboard = 2
+modulate = Color(0.886275, 0.47451, 0.2, 1)
+outline_modulate = Color(0.886275, 0.47451, 0.2, 1)
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/czapka-absolwenta-pionek"]
 stream = ExtResource("14_u56ja")
@@ -368,6 +385,11 @@ bus = &"Sfx"
 [node name="Jacenty" parent="GameManager/Players" instance=ExtResource("3_8t0aq")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 12.7377, 0.5, 12.4487)
 walkSoundPlayerPath = NodePath("../czapka-absolwenta-pionek/AudioStreamPlayer3D")
+
+[node name="Label3D" type="Label3D" parent="GameManager/Players/Jacenty"]
+billboard = 2
+modulate = Color(0, 0.713726, 0.411765, 1)
+outline_modulate = Color(0, 0.713726, 0.411765, 1)
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/Jacenty"]
 stream = ExtResource("14_u56ja")
