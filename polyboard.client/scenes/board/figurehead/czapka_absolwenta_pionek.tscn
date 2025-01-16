@@ -136,7 +136,7 @@ transform = Transform3D(0.0558133, 0, 0, 0, 0.0558133, 0, 0, 0, 0.0558133, 0.075
 mesh = SubResource("ArrayMesh_3188p")
 
 [node name="Cylinder_001" parent="." index="3"]
-transform = Transform3D(0.0105891, 0, 0, 0, -0.0259705, 0.0107579, 0, -0.35177, -0.000794231, 0.0725318, -1.31104, -0.461127)
+transform = Transform3D(0.0105891, 0, 0, 0, -0.0259705, 0.0107579, 0, -0.35177, -0.000794235, 0.0725318, -1.31104, -0.461127)
 mesh = SubResource("ArrayMesh_ecd80")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." index="4"]
