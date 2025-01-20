@@ -84,17 +84,6 @@ public partial class Board : StaticBody3D
 		randomCard.Visible = false;
 		textureDisplay.Visible = false;
 
-		if (fieldId == 2 || fieldId == 17 || fieldId == 33)
-		{
-			await ShowRandomCard("community");
-			return;
-		}
-		else if (fieldId == 7 || fieldId == 22 || fieldId == 36)
-		{
-			await ShowRandomCard("chance");
-			return;
-		}
-
 		string textureName = $"Field{fieldId}";
 		Texture2D fieldTexture = ResourceLoader.Load<Texture2D>($"res://scenes/board/level/textures/{textureName}.png");
 
