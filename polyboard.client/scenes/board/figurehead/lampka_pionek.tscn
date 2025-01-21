@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://bsi4oslsf3i8v"]
+
+[ext_resource type="PackedScene" uid="uid://dj58e1gcft5xg" path="res://figureheads/lampka-pionek.glb" id="1_wgqyv"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_sf2bt"]
+size = Vector3(2.49623, 3.53625, 2.14679)
+
+[node name="lampka-pionek" instance=ExtResource("1_wgqyv")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, -0.922199, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0163803, 1.26813, 0.0794373)
+shape = SubResource("BoxShape3D_sf2bt")

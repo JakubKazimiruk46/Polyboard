@@ -1,9 +1,8 @@
-[gd_scene load_steps=31 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=30 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" path="res://scenes/board/level/level.gd" id="1_djwtq"]
 [ext_resource type="Texture2D" uid="uid://u6156pm3sx3h" path="res://assets/images/pb_background.jpg" id="1_ymkqo"]
-[ext_resource type="PackedScene" uid="uid://corrmnc7rodeh" path="res://scenes/board/figurehead/figurehead.tscn" id="3_8t0aq"]
 [ext_resource type="PackedScene" uid="uid://cqpmepp30bdrg" path="res://scenes/board/level/MAPA_OBIEKT.glb" id="4_6krdw"]
 [ext_resource type="PackedScene" uid="uid://dhj5sru57cpw4" path="res://kostka/die.tscn" id="5_p3toi"]
 [ext_resource type="AudioStream" uid="uid://bvd8lde5mcmy0" path="res://assets/Music/construction_sound.mp3" id="6_h2q08"]
@@ -344,57 +343,44 @@ playersUIContainerPath = NodePath("../UI/Players")
 [node name="Players" type="Node3D" parent="GameManager"]
 script = ExtResource("17_6omuv")
 
-[node name="xbox-controller-pionek" parent="GameManager/Players" instance=ExtResource("21_1ulqv")]
+[node name="ziut" parent="GameManager/Players" instance=ExtResource("21_1ulqv")]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 11.023, 0.5, 12.048)
 script = ExtResource("18_gkn4w")
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
 
-[node name="Label3D" type="Label3D" parent="GameManager/Players/xbox-controller-pionek"]
+[node name="Label3D" type="Label3D" parent="GameManager/Players/ziut"]
 billboard = 2
 modulate = Color(1, 0.258824, 0.627451, 1)
 outline_modulate = Color(1, 0.258824, 0.627451, 1)
 
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/xbox-controller-pionek"]
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/ziut"]
 stream = ExtResource("14_u56ja")
 bus = &"Sfx"
 
-[node name="pizza-pionek" parent="GameManager/Players" instance=ExtResource("17_1m425")]
+[node name="ziut1" parent="GameManager/Players" instance=ExtResource("17_1m425")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 13.0028, 0.529029, 10.9497)
 script = ExtResource("18_gkn4w")
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
 
-[node name="Label3D" type="Label3D" parent="GameManager/Players/pizza-pionek"]
+[node name="Label3D" type="Label3D" parent="GameManager/Players/ziut1"]
 billboard = 2
 modulate = Color(0, 0.682353, 0.713726, 1)
 outline_modulate = Color(0, 0.682353, 0.713726, 1)
 
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/pizza-pionek"]
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/ziut1"]
 stream = ExtResource("14_u56ja")
 bus = &"Sfx"
 
-[node name="czapka-absolwenta-pionek" parent="GameManager/Players" instance=ExtResource("17_gaapt")]
+[node name="ziut2" parent="GameManager/Players" instance=ExtResource("17_gaapt")]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 11.2924, 0.569427, 10.8537)
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
 
-[node name="Label3D" type="Label3D" parent="GameManager/Players/czapka-absolwenta-pionek"]
+[node name="Label3D" type="Label3D" parent="GameManager/Players/ziut2"]
 billboard = 2
 modulate = Color(0.886275, 0.47451, 0.2, 1)
 outline_modulate = Color(0.886275, 0.47451, 0.2, 1)
 
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/czapka-absolwenta-pionek"]
-stream = ExtResource("14_u56ja")
-bus = &"Sfx"
-
-[node name="Jacenty" parent="GameManager/Players" instance=ExtResource("3_8t0aq")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 12.7377, 0.5, 12.4487)
-walkSoundPlayerPath = NodePath("../czapka-absolwenta-pionek/AudioStreamPlayer3D")
-
-[node name="Label3D" type="Label3D" parent="GameManager/Players/Jacenty"]
-billboard = 2
-modulate = Color(0, 0.713726, 0.411765, 1)
-outline_modulate = Color(0, 0.713726, 0.411765, 1)
-
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/Jacenty"]
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/ziut2"]
 stream = ExtResource("14_u56ja")
 bus = &"Sfx"
 

@@ -48,7 +48,7 @@ public partial class Lobby : Control
 	private Dictionary<User, Control> _userGuiMap = new Dictionary<User, Control>();
 	private TextureButton _backButton;
 	private Button _readyButton;
-	
+	private Button _setFigureheadsButton;
 	private Button _startGameButton;
 
 	public override void _Ready()
@@ -56,9 +56,12 @@ public partial class Lobby : Control
 		_lobbyPersonScene = (PackedScene)GD.Load("res://scenes/lobby/lobby_person.tscn");
 
 		var userListContainer = GetNode<VBoxContainer>("MarginContainer/VBoxContainer/UserList");
-
+		
 		_users = JsonConvert.DeserializeObject<List<User>>(jsonInput);
-
+		
+		_setFigureheadsButton = GetNode<Button>("MarginContainer/VBoxContainer/HBoxContainer/SetFigureheadsButton");
+		_setFigureheadsButton.Pressed += OnSetFigureheadsButtonPressed;
+		
 		_readyButton = GetNode<Button>("MarginContainer/VBoxContainer/HBoxContainer/ReadyButton");
 		_readyButton.Pressed += OnReadyButtonPressed;
 		
@@ -117,5 +120,9 @@ public partial class Lobby : Control
 		{
 			GetTree().ChangeSceneToFile(_previousScenePath);
 		}
-}
+	}
+	
+	private void OnSetFigureheadsButtonPressed(){
+		GetTree().ChangeSceneToFile("res://scenes/set_skins/set_skins.tscn");
+	}
 }

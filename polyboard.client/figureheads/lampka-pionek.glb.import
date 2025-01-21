@@ -13,7 +13,7 @@ dest_files=["res://.godot/imported/lampka-pionek.glb-e7d756ae07b23cd5c3ebe69618c
 
 [params]
 
-nodes/root_type=""
+nodes/root_type="CharacterBody3D"
 nodes/root_name=""
 nodes/apply_root_scale=true
 nodes/root_scale=1.0
