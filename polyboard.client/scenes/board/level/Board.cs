@@ -274,7 +274,18 @@ public async void ShowFieldTexture(int fieldId)
 			float scaleFactorY = viewportSize.Y / 1250f;
 			float scaleFactor = Math.Min(scaleFactorX, scaleFactorY);
 			Vector2 scale = new Vector2(scaleFactor, scaleFactor);
-
+			field = gameManager.getCurrentField(fieldId);
+			if(field.owned == true)
+			{
+				string nickname = field.GetUserNickname(field);
+				ownerNickname.Text = $"właściciel:\n{nickname}";
+			}
+			else
+			{
+				ownerNickname.Text = "Pole nie ma właściciela";
+			}
+			ownerNickname.Visible = true;
+			ownerNicknameView.Visible = true;
 			textureDisplay.Scale = new Vector2(0, 0);
 			textureDisplay.Visible = true;
 
