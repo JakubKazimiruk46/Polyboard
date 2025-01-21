@@ -13,7 +13,7 @@ dest_files=["res://.godot/imported/mikroskop-pionek.glb-43a4c7652cab50d26b761e8a
 
 [params]
 
-nodes/root_type=""
+nodes/root_type="CharacterBody3D"
 nodes/root_name=""
 nodes/apply_root_scale=true
 nodes/root_scale=1.0

@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://hjai23lenb1h"]
+
+[ext_resource type="PackedScene" uid="uid://s44vy8pcjsa3" path="res://figureheads/lego-pionek.glb" id="1_o68ba"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_x1b5y"]
+size = Vector3(2.86816, 4.26208, 1.28076)
+
+[node name="lego-pionek" instance=ExtResource("1_o68ba")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, -0.80907, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." index="7"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.000488281, 1.97305, 0.140381)
+shape = SubResource("BoxShape3D_x1b5y")

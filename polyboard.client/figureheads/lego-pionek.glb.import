@@ -13,7 +13,7 @@ dest_files=["res://.godot/imported/lego-pionek.glb-f62763ec58b801bdf3b53b4959bbc
 
 [params]
 
-nodes/root_type=""
+nodes/root_type="CharacterBody3D"
 nodes/root_name=""
 nodes/apply_root_scale=true
 nodes/root_scale=1.0

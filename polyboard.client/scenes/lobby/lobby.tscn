@@ -46,7 +46,7 @@ texture_normal = ExtResource("3_1hxoy")
 [node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 43
-text = "Lobby"
+text = "🚀 Lobby 🚀"
 horizontal_alignment = 1
 
 [node name="UserList" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
@@ -61,10 +61,15 @@ alignment = 1
 [node name="ReadyButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-text = "READY"
+text = "READY ✔️"
 
 [node name="StartButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-text = "START GAME
+text = "START GAME 🎬
 "
+
+[node name="SetFigureheadsButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "SET SKINS ♟️"

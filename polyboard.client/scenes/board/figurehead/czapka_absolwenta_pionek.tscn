@@ -121,6 +121,7 @@ shadow_mesh = SubResource("ArrayMesh_xdloe")
 size = Vector3(1.06885, 0.417023, 1.13062)
 
 [node name="czapka-absolwenta-pionek" instance=ExtResource("1_i5w7a")]
+transform = Transform3D(-0.215, 0, -0.372391, 0, 0.43, 0, 0.372391, 0, -0.215, 0, 0.78, 0)
 script = ExtResource("2_4x40n")
 
 [node name="Empty" parent="." index="0"]

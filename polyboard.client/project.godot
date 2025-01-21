@@ -27,6 +27,7 @@ SettingsSignalBus="*res://autoloads/SettingsSignalBus.gd"
 SaveManager="*res://autoloads/SaveManager.gd"
 Authentication="*res://scenes/authentication/authentication.gd"
 HubConnectionService="*res://services/HubConnectionService.cs"
+FigureheadLoader="*res://services/figurehead_loader.gd"
 
 [dotnet]
 
