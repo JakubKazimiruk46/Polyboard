@@ -347,6 +347,7 @@ script = ExtResource("17_6omuv")
 [node name="xbox-controller-pionek" parent="GameManager/Players" instance=ExtResource("21_1ulqv")]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 11.023, 0.5, 12.048)
 script = ExtResource("18_gkn4w")
+walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
 
 [node name="Label3D" type="Label3D" parent="GameManager/Players/xbox-controller-pionek"]
 billboard = 2
@@ -360,6 +361,7 @@ bus = &"Sfx"
 [node name="pizza-pionek" parent="GameManager/Players" instance=ExtResource("17_1m425")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 13.0028, 0.529029, 10.9497)
 script = ExtResource("18_gkn4w")
+walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
 
 [node name="Label3D" type="Label3D" parent="GameManager/Players/pizza-pionek"]
 billboard = 2
@@ -372,6 +374,7 @@ bus = &"Sfx"
 
 [node name="czapka-absolwenta-pionek" parent="GameManager/Players" instance=ExtResource("17_gaapt")]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 11.2924, 0.569427, 10.8537)
+walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
 
 [node name="Label3D" type="Label3D" parent="GameManager/Players/czapka-absolwenta-pionek"]
 billboard = 2

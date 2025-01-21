@@ -18,33 +18,20 @@ public partial class Board : StaticBody3D
 	private TextureRect cardView;
 	private Timer buyTime;
 
-	private readonly Dictionary<(string type, int number), int> cardEffects = new Dictionary<(string type, int number), int>
-	{
-		// Community cards effects
-		{ ("community", 4), -150 },
-		{ ("community", 5), -50 },
-		{ ("community", 6), -100 },
-		{ ("community", 7), 50 },
-		{ ("community", 8), 150 },
-		{ ("community", 9), -100 },
-		{ ("community", 10), 200 },
-		{ ("community", 11), 200 },
-		{ ("community", 12), 200 },
-		{ ("community", 13), -100 },
-		{ ("community", 15), 200 },
-		{ ("community", 16), -50 },
+	private readonly Dictionary<(string type, int number), (int ectsEffect, Func<Task> specialEffect)> cardEffects;
 
-		// Chance cards effects
-		{ ("chance", 2), 100 },
-		{ ("chance", 3), 150 },
-		{ ("chance", 6), 100 },
-		{ ("chance", 11), -150 },
-		{ ("chance", 12), -150 },
-		{ ("chance", 13), -50 },
-		{ ("chance", 16), 100 },
-	};
+	public Board()
+	{
+		cardEffects = new Dictionary<(string type, int number), (int ectsEffect, Func<Task> specialEffect)>();
+	}
 
 	public override void _Ready()
+	{
+		InitializeComponents();
+		InitializeCardEffects();
+	}
+
+	private void InitializeComponents()
 	{
 		step_on_card = GetNodeOrNull<Sprite2D>("/root/Level/BuyCard/HBoxContainer/FieldView/TextureRect/FieldToBuy");
 		randomCard = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/RandomCard");
@@ -74,71 +61,131 @@ public partial class Board : StaticBody3D
 		}
 	}
 
-	public List<Field> GetFields()
+	private void InitializeCardEffects()
 	{
-		return fields;
+		// Community cards effects
+		cardEffects.Add(("community", 4), (-150, null));
+		cardEffects.Add(("community", 5), (-50, null));
+		cardEffects.Add(("community", 6), (-100, null));
+		cardEffects.Add(("community", 7), (50, null));
+		cardEffects.Add(("community", 8), (150, null));
+		cardEffects.Add(("community", 9), (-100, null));
+		cardEffects.Add(("community", 10), (200, null));
+		cardEffects.Add(("community", 11), (200, null));
+		cardEffects.Add(("community", 12), (200, null));
+		cardEffects.Add(("community", 13), (-100, null));
+		cardEffects.Add(("community", 15), (200, null));
+		cardEffects.Add(("community", 16), (-50, null));
+
+		// Chance cards effects
+		cardEffects.Add(("chance", 2), (100, null));
+		cardEffects.Add(("chance", 3), (150, null));
+		cardEffects.Add(("chance", 5), (0, async () => 
+		{
+			var currentPlayer = gameManager.getCurrentPlayer();
+			await currentPlayer.MoveByFields(-2, this);
+		}));
+		cardEffects.Add(("chance", 6), (100, null));
+		cardEffects.Add(("chance", 7), (0, async () => 
+		{
+			var currentPlayer = gameManager.getCurrentPlayer();
+			await currentPlayer.MoveToField(0, this);
+		}));
+		cardEffects.Add(("chance", 11), (-150, null));
+		cardEffects.Add(("chance", 12), (-150, null));
+		cardEffects.Add(("chance", 13), (-50, async () => 
+		{
+			var currentPlayer = gameManager.getCurrentPlayer();
+			await currentPlayer.MoveByFields(-2, this);
+		}));
 	}
 
-	public async void ShowFieldTexture(int fieldId)
+	private async Task ProcessCardEffect(string cardType, int cardNumber)
 	{
-		randomCard.Visible = false;
-		textureDisplay.Visible = false;
-
-		string textureName = $"Field{fieldId}";
-		Texture2D fieldTexture = ResourceLoader.Load<Texture2D>($"res://scenes/board/level/textures/{textureName}.png");
-
-		if (fieldTexture != null)
+		if (cardEffects.TryGetValue((cardType, cardNumber), out var effect))
 		{
-			textureDisplay.Texture = fieldTexture;
-			Vector2 viewportSize = GetViewport().GetVisibleRect().Size;
-			float scaleFactorX = viewportSize.X / 3000f;
-			float scaleFactorY = viewportSize.Y / 1250f;
-			float scaleFactor = Math.Min(scaleFactorX, scaleFactorY);
-			Vector2 scale = new Vector2(scaleFactor, scaleFactor);
+			// Hide end turn button during effect processing
+			endTurnButton.Visible = false;
+			
+			var currentPlayerIndex = gameManager.GetCurrentPlayerIndex();
 
-			textureDisplay.Scale = new Vector2(0, 0);
-			textureDisplay.Visible = true;
+			// Apply ECTS effect
+			if (effect.ectsEffect != 0)
+			{
+				gameManager.AddEctsToPlayer(currentPlayerIndex, effect.ectsEffect);
+				
+				if (effect.ectsEffect > 0)
+				{
+					GD.Print($"Karta {cardType} {cardNumber}: Gracz otrzymał {effect.ectsEffect} ECTS");
+				}
+				else
+				{
+					GD.Print($"Karta {cardType} {cardNumber}: Gracz stracił {-effect.ectsEffect} ECTS");
+				}
 
-			Tween tween = CreateTween();
-			tween.TweenProperty(textureDisplay, "scale", scale, 0.15f)
-				.SetTrans(Tween.TransitionType.Linear)
-				.SetEase(Tween.EaseType.InOut);
+				// Small delay for visual feedback
+				await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
+			}
 
-			await ToSignal(tween, "finished");
+			// Execute special card effect (pawn movement) if it exists
+			if (effect.specialEffect != null)
+			{
+				try
+				{
+					await effect.specialEffect();
+					// Add delay after special effect
+					await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
+				}
+				catch (Exception e)
+				{
+					GD.PrintErr($"Błąd podczas wykonywania specjalnego efektu karty: {e.Message}");
+				}
+			}
+
+			// Show end turn button after all effects are processed
+			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
+			endTurnButton.Visible = true;
 		}
 	}
 
-	public void StepOnField(int fieldId)
+	public async void StepOnField(int fieldId)
 	{
+		// Wait for any animations to complete
+		await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
+
+		// Hide end turn button initially
+		endTurnButton.Visible = false;
+
 		if (fieldId == 2 || fieldId == 17 || fieldId == 33)
 		{
-			ShowRandomCard("community");
+			await ShowRandomCard("community");
+			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
 			endTurnButton.Visible = true;
-
 		}
 		else if (fieldId == 7 || fieldId == 22 || fieldId == 36)
 		{
-			ShowRandomCard("chance");
+			await ShowRandomCard("chance");
+			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
 			endTurnButton.Visible = true;
-
 		}
 		else if (fieldId == 4 || fieldId == 38 || fieldId == 20 || fieldId == 30 || fieldId == 10)
 		{
+			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
 			endTurnButton.Visible = true;
 		}
 		else
 		{
 			BuyField(fieldId);
+			// End turn button visibility is handled by BuyCard timer in this case
 		}
 	}
 
 	public void BuyField(int fieldId)
 	{
-
 		buyTime.Start();
-		randomCard.Visible=false;
-		tradeButton.Disabled=true;
-		buildButton.Disabled=true;
+		randomCard.Visible = false;
+		tradeButton.Disabled = true;
+		buildButton.Disabled = true;
 		string textureName = $"Field{fieldId}";
 		Texture2D fieldTexture = ResourceLoader.Load<Texture2D>($"res://scenes/board/level/textures/{textureName}.png");
 
@@ -172,7 +219,6 @@ public partial class Board : StaticBody3D
 		Random random = new Random();
 		int cardNumber = random.Next(2, 17);
 
-		// Show card back first
 		string initialTexturePath = $"res://scenes/board/level/textures/{(cardType == "community" ? "community_chest/community_1" : "chances/chance_1")}.png";
 		var cardTexture = ResourceLoader.Load<Texture2D>(initialTexturePath);
 
@@ -181,7 +227,6 @@ public partial class Board : StaticBody3D
 			randomCard.Texture = cardTexture;
 			randomCard.Visible = true;
 
-			// Animate card flip
 			Tween tween = CreateTween();
 			tween.TweenProperty(randomCard, "rotation_degrees", 360 * 2, 1.2f)
 				.SetTrans(Tween.TransitionType.Circ)
@@ -191,32 +236,54 @@ public partial class Board : StaticBody3D
 
 			randomCard.RotationDegrees = 0;
 
-			// Show actual card
 			string finalTexturePath = $"res://scenes/board/level/textures/{(cardType == "community" ? "community_chest/community" : "chances/chance")}_{cardNumber}.png";
 			cardTexture = ResourceLoader.Load<Texture2D>(finalTexturePath);
 			randomCard.Texture = cardTexture;
 			randomCard.Visible = true;
 
-			// Process card effect
-			ProcessCardEffect(cardType, cardNumber);
+			await ProcessCardEffect(cardType, cardNumber);
 		}
 	}
 
-	private void ProcessCardEffect(string cardType, int cardNumber)
+public async void ShowFieldTexture(int fieldId)
 	{
-		if (cardEffects.TryGetValue((cardType, cardNumber), out int ectsAmount))
+		randomCard.Visible = false;
+		textureDisplay.Visible = false;
+
+		string textureName = $"Field{fieldId}";
+		Texture2D fieldTexture = ResourceLoader.Load<Texture2D>($"res://scenes/board/level/textures/{textureName}.png");
+
+		if (fieldTexture != null)
 		{
-			var currentPlayerIndex = gameManager.GetCurrentPlayerIndex();
-			if (ectsAmount > 0)
-			{
-				gameManager.AddEctsToPlayer(currentPlayerIndex, ectsAmount);
-				GD.Print($"Karta {cardType} {cardNumber}: Gracz otrzymał {ectsAmount} ECTS");
-			}
-			else
-			{
-				gameManager.AddEctsToPlayer(currentPlayerIndex, ectsAmount);
-				GD.Print($"Karta {cardType} {cardNumber}: Gracz stracił {-ectsAmount} ECTS");
-			}
+			textureDisplay.Texture = fieldTexture;
+			Vector2 viewportSize = GetViewport().GetVisibleRect().Size;
+			float scaleFactorX = viewportSize.X / 3000f;
+			float scaleFactorY = viewportSize.Y / 1250f;
+			float scaleFactor = Math.Min(scaleFactorX, scaleFactorY);
+			Vector2 scale = new Vector2(scaleFactor, scaleFactor);
+
+			textureDisplay.Scale = new Vector2(0, 0);
+			textureDisplay.Visible = true;
+
+			Tween tween = CreateTween();
+			tween.TweenProperty(textureDisplay, "scale", scale, 0.15f)
+				.SetTrans(Tween.TransitionType.Linear)
+				.SetEase(Tween.EaseType.InOut);
+
+			await ToSignal(tween, "finished");
+		}
+	}
+
+	public async Task MovePawn(Figurehead pawn, int fieldId, int positionIndex)
+	{
+		Vector3? targetPosition = GetPositionForPawn(fieldId, positionIndex);
+		if (targetPosition.HasValue)
+		{
+			Tween tween = CreateTween();
+			tween.TweenProperty(pawn, "global_position", targetPosition.Value, 0.5f)
+				.SetTrans(Tween.TransitionType.Linear)
+				.SetEase(Tween.EaseType.InOut);
+			await ToSignal(tween, "finished");
 		}
 	}
 
@@ -230,26 +297,13 @@ public partial class Board : StaticBody3D
 		return null;
 	}
 
-	public async void MovePawn(Figurehead pawn, int fieldId, int positionIndex)
-	{
-		Vector3? targetPosition = GetPositionForPawn(fieldId, positionIndex);
-		if (targetPosition.HasValue)
-		{
-			Tween tween = CreateTween();
-			tween.TweenProperty(pawn, "global_position", targetPosition.Value, 0.5f)
-				.SetTrans(Tween.TransitionType.Linear)
-				.SetEase(Tween.EaseType.InOut);
-			await ToSignal(tween, "finished");
-		}
-	}
-
 	public Field GetFieldById(int fieldId)
 	{
 		return fields.Find(field => field.FieldId == fieldId);
 	}
 
-	public override void _Process(double delta)
+	public List<Field> GetFields()
 	{
-		// Process logic if needed
+		return fields;
 	}
 }

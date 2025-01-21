@@ -14,8 +14,8 @@ public partial class GameManager : Node3D
 	[Export] public NodePath notificationLabelPath;
 	[Export] public NodePath rollButtonPath;
 	[Export] public NodePath endTurnButtonPath;
-	[Export] public NodePath ectsUIContainerPath; // Ścieżka do kontenera ECTS w UI
-	[Export] public NodePath playersUIContainerPath; // Ścieżka do UI/Players
+	[Export] public NodePath ectsUIContainerPath;
+	[Export] public NodePath playersUIContainerPath;
 
 	private Board board;
 	private Camera3D masterCamera;
@@ -31,9 +31,9 @@ public partial class GameManager : Node3D
 	private int totalSteps = 0;
 	private Button rollButton;
 	private Button endTurnButton;
-	private VBoxContainer ectsUIContainer; // Kontener ECTS w UI
+	private VBoxContainer ectsUIContainer;
+	private bool isMovementInProgress = false;
 
-	// Listy do przechowywania referencji do labeli w UI odpowiadających graczom:
 	private List<Label> playerNameLabels = new List<Label>();
 	private List<Label> playerECTSLabels = new List<Label>();
 
@@ -102,7 +102,7 @@ public partial class GameManager : Node3D
 		Node playersContainer = GetNodeOrNull(playersContainerPath);
 		if (playersContainer == null)
 		{
-			GD.PrintErr("Błąd: Nie znaleziono węzła Players (3D). Sprawdź, czy 'playersContainerPath' jest ustawiony w edytorze.");
+			GD.PrintErr("Błąd: Nie znaleziono węzła Players (3D).");
 			return;
 		}
 		foreach (Node child in playersContainer.GetChildren())
@@ -114,7 +114,7 @@ public partial class GameManager : Node3D
 		}
 		if (players.Count == 0)
 		{
-			GD.PrintErr("Błąd: Nie znaleziono żadnych pionków w węźle Players.");
+			GD.PrintErr("Błąd: Nie znaleziono żadnych pionków.");
 		}
 		else
 		{
@@ -157,7 +157,7 @@ public partial class GameManager : Node3D
 			return;
 		}
 		endTurnButton.Connect("pressed", new Callable(this, nameof(OnEndTurnButtonPressed)));
-		endTurnButton.Visible = false; // Początkowo przycisk jest niewidoczny
+		endTurnButton.Visible = false;
 	}
 
 	private void InitPlayersUI()
@@ -165,12 +165,10 @@ public partial class GameManager : Node3D
 		Node playersUIContainer = GetNodeOrNull(playersUIContainerPath);
 		if (playersUIContainer == null)
 		{
-			GD.PrintErr("Błąd: Nie znaleziono kontenera UI/Players. Sprawdź 'playersUIContainerPath'.");
+			GD.PrintErr("Błąd: Nie znaleziono kontenera UI/Players.");
 			return;
 		}
 
-		// Załóżmy, że ilość dzieci w playersUIContainer odpowiada ilości graczy.
-		// Każdy PlayerX ma strukturę MarginContainer > VBoxContainer > Label (nazwa) i HBoxContainer > Label (ECTS).
 		for (int i = 0; i < players.Count; i++)
 		{
 			Node playerUINode = playersUIContainer.GetChild(i);
@@ -183,35 +181,32 @@ public partial class GameManager : Node3D
 			var marginContainer = playerUINode.GetNodeOrNull<MarginContainer>("MarginContainer");
 			if (marginContainer == null)
 			{
-				GD.PrintErr($"Błąd: Węzeł UI Player{i+1} nie posiada oczekiwanej struktury (MarginContainer).");
+				GD.PrintErr($"Błąd: Nieprawidłowa struktura UI (MarginContainer).");
 				continue;
 			}
 
 			var vBoxContainer = marginContainer.GetNodeOrNull<VBoxContainer>("VBoxContainer");
 			if (vBoxContainer == null)
 			{
-				GD.PrintErr($"Błąd: Węzeł UI Player{i+1} nie posiada oczekiwanej struktury (VBoxContainer).");
+				GD.PrintErr($"Błąd: Nieprawidłowa struktura UI (VBoxContainer).");
 				continue;
 			}
 
-			// Pierwszy label to nazwa gracza
 			var nameLabel = vBoxContainer.GetNodeOrNull<Label>("Label");
 			if (nameLabel == null)
 			{
-				GD.PrintErr($"Błąd: Nie znaleziono Label z nazwą gracza (Player{i+1}).");
+				GD.PrintErr($"Błąd: Nie znaleziono Label z nazwą gracza.");
 				continue;
 			}
 
-			// W HBoxContainer mamy TextureRect i Label od ECTS
 			var hBoxContainer = vBoxContainer.GetNodeOrNull<HBoxContainer>("HBoxContainer");
 			if (hBoxContainer == null)
 			{
-				GD.PrintErr($"Błąd: Nie znaleziono HBoxContainer dla ECTS w Player{i+1}.");
+				GD.PrintErr($"Błąd: Nie znaleziono HBoxContainer dla ECTS.");
 				continue;
 			}
 
 			Label ectsLabel = null;
-			// Szukamy Label w HBoxContainer (może mieć różną nazwę, zakładamy "Label")
 			foreach (Node child in hBoxContainer.GetChildren())
 			{
 				if (child is Label lbl)
@@ -223,11 +218,10 @@ public partial class GameManager : Node3D
 
 			if (ectsLabel == null)
 			{
-				GD.PrintErr($"Błąd: Nie znaleziono Label ECTS w Player{i+1}.");
+				GD.PrintErr($"Błąd: Nie znaleziono Label ECTS.");
 				continue;
 			}
 
-			// Ustawiamy nazwy i ECTS
 			nameLabel.Text = players[i].Name;
 			ectsLabel.Text = players[i].ECTS.ToString();
 
@@ -267,7 +261,6 @@ public partial class GameManager : Node3D
 			player.GlobalPosition = startPosition.Value;
 			GD.Print($"Gracz {players[i].Name} ustawiony na pozycji startowej: {startPosition.Value}");
 
-			// Aktualizacja ECTS UI na starcie
 			UpdateECTSUI(i);
 		}
 		GD.Print("Wszyscy gracze zostali ustawieni na polu startowym.");
@@ -283,7 +276,7 @@ public partial class GameManager : Node3D
 
 	private void OnEndTurnButtonPressed()
 	{
-		if (currentState == GameState.WaitingForInput)
+		if (!isMovementInProgress && currentState == GameState.WaitingForInput)
 		{
 			EndTurn();
 		}
@@ -300,7 +293,7 @@ public partial class GameManager : Node3D
 		BlockBoardInteractions();
 		SwitchToDiceCamera();
 		rollButton.Visible = false;
-		endTurnButton.Visible = false; // Ukrycie przycisku zakończenia tury podczas rzutu
+		endTurnButton.Visible = false;
 
 		string currentPlayerName = GetCurrentPlayerName();
 		ShowNotification($"Gracz {currentPlayerName} rzuca kostkami...", 2f);
@@ -338,7 +331,6 @@ public partial class GameManager : Node3D
 
 		if (die1Result.Value == die2Result.Value)
 		{
-			// Dublet
 			GD.Print("Dublet! Kolejny rzut po ruchu.");
 			ShowNotification("Dublet! Powtórz rzut po ruchu.", 5f);
 		}
@@ -356,40 +348,55 @@ public partial class GameManager : Node3D
 			GD.PrintErr("Błąd: Indeks aktualnego gracza poza zakresem.");
 			return;
 		}
+
 		currentState = GameState.MovingPawn;
 		Figurehead currentPlayer = players[currentPlayerIndex];
-		endTurnButton.Visible = false; // Upewniamy się, że przycisk jest ukryty podczas ruchu
+		endTurnButton.Visible = false;
+		isMovementInProgress = true;
+
 		await currentPlayer.MovePawnSequentially(steps, board);
 
-		// Aktualizacja ECTS UI po ruchu
-		UpdateECTSUI(currentPlayerIndex);
+		isMovementInProgress = false;
+		
+		// Poczekaj na zakończenie wszystkich animacji i efektów
+		await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
 
-		if (die1Result.HasValue && die2Result.HasValue && die1Result.Value == die2Result.Value)
+		if (die1Result.HasValue && die2Result.HasValue)
 		{
-			PrepareForNextRoll();
+			if (die1Result.Value != die2Result.Value)
+			{
+				currentState = GameState.WaitingForInput;
+				endTurnButton.Visible = true;
+			}
+			else
+			{
+				PrepareForNextRoll();
+			}
 		}
-		else
-		{
-			currentState = GameState.WaitingForInput;
-		}
+
+		UpdateECTSUI(currentPlayerIndex);
 	}
 
 	private void PrepareForNextRoll()
 	{
+		if (isMovementInProgress) return;
+
 		die1Result = null;
 		die2Result = null;
 		totalSteps = 0;
 		UnblockBoardInteractions();
 		currentState = GameState.WaitingForInput;
-		rollButton.Visible = true; // Kolejny rzut
+		rollButton.Visible = true;
 		endTurnButton.Visible = false;
 		string currentPlayerName = GetCurrentPlayerName();
 		ShowNotification($"Gracz {currentPlayerName}, rzuć ponownie!", 2f);
 		GD.Print($"Gracz {currentPlayerName} może wykonać kolejny rzut.");
 	}
 
-	private void EndTurn()
+private void EndTurn()
 	{
+		if (isMovementInProgress) return;
+
 		die1Result = null;
 		die2Result = null;
 		totalSteps = 0;
@@ -473,10 +480,6 @@ public partial class GameManager : Node3D
 		// Możesz tutaj dodać kod reagujący na zmiany ECTS itp.
 	}
 
-	/// <summary>
-	/// Pobiera nazwę aktualnego gracza.
-	/// </summary>
-	/// <returns>Nazwa aktualnego gracza.</returns>
 	private string GetCurrentPlayerName()
 	{
 		if (currentPlayerIndex < 0 || currentPlayerIndex >= players.Count)
@@ -487,7 +490,7 @@ public partial class GameManager : Node3D
 		return players[currentPlayerIndex].Name;
 	}
 	
-		// Do kart
+	// Metody do obsługi kart
 	public int GetCurrentPlayerIndex()
 	{
 		return currentPlayerIndex;
