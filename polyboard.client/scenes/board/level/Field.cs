@@ -24,9 +24,25 @@ public partial class Field : Node3D
 	public int ECTSReward = 0; // Ilość ECTS przyznawana za lądowanie na tym polu
 	protected Sprite2D viewDetailsDialog;
 	protected AudioStreamPlayer3D constructionSoundPlayer;
-
+	protected Figurehead Owner;
+	public bool owned = false;
+	
+	
+	public void BuyField(Figurehead player, Field field)
+	{
+		field.Owner = player;
+		field.owned = true;
+		GD.Print(player.Name);
+		GD.Print("Nowy owner pola: ",field.Owner.Name);
+	}
+	
+	public string GetUserNickname(Field field)
+	{
+		return field.Owner.Name;
+	}
 	public Field()
 	{
+		Owner=null;
 		FieldId = nextId;
 		nextId++;
 
