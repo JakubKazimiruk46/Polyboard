@@ -44,10 +44,10 @@ func on_build_button_pressed():
 		# Pobierz pole jako Node (lub Field, jeśli typowanie jest zaimplementowane)
 		print(Field.FieldId)
 		print(current_position)
-		if Field:
+		if Field and currentFigureHead == Field.Owner:
 			Field.BuildingHouse(current_position)
 		else:
-			print("Nie znaleziono pola dla indeksu: %d" % current_position)
+			print("Nie znaleziono pola dla indeksu: %d / Pole nie należy do gracza" % current_position)
 	#else:
 		#print("Nie znaleziono instancji Board lub metoda GetFieldById nie istnieje!")
 

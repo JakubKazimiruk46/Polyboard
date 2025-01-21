@@ -38,10 +38,12 @@ func on_timer_timeout():
 		total_time_in_secs = 30
 		$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.add_theme_color_override("font_color","white")
 		$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.text = ''
-		endturnbutton.visible = true;
-		tradeButton.disabled = false;
-		buildButton.disabled = false;
+		turn_on_buttons()
 
+func turn_on_buttons():
+	endturnbutton.visible = true
+	tradeButton.disabled = false
+	buildButton.disabled = false
 
 func on_buyButtonPressed():
 	$Timer.stop()
@@ -55,9 +57,25 @@ func on_buyButtonPressed():
 	total_time_in_secs = 30
 	$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.text = ''
 	$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.add_theme_color_override("font_color","white")
-	endturnbutton.visible = true;
-	tradeButton.disabled = false;
-	buildButton.disabled = false;
+	turn_on_buttons()
+	var figurehead_script = preload("res://scenes/board/figurehead/Figurehead.cs")
+	var board = $"../Board"
+	var game_manager = $"../GameManager"
+	var currentFigureHead = game_manager.getCurrentPlayer()
+	var current_position = currentFigureHead.GetCurrentPositionIndex()
+	var Field = game_manager.getCurrentField(current_position)
+	if board and board.has_method("GetFieldById"):
+		# Pobierz pole jako Node (lub Field, jeśli typowanie jest zaimplementowane)
+		print(Field.FieldId)
+		print(current_position)
+		if Field:
+			Field.BuyField(currentFigureHead,Field)
+			
+		else:
+			print("Nie znaleziono pola dla indeksu: %d" % current_position)
+	#else:
+		#print("Nie znaleziono instancji Board lub metoda GetFieldById nie istnieje!")
+
 
 func on_auctionButtonPressed():
 	self.visible = false
@@ -66,9 +84,7 @@ func on_auctionButtonPressed():
 	total_time_in_secs = 30
 	$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.text = ''
 	$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.add_theme_color_override("font_color","white")
-	endturnbutton.visible = true
-	tradeButton.disabled = false;
-	buildButton.disabled = false;
+	turn_on_buttons()
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass

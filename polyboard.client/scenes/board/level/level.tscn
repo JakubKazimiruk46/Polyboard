@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=32 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -47,6 +47,11 @@ ambient_light_energy = 0.9
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_o0qui"]
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_pqnpu"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7vlct"]
+bg_color = Color(0.147672, 0.147672, 0.147672, 1)
+expand_margin_left = 4.0
+expand_margin_right = 4.0
 
 [node name="Level" type="Node3D"]
 script = ExtResource("1_djwtq")
@@ -259,8 +264,28 @@ grow_vertical = 2
 metadata/_edit_use_anchors_ = true
 
 [node name="FieldCard" type="Sprite2D" parent="CanvasLayer/TextureRect2"]
+offset = Vector2(10, 10)
 
 [node name="RandomCard" type="Sprite2D" parent="CanvasLayer/TextureRect2"]
+
+[node name="OwnerNickname" type="PanelContainer" parent="CanvasLayer"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_7vlct")
+
+[node name="owner_nickname" type="Label" parent="CanvasLayer/OwnerNickname"]
+layout_mode = 2
+horizontal_alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="CanvasLayer"]
 anchors_preset = -1

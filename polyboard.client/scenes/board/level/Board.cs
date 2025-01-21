@@ -9,6 +9,7 @@ public partial class Board : StaticBody3D
 	private List<Field> fields = new List<Field>();
 	private Sprite2D textureDisplay;
 	private Sprite2D randomCard;
+	private Label ownerNickname;
 	private Sprite2D step_on_card;
 	private Button endTurnButton;
 	private TextureButton tradeButton;
@@ -17,6 +18,8 @@ public partial class Board : StaticBody3D
 	private CanvasLayer BuyCard;
 	private TextureRect cardView;
 	private Timer buyTime;
+	private Field field;
+	private PanelContainer ownerNicknameView;
 
 	private readonly Dictionary<(string type, int number), (int ectsEffect, Func<Task> specialEffect)> cardEffects;
 
@@ -36,13 +39,14 @@ public partial class Board : StaticBody3D
 		step_on_card = GetNodeOrNull<Sprite2D>("/root/Level/BuyCard/HBoxContainer/FieldView/TextureRect/FieldToBuy");
 		randomCard = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/RandomCard");
 		textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/FieldCard");
+		ownerNickname = GetNodeOrNull<Label>("/root/Level/CanvasLayer/OwnerNickname/owner_nickname");
 		cardView = GetNodeOrNull<TextureRect>("/root/Level/BuyCard/HBoxContainer/FieldView/TextureRect");
 		buyTime = GetNodeOrNull<Timer>("/root/Level/BuyCard/Timer");
 		endTurnButton = GetNodeOrNull<Button>("/root/Level/UI/ZakończTure");
 		tradeButton = GetNodeOrNull<TextureButton>("/root/Level/UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2/trade_button");
 		buildButton = GetNodeOrNull<TextureButton>("/root/Level/UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3/build_button");
 		gameManager = GetNode<GameManager>("/root/Level/GameManager");
-
+		ownerNicknameView = GetNodeOrNull<PanelContainer>("/root/Level/CanvasLayer/OwnerNickname");
 		if (textureDisplay == null || step_on_card == null)
 		{
 			GD.PrintErr("Błąd: Nie znaleziono wymaganych komponentów Sprite2D.");
@@ -175,8 +179,17 @@ public partial class Board : StaticBody3D
 		}
 		else
 		{
-			BuyField(fieldId);
-			// End turn button visibility is handled by BuyCard timer in this case
+			Figurehead currentFigureHead = gameManager.getCurrentPlayer();
+			int current_position = currentFigureHead.GetCurrentPositionIndex();
+			Field field = gameManager.getCurrentField(current_position);
+			if(field.owned==false)
+				BuyField(fieldId);
+			else
+			{
+				endTurnButton.Visible = true;
+				GD.Print(field.Owner.Name);
+			}
+
 		}
 	}
 
@@ -208,7 +221,7 @@ public partial class Board : StaticBody3D
 	{
 		randomCard.Visible = false;
 		textureDisplay.Visible = false;
-
+		ownerNicknameView.Visible = false;
 		Vector2 viewportSize = GetViewport().GetVisibleRect().Size;
 		float scaleFactorX = viewportSize.X / 2500f;
 		float scaleFactorY = viewportSize.Y / 1080f;
