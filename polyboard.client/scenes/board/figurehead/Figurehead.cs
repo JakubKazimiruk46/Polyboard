@@ -7,11 +7,16 @@ public partial class Figurehead : CharacterBody3D
 	public int CurrentPositionIndex { get; set; } = 0;
 	[Export]
 	public NodePath walkSoundPlayerPath;
+	 [Export]
+	public NodePath pawnInstancePath;
+	
 
 	[Export]
 	public int StartingECTS = 100;
 
 	private AudioStreamPlayer3D walkSoundPlayer;
+	private AnimationPlayer animationPlayer;
+	private bool hasAnimation=false;
 	public int ECTS { get; private set; }
 
 	// Dodane stałe do obsługi planszy
@@ -25,7 +30,22 @@ public partial class Figurehead : CharacterBody3D
 		{
 			GD.PrintErr("Błąd: Nie znaleziono AudioStreamPlayer3D. Sprawdź walkSoundPlayerPath.");
 		}
-
+		var pawnInstance = GetNodeOrNull<Node>(pawnInstancePath);
+		if (pawnInstance == null)
+		{
+			GD.PrintErr($"Błąd: Nie znaleziono instancji pionka pod ścieżką {pawnInstancePath}.");
+			return;
+		}
+		 animationPlayer = pawnInstance.GetNodeOrNull<AnimationPlayer>("AnimationPlayer");
+		if (animationPlayer != null)
+		{
+			GD.Print("Znaleziono AnimationPlayer w instancji pionka.");
+		}
+		else
+		{
+			GD.Print("Brak AnimationPlayer w instancji pionka.");
+		}
+		
 		ECTS = StartingECTS;
 		UpdateECTSUI();
 	}
@@ -34,6 +54,7 @@ public partial class Figurehead : CharacterBody3D
 	public async Task MoveByFields(int fieldCount, Board board)
 	{
 		PlayWalkSound();
+		PlayWalkAnimation();
 		int initialPosition = CurrentPositionIndex;
 		int steps = Math.Abs(fieldCount); // Ilość kroków do wykonania
 		int direction = Math.Sign(fieldCount); // 1 dla ruchu w przód, -1 dla ruchu w tył
@@ -105,7 +126,7 @@ public partial class Figurehead : CharacterBody3D
 		}
 
 		StopWalkSound();
-		
+		StopWalkAnimation();
 		// Wywołaj odpowiednie akcje po zakończeniu ruchu
 		board.StepOnField(CurrentPositionIndex);
 		OnFieldLanded(board.GetFieldById(CurrentPositionIndex));
@@ -154,6 +175,23 @@ public partial class Figurehead : CharacterBody3D
 		if (walkSoundPlayer != null && walkSoundPlayer.Playing)
 		{
 			walkSoundPlayer.Stop();
+		}
+	}
+	
+	 private void PlayWalkAnimation()
+	{
+		if (animationPlayer != null  && !animationPlayer.IsPlaying())
+		{
+			
+			animationPlayer.Play("ArmatureAction");
+		}
+	}
+
+	private void StopWalkAnimation()
+	{
+		if (animationPlayer != null && animationPlayer.IsPlaying())
+		{
+			animationPlayer.Stop();
 		}
 	}
 
