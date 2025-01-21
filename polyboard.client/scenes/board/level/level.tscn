@@ -383,7 +383,7 @@ stream = ExtResource("14_u56ja")
 bus = &"Sfx"
 
 [node name="ziut1" parent="GameManager/Players" instance=ExtResource("17_1m425")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 13.0028, 0.529029, 10.9497)
+transform = Transform3D(-0.5, 0, -7.54979e-08, 0, 0.5, 0, 7.54979e-08, 0, -0.5, 13.003, 0.1, 10.95)
 script = ExtResource("18_gkn4w")
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
 

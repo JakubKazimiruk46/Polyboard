@@ -90,6 +90,17 @@ public partial class Figurehead : CharacterBody3D
 			tween.TweenProperty(this, "global_position", nextPosition, 0.5f)
 				 .SetTrans(Tween.TransitionType.Linear)
 				 .SetEase(Tween.EaseType.InOut);
+				
+				if (CurrentPositionIndex == 0 || CurrentPositionIndex == 10 || CurrentPositionIndex == 20 || CurrentPositionIndex == 30)
+			{
+			Vector3 currentRotation = RotationDegrees;
+			Vector3 newRotation = currentRotation + new Vector3(0, 90, 0);
+
+			
+			tween.TweenProperty(this, "rotation_degrees", newRotation, 0.5f)
+				 .SetTrans(Tween.TransitionType.Linear)
+				 .SetEase(Tween.EaseType.InOut);
+			}
 			await ToSignal(tween, "finished");
 		}
 
