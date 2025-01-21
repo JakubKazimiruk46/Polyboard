@@ -59,11 +59,12 @@ namespace PolyBoard.Server.Presentation.Hubs
             {
                 ConnectionId = Context.ConnectionId,
                 UserId = Context.UserIdentifier ?? Guid.NewGuid().ToString(),
-                Username = Context.User?.Identity?.Name ?? $"New user {lobby.Connections.Count}"
+                Username = Context.User?.Identity?.Name ?? $"New user {lobby.Connections.Count + 1}",
+                IsReady = false,
             };
             if (!lobby.AddConnection(userConnection, password))
             {
-                await Clients.Caller.SendAsync("Error", "Failed Joinin Lobby! Try JoinLobby function...");
+                await Clients.Caller.SendAsync("Error", "Failed Joining Lobby! Try JoinLobby function...");
                 return;
             }
 
@@ -98,7 +99,7 @@ namespace PolyBoard.Server.Presentation.Hubs
             {
                 UserId = Context.UserIdentifier ?? Guid.NewGuid().ToString(),
                 ConnectionId = Context.ConnectionId,
-                Username = Context.User?.Identity?.Name ?? $"User {lobby.Connections.Count}",
+                Username = Context.User?.Identity?.Name ?? $"User {lobby.Connections.Count + 1}",
                 IsReady = false
             };
 

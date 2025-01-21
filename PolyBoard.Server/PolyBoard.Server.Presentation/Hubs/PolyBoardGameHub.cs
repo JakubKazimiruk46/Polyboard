@@ -1,16 +1,20 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.SignalR;
+using PolyBoard.Server.Application.GameEvents.Commands;
+using PolyBoard.Server.Core.Entities;
 using PolyBoard.Server.Core.Enums;
+using PolyBoard.Server.Core.Interfaces.Repositories;
 
 namespace PolyBoard.Server.Presentation.Hubs
 {
     public partial class PolyBoardHub
     {
         private readonly IMediator _mediator;
-
-        public PolyBoardHub(IMediator mediator)
+        private readonly IRepository<GameEvent> _gameEventRepository;
+        public PolyBoardHub(IMediator mediator, IRepository<GameEvent> gameEventRepository)
         {
             _mediator = mediator;
+            _gameEventRepository = gameEventRepository;
         }
 
         public async Task StartGame(Guid lobbyId)
@@ -88,6 +92,27 @@ namespace PolyBoard.Server.Presentation.Hubs
             lobby.NextTurn();
             await Clients.Group(lobbyId.ToString()).SendAsync("TurnChanged", lobby.GetCurrentPlayer().UserId);
         }
+
+        public async Task RollDices(RollDicesCommand command)
+        {
+            await _mediator.Send(command);
+        }
+
+        public async Task BuyProperty(BuyPropertyCommand command)
+        {
+            await _mediator.Send(command);
+        }
+
+        public async Task StartAuction(StartAuctionCommand command)
+        {
+            await _mediator.Send(command);
+        }
+
+        public async Task PlaceBid(PlaceBidCommand command)
+        {
+            await _mediator.Send(command);
+        }
+
         private async Task NotifyGameState(Guid lobbyId)
         {
             if (!_lobbies.TryGetValue(lobbyId, out var lobby))

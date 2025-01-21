@@ -6,13 +6,15 @@ namespace PolyBoard.Server.Application.GameEvents.Commands
     {
         public Guid GameId { get; }
         public Guid PlayerId { get; }
+        public Guid TurnId { get; }
         public int Dice1 { get; }
         public int Dice2 { get; }
         public int TotalRoll => Dice1 + Dice2;
 
-        public RollDicesCommand(Guid gameId, Guid playerId, int dice1, int dice2)
+        public RollDicesCommand(Guid gameId, Guid turnId, Guid playerId, int dice1, int dice2)
         {
             GameId = gameId;
+            TurnId = turnId;
             PlayerId = playerId;
             Dice1 = dice1;
             Dice2 = dice2;
