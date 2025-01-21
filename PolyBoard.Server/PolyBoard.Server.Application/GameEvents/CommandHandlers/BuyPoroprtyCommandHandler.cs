@@ -6,30 +6,30 @@ using PolyBoard.Server.Core.Interfaces.Repositories;
 
 namespace PolyBoard.Server.Application.GameEvents.CommandHandlers
 {
-    internal class RollDicesCommandHandler : IRequestHandler<RollDicesCommand>
+    internal class BuyPoroprtyCommandHandler : IRequestHandler<BuyPropertyCommand>
     {
         private readonly IRepository<GameEvent> _gameEventRepository;
         private readonly IGameEventNotifier _notifier;
 
-        public RollDicesCommandHandler(IRepository<GameEvent> gamesRepository, IGameEventNotifier gameEventNotifier)
+        public BuyPoroprtyCommandHandler(IRepository<GameEvent> gameEventRepository, IGameEventNotifier notifier)
         {
-            _gameEventRepository = gamesRepository;
-            _notifier = gameEventNotifier;
+            _gameEventRepository = gameEventRepository;
+            _notifier = notifier;
         }
 
-        public async Task Handle(RollDicesCommand request, CancellationToken cancellationToken)
+        public async Task Handle(BuyPropertyCommand request, CancellationToken cancellationToken)
         {
             var gameEvent = new GameEvent
             {
                 Id = Guid.NewGuid(),
-                Name = "RollDices",
-                RequiresTurn = true,
+                Name = "BuyProperty",
+                RequiresTurn = false,
                 JsonBody = request,
                 Game = new Game { Id = request.GameId }
             };
 
             await Task.WhenAll(_gameEventRepository.CreateAsync(gameEvent, cancellationToken),
-                _notifier.NotifyGameEventAsync(request.GameId, "ReceiveRollDicesEvent", gameEvent, cancellationToken));
+                _notifier.NotifyGameEventAsync(request.GameId, "ReceiveBuyPropertyEvent", gameEvent, cancellationToken));
         }
     }
 }
