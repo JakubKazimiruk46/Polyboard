@@ -369,9 +369,10 @@ playersUIContainerPath = NodePath("../UI/Players")
 script = ExtResource("17_6omuv")
 
 [node name="ziut" parent="GameManager/Players" instance=ExtResource("21_1ulqv")]
-transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 11.023, 0.5, 12.048)
+transform = Transform3D(0.05, 0, 0, 0, 0.017101, -0.0469846, 0, 0.0469846, 0.017101, 11.023, 0.6, 12.048)
 script = ExtResource("18_gkn4w")
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
+pawnInstancePath = NodePath(".")
 
 [node name="Label3D" type="Label3D" parent="GameManager/Players/ziut"]
 billboard = 2
