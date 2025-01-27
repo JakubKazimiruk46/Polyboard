@@ -11,7 +11,15 @@ namespace PolyBoard.Infrastructure.Extensions
             using var serviceProvider = services.BuildServiceProvider();
             using var scope = serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
-            dbContext.Database.Migrate();
+            try
+            {
+                dbContext.Database.Migrate();
+            }
+            catch (Exception ex) 
+            {
+                Console.WriteLine("Failed to migrate: ", ex.ToString());
+            }
+            
         }
     }
 }

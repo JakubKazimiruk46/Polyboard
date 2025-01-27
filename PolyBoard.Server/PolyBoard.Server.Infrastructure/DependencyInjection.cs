@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PolyBoard.Infrastructure.Extensions;
 using PolyBoard.Server.Application.Abstractions;
 using PolyBoard.Server.Core.Entities;
 using PolyBoard.Server.Core.Interfaces.Repositories;
@@ -34,6 +35,8 @@ public static class DependencyInjection
             .AddIdentityCore<User>()
             .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<PostgresDbContext>();
+
+        services.ApplyMigrations();
 
         return services;
     }
