@@ -36,6 +36,7 @@ public partial class GameManager : Node3D
 
 	private List<Label> playerNameLabels = new List<Label>();
 	private List<Label> playerECTSLabels = new List<Label>();
+	private List<bool> playerBankruptcyStatus = new List<bool>(); // Track bankruptcy status for each player
 
 	private enum GameState { WaitingForInput, RollingDice, MovingPawn, EndTurn }
 	private GameState currentState = GameState.WaitingForInput;
@@ -110,6 +111,7 @@ public partial class GameManager : Node3D
 			if (child is Figurehead fh)
 			{
 				players.Add(fh);
+				playerBankruptcyStatus.Add(false); // Initialize all players as not bankrupt
 			}
 		}
 		if (players.Count == 0)
@@ -239,6 +241,96 @@ public partial class GameManager : Node3D
 		}
 
 		playerECTSLabels[playerIndex].Text = players[playerIndex].ECTS.ToString();
+		
+		// Check for bankruptcy after updating ECTS
+		CheckForBankruptcy(playerIndex);
+	}
+	
+	// New method to check if a player is bankrupt
+	private void CheckForBankruptcy(int playerIndex)
+	{
+		if (playerIndex < 0 || playerIndex >= players.Count)
+		{
+			return;
+		}
+		
+		Figurehead player = players[playerIndex];
+		
+		// Check if player's ECTS is 0 or below and they're not already bankrupt
+		if (player.ECTS <= 0 && !playerBankruptcyStatus[playerIndex])
+		{
+			DeclarePlayerBankrupt(playerIndex);
+		}
+	}
+	
+	// New method to handle bankruptcy
+	private void DeclarePlayerBankrupt(int playerIndex)
+	{
+		if (playerIndex < 0 || playerIndex >= players.Count)
+		{
+			return;
+		}
+		
+		Figurehead player = players[playerIndex];
+		playerBankruptcyStatus[playerIndex] = true;
+		
+		// Update UI to show player is bankrupt
+		if (playerIndex < playerNameLabels.Count)
+		{
+			playerNameLabels[playerIndex].Text = $"{player.Name} (BANKRUT)";
+			// Optionally change color to red or gray
+			playerNameLabels[playerIndex].AddThemeColorOverride("font_color", new Color(1, 0, 0)); // Red color
+		}
+		
+		// Show notification
+		ShowNotification($"Gracz {player.Name} zbankrutował! Koniec gry dla tego gracza.", 5f);
+		GD.Print($"Gracz {player.Name} zbankrutował! Koniec gry dla tego gracza.");
+		
+		// If current player is bankrupt, end their turn
+		if (playerIndex == currentPlayerIndex)
+		{
+			EndTurn();
+		}
+		
+		// Check if only one player is left (game over)
+		CheckForGameOver();
+	}
+	
+	// Check if the game is over (only one player left)
+	private void CheckForGameOver()
+	{
+		int activePlayers = 0;
+		int lastActivePlayerIndex = -1;
+		
+		for (int i = 0; i < playerBankruptcyStatus.Count; i++)
+		{
+			if (!playerBankruptcyStatus[i])
+			{
+				activePlayers++;
+				lastActivePlayerIndex = i;
+			}
+		}
+		
+		if (activePlayers == 1)
+		{
+			// Game over - one player left
+			ShowNotification($"Gra zakończona! Gracz {players[lastActivePlayerIndex].Name} wygrywa!", 10f);
+			GD.Print($"Gra zakończona! Gracz {players[lastActivePlayerIndex].Name} wygrywa!");
+			
+			// Disable controls
+			rollButton.Disabled = true;
+			endTurnButton.Disabled = true;
+		}
+		else if (activePlayers == 0)
+		{
+			// All players bankrupt - very unlikely but handle it
+			ShowNotification("Gra zakończona! Wszyscy gracze zbankrutowali!", 10f);
+			GD.Print("Gra zakończona! Wszyscy gracze zbankrutowali!");
+			
+			// Disable controls
+			rollButton.Disabled = true;
+			endTurnButton.Disabled = true;
+		}
 	}
 
 	private void SetAllPlayersOnStart()
@@ -270,6 +362,13 @@ public partial class GameManager : Node3D
 	{
 		if (currentState == GameState.WaitingForInput)
 		{
+			// Check if the current player is bankrupt
+			if (IsCurrentPlayerBankrupt())
+			{
+				SkipBankruptPlayer();
+				return;
+			}
+			
 			StartDiceRollForCurrentPlayer();
 		}
 	}
@@ -280,6 +379,23 @@ public partial class GameManager : Node3D
 		{
 			EndTurn();
 		}
+	}
+	
+	// Check if current player is bankrupt
+	private bool IsCurrentPlayerBankrupt()
+	{
+		if (currentPlayerIndex >= 0 && currentPlayerIndex < playerBankruptcyStatus.Count)
+		{
+			return playerBankruptcyStatus[currentPlayerIndex];
+		}
+		return false;
+	}
+	
+	// Skip bankrupt player and move to next player
+	private void SkipBankruptPlayer()
+	{
+		GD.Print($"Skipping bankrupt player: {players[currentPlayerIndex].Name}");
+		EndTurn();
 	}
 
 	private void StartDiceRollForCurrentPlayer()
@@ -316,7 +432,7 @@ public partial class GameManager : Node3D
 		CheckDiceResults();
 	}
 
-	private void CheckDiceResults()
+private void CheckDiceResults()
 	{
 		if (!die1Result.HasValue || !die2Result.HasValue)
 		{
@@ -361,6 +477,19 @@ public partial class GameManager : Node3D
 		// Poczekaj na zakończenie wszystkich animacji i efektów
 		await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
 
+		// Check for bankruptcy after movement (ECTS might have changed during movement)
+		CheckForBankruptcy(currentPlayerIndex);
+		
+		// If the player is now bankrupt, end their turn
+		if (IsCurrentPlayerBankrupt())
+		{
+			die1Result = null;
+			die2Result = null;
+			currentState = GameState.WaitingForInput;
+			EndTurn();
+			return;
+		}
+
 		if (die1Result.HasValue && die2Result.HasValue)
 		{
 			if (die1Result.Value != die2Result.Value)
@@ -393,14 +522,17 @@ public partial class GameManager : Node3D
 		GD.Print($"Gracz {currentPlayerName} może wykonać kolejny rzut.");
 	}
 
-private void EndTurn()
+	private void EndTurn()
 	{
 		if (isMovementInProgress) return;
 
 		die1Result = null;
 		die2Result = null;
 		totalSteps = 0;
-		currentPlayerIndex = (currentPlayerIndex + 1) % players.Count;
+		
+		// Find next active (non-bankrupt) player
+		FindNextActivePlayer();
+		
 		UnblockBoardInteractions();
 		currentState = GameState.WaitingForInput;
 		rollButton.Visible = true;
@@ -408,6 +540,26 @@ private void EndTurn()
 		string nextPlayerName = GetCurrentPlayerName();
 		ShowNotification($"Tura gracza: {nextPlayerName}", 2f);
 		GD.Print($"Zakończono turę gracza. Teraz tura gracza: {nextPlayerName}");
+	}
+	
+	// Find the next non-bankrupt player
+	private void FindNextActivePlayer()
+	{
+		int originalIndex = currentPlayerIndex;
+		int nextPlayerIndex;
+		
+		do {
+			nextPlayerIndex = (currentPlayerIndex + 1) % players.Count;
+			currentPlayerIndex = nextPlayerIndex;
+			
+			// If we've checked all players and returned to the original index, break to avoid infinite loop
+			if (nextPlayerIndex == originalIndex)
+			{
+				break;
+			}
+		} while (playerBankruptcyStatus[currentPlayerIndex]);
+		
+		// If everyone is bankrupt, currentPlayerIndex will remain unchanged
 	}
 
 	private void SwitchToMasterCamera()
@@ -502,6 +654,38 @@ private void EndTurn()
 		{
 			players[playerIndex].AddECTS(amount);
 			UpdateECTSUI(playerIndex);
+			
+			// If player was bankruptcy but got back to positive ECTS, remove bankruptcy status
+			if (amount > 0 && playerBankruptcyStatus[playerIndex] && players[playerIndex].ECTS > 0)
+			{
+				RevivePlayer(playerIndex);
+			}
+		}
+	}
+	
+	// Method to revive a player if they gain ECTS after bankruptcy
+	private void RevivePlayer(int playerIndex)
+	{
+		if (playerIndex < 0 || playerIndex >= players.Count)
+		{
+			return;
+		}
+		
+		// Only revive if the player has positive ECTS
+		if (players[playerIndex].ECTS > 0)
+		{
+			playerBankruptcyStatus[playerIndex] = false;
+			
+			// Update UI to remove bankrupt status
+			if (playerIndex < playerNameLabels.Count)
+			{
+				playerNameLabels[playerIndex].Text = players[playerIndex].Name;
+				// Reset text color
+				playerNameLabels[playerIndex].RemoveThemeColorOverride("font_color");
+			}
+			
+			ShowNotification($"Gracz {players[playerIndex].Name} wraca do gry!", 5f);
+			GD.Print($"Gracz {players[playerIndex].Name} wraca do gry!");
 		}
 	}
 }
