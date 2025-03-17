@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://be5o85k4nbeu5"]
+[gd_scene load_steps=17 format=3 uid="uid://be5o85k4nbeu5"]
 
 [ext_resource type="Script" path="res://scenes/board/level/ui.gd" id="1_e26wc"]
 [ext_resource type="Texture2D" uid="uid://dhxn8lostrjd4" path="res://assets/images/cards.png" id="2_oospi"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://bnb0sdm2vdwhu" path="res://assets/images/zastaw.png" id="6_ninoq"]
 [ext_resource type="Texture2D" uid="uid://bof7cx2xbx3k1" path="res://assets/images/question_card.png" id="7_q3a1k"]
 [ext_resource type="PackedScene" uid="uid://d2arsk7nm7cu3" path="res://scenes/board/level/timer.tscn" id="8_8lgx8"]
+[ext_resource type="Texture2D" uid="uid://dhyf7dobwsaob" path="res://assets/images/house.png" id="9_mvhbk"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5ptj7"]
 bg_color = Color(1, 0.258617, 0.62817, 1)
@@ -314,6 +315,14 @@ text = "SPECJALNE KARTY"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="VBoxContainer6" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons"]
+layout_mode = 2
+
+[node name="remove_owner_button" type="TextureButton" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer6"]
+layout_mode = 2
+tooltip_text = "Sprzedaj"
+texture_normal = ExtResource("9_mvhbk")
+
 [node name="Cards" type="PanelContainer" parent="."]
 anchors_preset = -1
 anchor_top = 1.05
@@ -411,3 +420,4 @@ grow_horizontal = 1
 [connection signal="pressed" from="HBoxContainer/view_buttons" to="." method="on_view_buttons_pressed"]
 [connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer/card_button" to="." method="on_cards_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2/trade_button" to="." method="on_trade_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer6/remove_owner_button" to="." method="on_remove_owner_button_pressed"]
