@@ -40,11 +40,15 @@ func on_build_button_pressed():
 	var currentFigureHead = game_manager.getCurrentPlayer()
 	var current_position = currentFigureHead.GetCurrentPositionIndex()
 	var Field = game_manager.getCurrentField(current_position)
+	var id = game_manager.GetCurrentPlayerIndex()
 	if board and board.has_method("GetFieldById"):
 		# Pobierz pole jako Node (lub Field, jeśli typowanie jest zaimplementowane)
 		print(Field.FieldId)
 		print(current_position)
-		if Field and currentFigureHead == Field.Owner:
+		if Field and currentFigureHead == Field.Owner and Field.houseCost <= currentFigureHead.ECTS and Field.isHotel == false:
+			currentFigureHead.ECTS -= Field.houseCost
+			game_manager.UpdateECTSUI(id)
+			
 			Field.BuildingHouse(current_position)
 		else:
 			print("Nie znaleziono pola dla indeksu: %d / Pole nie należy do gracza" % current_position)

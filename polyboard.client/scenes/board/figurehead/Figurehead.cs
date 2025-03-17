@@ -229,7 +229,7 @@ public partial class Figurehead : CharacterBody3D
 		// Implementacja aktualizacji UI
 	}
 
-	private void ShowECTSUpdate()
+	public void ShowECTSUpdate()
 	{
 		// Implementacja pokazywania aktualizacji ECTS
 	}

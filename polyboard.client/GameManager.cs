@@ -232,7 +232,7 @@ public partial class GameManager : Node3D
 		}
 	}
 
-	private void UpdateECTSUI(int playerIndex)
+	public void UpdateECTSUI(int playerIndex)
 	{
 		if (playerIndex < 0 || playerIndex >= playerECTSLabels.Count)
 		{
@@ -587,7 +587,7 @@ private void CheckDiceResults()
 		}
 	}
 
-	private void ShowNotification(string message, float duration = 3f)
+	public void ShowNotification(string message, float duration = 3f)
 	{
 		if (notificationLabel == null || notificationPanel == null) return;
 		notificationLabel.Text = message;
@@ -686,6 +686,15 @@ private void CheckDiceResults()
 			
 			ShowNotification($"Gracz {players[playerIndex].Name} wraca do gry!", 5f);
 			GD.Print($"Gracz {players[playerIndex].Name} wraca do gry!");
+		}
+	}
+	public void SubtractEctsFromPlayer(int playerIndex, int amount)
+	{
+		if (playerIndex >= 0 && playerIndex < players.Count)
+		{
+			GD.Print("...");
+			players[playerIndex].SpendECTS(amount);
+			UpdateECTSUI(playerIndex);
 		}
 	}
 }

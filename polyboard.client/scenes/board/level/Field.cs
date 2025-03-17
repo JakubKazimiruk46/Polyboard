@@ -27,10 +27,17 @@ public partial class Field : Node3D
 	protected AudioStreamPlayer3D constructionSoundPlayer;
 	protected Figurehead Owner;
 	public bool owned = false;
-	
+	public int houseCost;
+	public int hotelCost;
+	public int fieldCost;
+	public List<int> rentCost = new List<int>(6);
+	private GameManager gameManager;
 	
 	public void BuyField(Figurehead player, Field field)
 	{
+		int id = gameManager.GetCurrentPlayerIndex();
+		player.SpendECTS(field.fieldCost);
+		gameManager.UpdateECTSUI(id);
 		field.Owner = player;
 		field.owned = true;
 		GD.Print(player.Name);
@@ -64,17 +71,17 @@ public partial class Field : Node3D
 		Name = $"Field{FieldId}";
 		
 		for (int i = 0; i < 6; i++)
-	{
-		occupied.Add(false);
+		{
+			occupied.Add(false);
+		}
+		for (int i = 0; i < 5; i++)
+		{
+			buildOccupied.Add(false);
+		}
 	}
-	for (int i = 0; i < 5; i++)
-	{
-		buildOccupied.Add(false);
-	}
-	}
-
 	public override void _Ready()
 	{
+		gameManager = GetNode<GameManager>("/root/Level/GameManager");
 		viewDetailsDialog = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect/ViewDetailsDialog");
 		constructionSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/ConstructionSound");
 		if (viewDetailsDialog == null)
