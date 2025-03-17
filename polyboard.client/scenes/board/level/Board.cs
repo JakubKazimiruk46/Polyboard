@@ -60,6 +60,224 @@ public partial class Board : StaticBody3D
 		{
 			if (child is Field field)
 			{
+				if (field.FieldId == 1)
+				{
+					field.Name = "Katedra Leśnictwa";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 60;
+					field.rentCost = new List<int> {2, 10, 30, 90, 160, 250};
+				}
+				else if (field.FieldId == 3)
+				{
+					field.Name = "Katedra Drzewek";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 60;
+					field.rentCost = new List<int> {2, 20, 60, 180, 320, 450};
+				}
+				else if (field.FieldId == 5)
+				{
+					field.Name = "Akademik Alfa";
+					field.fieldCost = 200;
+					field.rentCost = new List<int> {25, 50, 100, 200};
+				}
+				else if (field.FieldId == 6)
+				{
+					field.Name = "Katedra Ekonomii";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 100;
+					field.rentCost = new List<int> {6, 30, 90, 270, 400, 550};
+				}
+				else if (field.FieldId == 8)
+				{
+					field.Name = "Katedra Marketingu";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 100;
+					field.rentCost = new List<int> {6, 30, 90, 270, 400, 550};
+				}
+				else if (field.FieldId == 9)
+				{
+					field.Name = "Katedra Logistyki";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 120;
+					field.rentCost = new List<int> {8, 40, 100, 300, 450, 600};
+				}
+				else if (field.FieldId == 11)
+				{
+					field.Name = "Katedra Grafiki";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 140;
+					field.rentCost = new List<int> {10, 50, 150, 450, 625, 750};
+				}
+				else if (field.FieldId == 12)
+				{
+					field.Name = "Centrum Nowoczesnego Kształcenia";
+					field.fieldCost = 150;
+				}
+				else if (field.FieldId == 13)
+				{
+					field.Name = "Katedra Urbanistyki";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 140;
+					field.rentCost = new List<int> {10, 50, 150, 450, 625, 750};
+				}
+				else if (field.FieldId == 14)
+				{
+					field.Name = "Katedra Architektury Wnętrz";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 160;
+					field.rentCost = new List<int> {10, 50, 150, 450, 625, 750};
+				}
+				else if (field.FieldId == 15)
+				{
+					field.Name = "Akademik Beta";
+					field.fieldCost = 200;
+					field.rentCost = new List<int> {25, 50, 100, 200};
+				}
+				else if (field.FieldId == 16)
+				{
+					field.Name = "Katedra Geotechniki";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 180;
+					field.rentCost = new List<int> {14, 70, 200, 550, 750, 950};
+				}
+				else if (field.FieldId == 18)
+				{
+					field.Name = "Katedra Budownictwa";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 180;
+					field.rentCost = new List<int> {14, 70, 200, 550, 750, 950};
+				}
+				else if (field.FieldId == 19)
+				{
+					field.Name = "Katedra Konstrukcji Budowlanych";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 200;
+					field.rentCost = new List<int> {16, 80, 220, 600, 800, 1000};
+				}
+				else if (field.FieldId == 21)
+				{
+					field.Name = "Katedra Biotechnologii";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 220;
+					field.rentCost = new List<int> {18, 90, 250, 700, 875, 1050};
+				}
+				else if (field.FieldId == 21)
+				{
+					field.Name = "Katedra Ciepłownictwa";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 220;
+					field.rentCost = new List<int> {18, 90, 250, 700, 875, 1050};
+				}
+				else if (field.FieldId == 23)
+				{
+					field.Name = "Katedra Ciepłownictwa";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 220;
+					field.rentCost = new List<int> {18, 90, 250, 700, 875, 1050};
+				}
+				else if (field.FieldId == 24)
+				{
+					field.Name = "Katedra Inżynierii Rolnej";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 240;
+					field.rentCost = new List<int> {20, 100, 300, 750, 925, 1110};
+				}
+				else if (field.FieldId == 25)
+				{
+					field.Name = "Akademik Gamma";
+					field.fieldCost = 200;
+					field.rentCost = new List<int> {25, 50, 100, 200};
+				}
+				else if (field.FieldId == 26)
+				{
+					field.Name = "Katedra Mechaniki";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 260;
+					field.rentCost = new List<int> {22, 110, 330, 800, 975, 1150};
+				}
+				else if (field.FieldId == 27)
+				{
+					field.Name = "Katedra Budowy Maszyn";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 260;
+					field.rentCost = new List<int> {22, 110, 330, 800, 975, 1150};
+				}
+				else if (field.FieldId == 28)
+				{
+					field.Name = "Klub Gwint";
+					field.fieldCost = 150;
+				}
+				else if (field.FieldId == 29)
+				{
+					field.Name = "Katedra Inżynierii Biomedycznej";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 280;
+					field.rentCost = new List<int> {24, 120, 360, 850, 1025, 1200};
+				}
+				else if (field.FieldId == 31)
+				{
+					field.Name = "Katedra Automatyki i Robotyki";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 300;
+					field.rentCost = new List<int> {26, 130, 390, 900, 1100, 1275};
+				}
+				else if (field.FieldId == 32)
+				{
+					field.Name = "Katedra Elektrotechniki";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 300;
+					field.rentCost = new List<int> {26, 130, 390, 900, 1100, 1275};
+				}
+				else if (field.FieldId == 34)
+				{
+					field.Name = "Katedra Fotoniki";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 320;
+					field.rentCost = new List<int> {28, 150, 450, 1000, 1200, 1400};
+				}
+				else if (field.FieldId == 35)
+				{
+					field.Name = "Akademik Delta";
+					field.fieldCost = 200;
+					field.rentCost = new List<int> {25, 50, 100, 200};
+				}
+				else if (field.FieldId == 37)
+				{
+					field.Name = "Katedra Oprogramowania";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 350;
+					field.rentCost = new List<int> {35, 175, 500, 1100, 1300, 1500};
+				}
+				else if (field.FieldId == 39)
+				{
+					field.Name = "Katedra Matematyki";
+					field.houseCost = 150;
+					field.hotelCost = 150;
+					field.fieldCost = 400;
+					field.rentCost = new List<int> {50, 200, 600, 1400, 1700, 2000};
+				}
 				fields.Add(field);
 			}
 		}

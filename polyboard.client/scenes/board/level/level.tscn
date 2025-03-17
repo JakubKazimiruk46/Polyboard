@@ -372,6 +372,7 @@ script = ExtResource("17_6omuv")
 transform = Transform3D(0.05, 0, 0, 0, 0.017101, -0.0469846, 0, 0.0469846, 0.017101, 11.023, 0.6, 12.048)
 script = ExtResource("18_gkn4w")
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
+pawnInstancePath = NodePath(".")
 
 [node name="Label3D" type="Label3D" parent="GameManager/Players/ziut"]
 billboard = 2
@@ -386,6 +387,7 @@ bus = &"Sfx"
 transform = Transform3D(-0.5, 0, -7.54979e-08, 0, 0.5, 0, 7.54979e-08, 0, -0.5, 13.003, 0.1, 10.95)
 script = ExtResource("18_gkn4w")
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
+pawnInstancePath = NodePath(".")
 
 [node name="Label3D" type="Label3D" parent="GameManager/Players/ziut1"]
 billboard = 2
@@ -399,6 +401,7 @@ bus = &"Sfx"
 [node name="ziut2" parent="GameManager/Players" instance=ExtResource("17_gaapt")]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 11.2924, 0.569427, 10.8537)
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
+pawnInstancePath = NodePath(".")
 
 [node name="Label3D" type="Label3D" parent="GameManager/Players/ziut2"]
 billboard = 2

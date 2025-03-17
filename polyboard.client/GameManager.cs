@@ -230,7 +230,7 @@ public partial class GameManager : Node3D
 		}
 	}
 
-	private void UpdateECTSUI(int playerIndex)
+	public void UpdateECTSUI(int playerIndex)
 	{
 		if (playerIndex < 0 || playerIndex >= playerECTSLabels.Count)
 		{
@@ -435,7 +435,7 @@ private void EndTurn()
 		}
 	}
 
-	private void ShowNotification(string message, float duration = 3f)
+	public void ShowNotification(string message, float duration = 3f)
 	{
 		if (notificationLabel == null || notificationPanel == null) return;
 		notificationLabel.Text = message;
@@ -501,6 +501,15 @@ private void EndTurn()
 		if (playerIndex >= 0 && playerIndex < players.Count)
 		{
 			players[playerIndex].AddECTS(amount);
+			UpdateECTSUI(playerIndex);
+		}
+	}
+	public void SubtractEctsFromPlayer(int playerIndex, int amount)
+	{
+		if (playerIndex >= 0 && playerIndex < players.Count)
+		{
+			GD.Print("...");
+			players[playerIndex].SpendECTS(amount);
 			UpdateECTSUI(playerIndex);
 		}
 	}

@@ -12,13 +12,12 @@ public partial class Figurehead : CharacterBody3D
 	
 
 	[Export]
-	public int StartingECTS = 100;
-
+	public int StartingECTS = 50;
 	private AudioStreamPlayer3D walkSoundPlayer;
 	private AnimationPlayer animationPlayer;
 	private bool hasAnimation=false;
 	public int ECTS { get; private set; }
-
+	
 	// Dodane stałe do obsługi planszy
 	private const int TOTAL_FIELDS = 40;
 	private const int START_FIELD = 0;
@@ -230,7 +229,7 @@ public partial class Figurehead : CharacterBody3D
 		// Implementacja aktualizacji UI
 	}
 
-	private void ShowECTSUpdate()
+	public void ShowECTSUpdate()
 	{
 		// Implementacja pokazywania aktualizacji ECTS
 	}

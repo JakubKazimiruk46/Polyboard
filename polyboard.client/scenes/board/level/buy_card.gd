@@ -3,6 +3,7 @@ extends CanvasLayer
 @onready var endturnbutton = $"../UI/ZakończTure"
 @onready var tradeButton = $"../UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2/trade_button" as TextureButton
 @onready var buildButton = $"../UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3/build_button" as TextureButton
+
 var board_view = false
 var total_time_in_secs : int = 30
 # Called when the node enters the scene tree for the first time.
@@ -46,18 +47,6 @@ func turn_on_buttons():
 	buildButton.disabled = false
 
 func on_buyButtonPressed():
-	$Timer.stop()
-	$ZakupKarty.play()
-	$HBoxContainer/GPUParticles2D.emitting = true
-	await get_tree().create_timer(1.5).timeout
-	$HBoxContainer/GPUParticles2D.emitting = false
-	await get_tree().create_timer(1).timeout
-	self.visible=false
-	$Ticking.stop()
-	total_time_in_secs = 30
-	$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.text = ''
-	$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.add_theme_color_override("font_color","white")
-	turn_on_buttons()
 	var figurehead_script = preload("res://scenes/board/figurehead/Figurehead.cs")
 	var board = $"../Board"
 	var game_manager = $"../GameManager"
@@ -68,14 +57,24 @@ func on_buyButtonPressed():
 		# Pobierz pole jako Node (lub Field, jeśli typowanie jest zaimplementowane)
 		print(Field.FieldId)
 		print(current_position)
-		if Field:
+		if Field && Field.fieldCost <= currentFigureHead.ECTS:
 			Field.BuyField(currentFigureHead,Field)
-			
+			$Timer.stop()
+			$ZakupKarty.play()
+			$HBoxContainer/GPUParticles2D.emitting = true
+			await get_tree().create_timer(1.5).timeout
+			$HBoxContainer/GPUParticles2D.emitting = false
+			await get_tree().create_timer(1).timeout
+			self.visible=false
+			$Ticking.stop()
+			total_time_in_secs = 30
+			$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.text = ''
+			$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.add_theme_color_override("font_color","white")
+			turn_on_buttons()
 		else:
-			print("Nie znaleziono pola dla indeksu: %d" % current_position)
-	#else:
-		#print("Nie znaleziono instancji Board lub metoda GetFieldById nie istnieje!")
-
+			var n = "Nie masz wystarczającej ilości ECTS, aby kupić to pole"
+			game_manager.ShowNotification(n)
+			#print("Nie znaleziono instancji Board lub metoda GetFieldById nie istnieje!")
 
 func on_auctionButtonPressed():
 	self.visible = false
