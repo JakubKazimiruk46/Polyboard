@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://bvlhympj7pq71"]
+[gd_scene load_steps=6 format=3 uid="uid://bvlhympj7pq71"]
 
 [ext_resource type="Script" path="res://scenes/board/level/Field.cs" id="1_04n6o"]
 [ext_resource type="Texture2D" uid="uid://cqqrjgdhq5flb" path="res://scenes/board/level/textures/FieldSelectionBorder.png" id="2_3tn34"]
+[ext_resource type="Texture2D" uid="uid://bnqotctseardl" path="res://scenes/board/level/textures/FieldOwnershipBorder.png" id="3_qjaje"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_yajq1"]
 size = Vector2(2, 4)
@@ -23,6 +24,15 @@ axis = 1
 double_sided = false
 render_priority = 2
 texture = ExtResource("2_3tn34")
+
+[node name="OwnerBorder" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0.05)
+visible = false
+cast_shadow = 2
+axis = 1
+double_sided = false
+render_priority = 2
+texture = ExtResource("3_qjaje")
 
 [node name="Area3D" type="Area3D" parent="."]
 

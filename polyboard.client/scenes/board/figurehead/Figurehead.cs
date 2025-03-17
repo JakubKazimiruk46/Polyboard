@@ -7,18 +7,18 @@ public partial class Figurehead : CharacterBody3D
 	public int CurrentPositionIndex { get; set; } = 0;
 	[Export]
 	public NodePath walkSoundPlayerPath;
-	 [Export]
+	[Export]
 	public NodePath pawnInstancePath;
-	
-
 	[Export]
 	public int StartingECTS = 100;
-
+	[Export]
+	public Color playerColor;
 	private AudioStreamPlayer3D walkSoundPlayer;
 	private AnimationPlayer animationPlayer;
+	
 	private bool hasAnimation=false;
 	public int ECTS { get; private set; }
-
+	
 	// Dodane stałe do obsługi planszy
 	private const int TOTAL_FIELDS = 40;
 	private const int START_FIELD = 0;
@@ -45,7 +45,6 @@ public partial class Figurehead : CharacterBody3D
 		{
 			GD.Print("Brak AnimationPlayer w instancji pionka.");
 		}
-		
 		ECTS = StartingECTS;
 		UpdateECTSUI();
 	}

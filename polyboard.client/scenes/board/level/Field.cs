@@ -16,6 +16,7 @@ public partial class Field : Node3D
 	public Vector3 buildCameraPosition;
 	protected Sprite3D _border;
 	protected Area3D _area;
+	protected Sprite3D _ownerBorder;
 	protected static int nextId = 0;
 	public int FieldId;
 	public List<Node3D> builtHouses = new List<Node3D>();
@@ -34,6 +35,19 @@ public partial class Field : Node3D
 		field.owned = true;
 		GD.Print(player.Name);
 		GD.Print("Nowy owner pola: ",field.Owner.Name);
+		GD.Print(field.Owner.playerColor);
+		 // Pobranie referencji do obiektu ramki
+		_ownerBorder = GetNodeOrNull<Sprite3D>("OwnerBorder");
+	
+		if (_ownerBorder == null)
+		{
+			GD.PrintErr("Błąd: Nie znaleziono OwnerBorder!");
+			return;
+		}
+
+	// Ustawienie koloru i widoczności ramki
+	_ownerBorder.Modulate = field.Owner.playerColor;
+	_ownerBorder.Visible = true;
 	}
 	
 	public string GetUserNickname(Field field)
@@ -84,11 +98,13 @@ public partial class Field : Node3D
 		fieldMeshInstance = GetNode<MeshInstance3D>("MeshInstance3D");
 		_border = GetNode<Sprite3D>("Border");
 		_area = GetNode<Area3D>("Area3D");
-		if (_border == null || _area == null)
+		_ownerBorder = GetNodeOrNull<Sprite3D>("OwnerBorder");
+		if (_border == null || _area == null || _ownerBorder == null)
 		{
 			GD.PrintErr("Nie znaleziono obiektów do wyświetlania krawędzi pola.");
 		}
 		_border.Visible = false;
+		_ownerBorder.Visible = false;
 
 		if (fieldMeshInstance != null)
 		{
