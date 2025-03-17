@@ -1,0 +1,60 @@
+[gd_scene load_steps=3 format=3 uid="uid://c5ql7v7oalj4x"]
+
+[ext_resource type="Script" uid="uid://p2wq4dt7xovl" path="res://scenes/local_lobby/local_lobby_player.gd" id="1_f301g"]
+
+[sub_resource type="Theme" id="Theme_ymor6"]
+
+[node name="LocalLobbyPlayer" type="Control"]
+layout_mode = 3
+anchor_right = 0.395
+anchor_bottom = 0.06
+offset_top = -1.0
+offset_right = -0.0400085
+offset_bottom = 0.119999
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_f301g")
+
+[node name="PlayerContainer" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(450, 40)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -225.0
+offset_top = -21.5
+offset_right = 225.0
+offset_bottom = 21.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+theme = SubResource("Theme_ymor6")
+
+[node name="PlayerName" type="Label" parent="PlayerContainer"]
+layout_mode = 2
+size_flags_horizontal = 5
+theme_override_font_sizes/font_size = 27
+text = "Player1"
+
+[node name="HSplitContainer" type="HSplitContainer" parent="PlayerContainer"]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+
+[node name="SetSkinButton" type="Button" parent="PlayerContainer"]
+layout_mode = 2
+size_flags_horizontal = 5
+theme_override_font_sizes/font_size = 20
+text = "SET SKIN 🧛🏿"
+
+[node name="SetNicknameButton" type="Button" parent="PlayerContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "SET NICKNAME 📜"
+
+[node name="NicknameDialog" type="AcceptDialog" parent="PlayerContainer"]
+
+[node name="NicknameInput" type="LineEdit" parent="PlayerContainer/NicknameDialog"]
+offset_right = 68.5625
+offset_bottom = 31.0
