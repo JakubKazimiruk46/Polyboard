@@ -374,6 +374,7 @@ transform = Transform3D(0.05, 0, 0, 0, 0.017101, -0.0469846, 0, 0.0469846, 0.017
 script = ExtResource("18_gkn4w")
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
 pawnInstancePath = NodePath(".")
+playerColor = Color(0, 0, 0.843137, 1)
 
 [node name="Label3D" type="Label3D" parent="GameManager/Players/ziut"]
 billboard = 2
@@ -404,7 +405,7 @@ bus = &"Sfx"
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 11.2924, 0.569427, 10.8537)
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
 pawnInstancePath = NodePath(".")
-playerColor = Color(0, 0, 0, 1)
+playerColor = Color(1, 0, 0, 1)
 
 [node name="Label3D" type="Label3D" parent="GameManager/Players/ziut2"]
 billboard = 2
@@ -412,6 +413,21 @@ modulate = Color(0.886275, 0.47451, 0.2, 1)
 outline_modulate = Color(0.886275, 0.47451, 0.2, 1)
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/ziut2"]
+stream = ExtResource("14_u56ja")
+bus = &"Sfx"
+
+[node name="ziut3" parent="GameManager/Players" instance=ExtResource("17_gaapt")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 11.2924, 0.569427, 10.8537)
+walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
+pawnInstancePath = NodePath(".")
+playerColor = Color(0, 0, 0, 1)
+
+[node name="Label3D" type="Label3D" parent="GameManager/Players/ziut3"]
+billboard = 2
+modulate = Color(0.886275, 0.47451, 0.2, 1)
+outline_modulate = Color(0.886275, 0.47451, 0.2, 1)
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="GameManager/Players/ziut3"]
 stream = ExtResource("14_u56ja")
 bus = &"Sfx"
 
