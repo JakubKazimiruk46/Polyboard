@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=32 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -22,6 +22,7 @@
 [ext_resource type="PackedScene" uid="uid://gp7nt0o21wam" path="res://scenes/board/figurehead/czapka_absolwenta_pionek.tscn" id="17_gaapt"]
 [ext_resource type="Script" path="res://scenes/board/figurehead/Figurehead.cs" id="18_gkn4w"]
 [ext_resource type="PackedScene" uid="uid://b2til4lqp6c80" path="res://scenes/board/figurehead/xbox_controller_pionek.tscn" id="21_1ulqv"]
+[ext_resource type="Script" path="res://test/BankruptcyTest.cs" id="23_dakaj"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]
 size = Vector3(28.5, 0.2, 28.5)
@@ -372,6 +373,7 @@ script = ExtResource("17_6omuv")
 transform = Transform3D(0.05, 0, 0, 0, 0.017101, -0.0469846, 0, 0.0469846, 0.017101, 11.023, 0.6, 12.048)
 script = ExtResource("18_gkn4w")
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
+pawnInstancePath = NodePath("..")
 
 [node name="Label3D" type="Label3D" parent="GameManager/Players/ziut"]
 billboard = 2
@@ -386,6 +388,7 @@ bus = &"Sfx"
 transform = Transform3D(-0.5, 0, -7.54979e-08, 0, 0.5, 0, 7.54979e-08, 0, -0.5, 13.003, 0.1, 10.95)
 script = ExtResource("18_gkn4w")
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
+pawnInstancePath = NodePath(".")
 
 [node name="Label3D" type="Label3D" parent="GameManager/Players/ziut1"]
 billboard = 2
@@ -399,6 +402,7 @@ bus = &"Sfx"
 [node name="ziut2" parent="GameManager/Players" instance=ExtResource("17_gaapt")]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 11.2924, 0.569427, 10.8537)
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
+pawnInstancePath = NodePath(".")
 
 [node name="Label3D" type="Label3D" parent="GameManager/Players/ziut2"]
 billboard = 2
@@ -415,6 +419,15 @@ light_energy = 8.0
 shadow_enabled = true
 omni_range = 30.0
 omni_attenuation = 0.8
+
+[node name="Testy" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("23_dakaj")
+GameManagerPath = NodePath("../GameManager")
 
 [connection signal="pressed" from="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3/build_button" to="UI" method="on_build_button_pressed"]
 

@@ -33,6 +33,10 @@ FigureheadLoader="*res://services/figurehead_loader.gd"
 
 project/assembly_name="PolyBoard.Client"
 
+[filesystem]
+
+import/blender/enabled=false
+
 [input]
 
 ui_space={
