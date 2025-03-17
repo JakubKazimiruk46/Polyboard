@@ -374,6 +374,7 @@ transform = Transform3D(0.05, 0, 0, 0, 0.017101, -0.0469846, 0, 0.0469846, 0.017
 script = ExtResource("18_gkn4w")
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
 pawnInstancePath = NodePath(".")
+StartingECTS = 500
 playerColor = Color(0, 0, 0.843137, 1)
 
 [node name="Label3D" type="Label3D" parent="GameManager/Players/ziut"]
@@ -390,6 +391,7 @@ transform = Transform3D(-0.5, 0, -7.54979e-08, 0, 0.5, 0, 7.54979e-08, 0, -0.5, 
 script = ExtResource("18_gkn4w")
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
 pawnInstancePath = NodePath(".")
+StartingECTS = 500
 playerColor = Color(0.698039, 0, 0.796078, 1)
 
 [node name="Label3D" type="Label3D" parent="GameManager/Players/ziut1"]
@@ -405,6 +407,7 @@ bus = &"Sfx"
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 11.2924, 0.569427, 10.8537)
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
 pawnInstancePath = NodePath(".")
+StartingECTS = 500
 playerColor = Color(1, 0, 0, 1)
 
 [node name="Label3D" type="Label3D" parent="GameManager/Players/ziut2"]
@@ -420,6 +423,7 @@ bus = &"Sfx"
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 11.2924, 0.569427, 10.8537)
 walkSoundPlayerPath = NodePath("AudioStreamPlayer3D")
 pawnInstancePath = NodePath(".")
+StartingECTS = 400
 playerColor = Color(0, 0, 0, 1)
 
 [node name="Label3D" type="Label3D" parent="GameManager/Players/ziut3"]
@@ -439,6 +443,7 @@ omni_range = 30.0
 omni_attenuation = 0.8
 
 [node name="Testy" type="Control" parent="."]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
