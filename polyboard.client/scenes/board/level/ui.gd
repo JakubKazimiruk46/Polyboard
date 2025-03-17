@@ -4,6 +4,7 @@ extends CanvasLayer
 @onready var buycard = $"../BuyCard"
 @onready var tradebutton = $HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2/trade_button
 @onready var buildbutton = $HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3/build_button
+@onready var remove_owner_button = $HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer6/remove_owner_button
 var cards_view = false
 var buttons_view = false
 
@@ -55,6 +56,20 @@ func on_build_button_pressed():
 	#else:
 		#print("Nie znaleziono instancji Board lub metoda GetFieldById nie istnieje!")
 
+func on_remove_owner_button_pressed():
+	print("REMOVE OWNER button pressed")
+	var game_manager = $"../GameManager"
+	var currentFigureHead = game_manager.getCurrentPlayer()
+	var current_position = currentFigureHead.GetCurrentPositionIndex()
+	var field = game_manager.getCurrentField(current_position)
+	
+	if field and field.owned:
+		# Reset field ownership
+		field.RemoveOwner()
+		print("Field ownership removed from: " + field.Name)
+	else:
+		print("Cannot remove ownership: field is not owned")
+
 func on_view_buttons_pressed():
 	if buttons_view == false:
 		buttons_view = true
@@ -77,3 +92,7 @@ func on_view_buttons_pressed():
 
 func _process(delta: float) -> void:
 	pass
+
+
+func _on_remove_owner_button_pressed() -> void:
+	pass # Replace with function body.

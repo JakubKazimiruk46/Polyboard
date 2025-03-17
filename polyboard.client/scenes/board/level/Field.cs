@@ -79,6 +79,35 @@ public partial class Field : Node3D
 			buildOccupied.Add(false);
 		}
 	}
+
+	public void RemoveOwner()
+	{
+		if (!owned || Owner == null)
+		{
+			GD.Print("Field is not owned, cannot remove owner");
+			return;
+		}
+		
+		GD.Print($"Removing ownership of {Name} from {Owner.Name}");
+		
+		// Reset ownership state
+		owned = false;
+		Owner = null;
+		
+		// Hide owner border
+		if (_ownerBorder != null)
+		{
+			_ownerBorder.Visible = false;
+		}
+		
+		// Remove any houses or hotels if they exist
+		if (builtHouses.Count > 0 || isHotel)
+		{
+			RemoveAllHouses();
+			isHotel = false;
+		}
+	}
+
 	public override void _Ready()
 	{
 		gameManager = GetNode<GameManager>("/root/Level/GameManager");
