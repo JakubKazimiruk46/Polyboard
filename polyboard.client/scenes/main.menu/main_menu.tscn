@@ -1,6 +1,6 @@
 [gd_scene load_steps=18 format=3 uid="uid://bggyt1jlrmlak"]
 
-[ext_resource type="Script" path="res://scenes/main.menu/main_menu.gd" id="1_gmssk"]
+[ext_resource type="Script" uid="uid://dmfaay3k7mwx1" path="res://scenes/main.menu/main_menu.gd" id="1_gmssk"]
 [ext_resource type="Texture2D" uid="uid://e56daf0rtn6l" path="res://assets/images/background.jpg" id="1_rlbls"]
 [ext_resource type="Texture2D" uid="uid://dw4jaa57o58m5" path="res://assets/images/logo.png" id="2_rf33w"]
 [ext_resource type="PackedScene" uid="uid://oysiwns4yqyq" path="res://scenes/login/login.tscn" id="4_yflvy"]
@@ -94,7 +94,7 @@ texture = ExtResource("2_rf33w")
 
 [node name="HSeparator" type="HSeparator" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 modulate = Color(1, 1, 1, 0)
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_horizontal = 4
 
@@ -112,7 +112,6 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
 text = "BOARD"
 
 [node name="logout_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-visible = false
 modulate = Color(0.293333, 1, 0.2, 1)
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
@@ -126,7 +125,6 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
 text = "LOG OUT"
 
 [node name="account_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-visible = false
 modulate = Color(0.293333, 1, 0.2, 1)
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
@@ -153,7 +151,6 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
 text = "LOGIN"
 
 [node name="new_game_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-visible = false
 modulate = Color(0.293333, 1, 0.2, 1)
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
@@ -166,8 +163,20 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_hmdkb")
 theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
 text = "NEW GAME"
 
+[node name="local_game_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+modulate = Color(0.293333, 1, 0.2, 1)
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+theme_override_fonts/font = SubResource("SystemFont_0607m")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_hmdkb")
+theme_override_styles/normal = SubResource("StyleBoxFlat_pyhlo")
+text = "LOCAL GAME"
+
 [node name="join_game_button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-visible = false
 modulate = Color(0.293333, 1, 0.2, 1)
 material = SubResource("CanvasItemMaterial_m6x2i")
 custom_minimum_size = Vector2(120, 0)

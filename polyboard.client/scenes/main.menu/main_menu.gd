@@ -6,6 +6,7 @@ extends Control
 @onready var account_button = $MarginContainer/HBoxContainer/VBoxContainer/account_button as Button
 @onready var newgame_button = $MarginContainer/HBoxContainer/VBoxContainer/new_game_button as Button
 @onready var join_game_button = $MarginContainer/HBoxContainer/VBoxContainer/join_game_button as Button
+@onready var local_game_button = $MarginContainer/HBoxContainer/VBoxContainer/local_game_button as Button
 @onready var settings_button = $MarginContainer/HBoxContainer/VBoxContainer/settings_button as Button
 @onready var exit_button = $MarginContainer/HBoxContainer/VBoxContainer/exit_button as Button
 @onready var login_button = $MarginContainer/HBoxContainer/VBoxContainer/login_button as Button
@@ -33,8 +34,11 @@ func update_menu_visibility():
 		join_game_button.visible = false
 		account_button.visible = false
 		logout_button.visible = false
+		local_game_button.visible = false
 		login_button.visible = true
+
 	else:
+		local_game_button.visible = true
 		account_button.visible = true
 		login_button.visible = false
 		logout_button.visible = true
@@ -125,6 +129,10 @@ func on_exit_settings_menu() -> void:
 func on_exit_pressed() -> void:
 	click_sound.play()
 	get_tree().quit()
+	
+func on_local_game_pressed() -> void:
+	click_sound.play()
+	get_tree().change_scene_to_file("res://scenes/local_lobby/local_lobby.gd")
 
 func handle_connecting_signals() -> void:
 	board_button.button_down.connect(on_board_pressed)
@@ -133,6 +141,7 @@ func handle_connecting_signals() -> void:
 	logout_button.button_down.connect(on_logout_pressed)
 	newgame_button.button_down.connect(on_newgame_pressed)
 	newgame_menu.exit_newgame_menu.connect(on_exit_newgame_menu)
+	local_game_button.button_down.connect(on_local_game_pressed)
 	login_button.button_down.connect(on_login_pressed)
 	login_menu.exit_login_menu.connect(on_exit_login_menu)
 	join_game_button.button_down.connect(on_joingame_pressed)
