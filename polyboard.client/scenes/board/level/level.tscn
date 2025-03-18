@@ -491,7 +491,6 @@ omni_range = 30.0
 omni_attenuation = 0.8
 
 [node name="Testy" type="Control" parent="."]
-visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
