@@ -324,7 +324,7 @@ tooltip_text = "Kliknij, aby zastawić daną nieruchomość. Otrzymasz natychmia
 tooltip_text = "Kliknij, aby zobaczyć swoje karty szansy i kasy społecznej"
 
 [node name="Cards" parent="UI" index="2"]
-offset_top = -76.4
+offset_top = -30.4
 offset_bottom = 0.399963
 
 [node name="ColorRect" parent="UI/Cards/ScrollContainer/MarginContainer/CardHBoxContainer" index="0"]
@@ -332,8 +332,8 @@ color = Color(0.176471, 0.176471, 0.176471, 1)
 
 [node name="TextureRect" type="TextureRect" parent="UI/Cards/ScrollContainer/MarginContainer/CardHBoxContainer/ColorRect" index="0"]
 layout_mode = 0
-offset_right = 112.0
-offset_bottom = 145.0
+offset_right = 65.0
+offset_bottom = 90.0
 expand_mode = 1
 
 [node name="ColorRect2" parent="UI/Cards/ScrollContainer/MarginContainer/CardHBoxContainer" index="1"]
@@ -341,8 +341,8 @@ color = Color(0.176471, 0.176471, 0.176471, 1)
 
 [node name="TextureRect" type="TextureRect" parent="UI/Cards/ScrollContainer/MarginContainer/CardHBoxContainer/ColorRect2" index="0"]
 layout_mode = 0
-offset_right = 99.0
-offset_bottom = 148.0
+offset_right = 65.0
+offset_bottom = 87.0
 
 [node name="ColorRect3" parent="UI/Cards/ScrollContainer/MarginContainer/CardHBoxContainer" index="2"]
 color = Color(0.176471, 0.176471, 0.176471, 1)
