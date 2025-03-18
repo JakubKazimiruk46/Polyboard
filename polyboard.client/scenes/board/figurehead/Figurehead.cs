@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 public partial class Figurehead : CharacterBody3D
 {
@@ -15,6 +16,7 @@ public partial class Figurehead : CharacterBody3D
 	public Color playerColor;
 	private AudioStreamPlayer3D walkSoundPlayer;
 	private AnimationPlayer animationPlayer;
+	public List<bool> ownedFields=new List<bool>(40);
 	
 	private bool hasAnimation=false;
 	public int ECTS { get; private set; }
@@ -25,6 +27,7 @@ public partial class Figurehead : CharacterBody3D
 
 	public override void _Ready()
 	{
+		ownedFields = new List<bool>(new bool[40]);
 		walkSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>(walkSoundPlayerPath);
 		if (walkSoundPlayer == null)
 		{
@@ -48,7 +51,17 @@ public partial class Figurehead : CharacterBody3D
 		ECTS = StartingECTS;
 		UpdateECTSUI();
 	}
-
+	
+	public Godot.Collections.Array GetOwnedFieldsAsArray()
+	{
+		Godot.Collections.Array array = new Godot.Collections.Array();
+		foreach (bool field in ownedFields)
+		{
+			array.Add(field);
+		}
+		return array;
+	}
+	
 	// Nowa metoda do przesuwania pionka o określoną liczbę pól (może być ujemna)
 	public async Task MoveByFields(int fieldCount, Board board)
 	{

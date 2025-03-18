@@ -40,6 +40,8 @@ public partial class Field : Node3D
 		gameManager.UpdateECTSUI(id);
 		field.Owner = player;
 		field.owned = true;
+		player.ownedFields[field.FieldId]=true;
+		GD.Print(player.Name,"Kupił pole o numerze Id ",field.FieldId);
 		GD.Print(player.Name);
 		GD.Print("Nowy owner pola: ",field.Owner.Name);
 		GD.Print(field.Owner.playerColor);
