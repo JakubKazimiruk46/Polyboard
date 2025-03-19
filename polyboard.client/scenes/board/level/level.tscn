@@ -22,7 +22,7 @@
 [ext_resource type="PackedScene" uid="uid://gp7nt0o21wam" path="res://scenes/board/figurehead/czapka_absolwenta_pionek.tscn" id="17_gaapt"]
 [ext_resource type="Script" path="res://scenes/board/figurehead/Figurehead.cs" id="18_gkn4w"]
 [ext_resource type="PackedScene" uid="uid://b2til4lqp6c80" path="res://scenes/board/figurehead/xbox_controller_pionek.tscn" id="21_1ulqv"]
-[ext_resource type="Script" path="res://test/BankruptcyTest.cs" id="23_dakaj"]
+[ext_resource type="Script" path="res://test/Tests.cs" id="23_dakaj"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]
 size = Vector3(28.5, 0.2, 28.5)
