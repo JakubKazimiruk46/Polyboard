@@ -1,9 +1,9 @@
 [gd_scene load_steps=10 format=3 uid="uid://caml7se6mxf4i"]
 
 [ext_resource type="PackedScene" uid="uid://by1k0ckydbvmy" path="res://scenes/account/match_history.tscn" id="1_hcews"]
-[ext_resource type="Script" path="res://scenes/account/tab_container.gd" id="1_x3biu"]
+[ext_resource type="Script" uid="uid://dbjvskae5l1qs" path="res://scenes/account/tab_container.gd" id="1_x3biu"]
 [ext_resource type="PackedScene" uid="uid://bioeyv8t6aq7g" path="res://scenes/account/achievement_filter.tscn" id="2_5diw0"]
-[ext_resource type="Script" path="res://scenes/account/achievements.gd" id="2_wts8v"]
+[ext_resource type="Script" uid="uid://dnavceoop62eg" path="res://scenes/account/achievements.gd" id="2_wts8v"]
 
 [sub_resource type="SystemFont" id="SystemFont_7t8lt"]
 font_names = PackedStringArray("Serif")

@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://cigncmj0i2aev"]
 
-[ext_resource type="Script" path="res://scenes/set_skins/set_skins.gd" id="1_6o7re"]
+[ext_resource type="Script" uid="uid://bpj8iyjwk35x4" path="res://scenes/set_skins/set_skins.gd" id="1_6o7re"]
 [ext_resource type="Texture2D" uid="uid://e56daf0rtn6l" path="res://assets/images/background.jpg" id="1_36wwe"]
-[ext_resource type="Script" path="res://scenes/set_skins/player.gd" id="3_o1a13"]
+[ext_resource type="Script" uid="uid://bolqrlsb3bo81" path="res://scenes/set_skins/player.gd" id="3_o1a13"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_x8o6b"]
 size = Vector2(353, 302)

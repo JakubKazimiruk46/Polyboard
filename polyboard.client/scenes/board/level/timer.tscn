@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://d2arsk7nm7cu3"]
 
-[ext_resource type="Script" path="res://scenes/board/level/timer.gd" id="1_7vpqn"]
+[ext_resource type="Script" uid="uid://n7nm70ibk2hv" path="res://scenes/board/level/timer.gd" id="1_7vpqn"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ek1em"]
 font_size = 20

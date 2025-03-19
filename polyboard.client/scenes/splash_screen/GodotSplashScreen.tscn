@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://mhf8k7c58vc0"]
 
 [ext_resource type="Texture2D" uid="uid://4ixawaqo8phf" path="res://assets/images/Godot.png" id="1_00oyk"]
-[ext_resource type="Script" path="res://scenes/splash_screen/splash_screen.gd" id="1_senbr"]
+[ext_resource type="Script" uid="uid://cjrwxapy1xmjr" path="res://scenes/splash_screen/splash_screen.gd" id="1_senbr"]
 
 [sub_resource type="SystemFont" id="SystemFont_ft8ld"]
 font_names = PackedStringArray("Impact")

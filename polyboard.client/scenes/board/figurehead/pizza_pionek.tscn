@@ -122,9 +122,9 @@ tracks/4/keys = PackedFloat32Array(0, 1, -0.512343, -0.0862348, -0.236444, 0.821
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_tikjf"]
 _data = {
-"ArmatureAction": SubResource("Animation_3s7wj"),
-"Cylinder_002Action": SubResource("Animation_bq8fa"),
-"EmptyAction": SubResource("Animation_hvksw")
+&"ArmatureAction": SubResource("Animation_3s7wj"),
+&"Cylinder_002Action": SubResource("Animation_bq8fa"),
+&"EmptyAction": SubResource("Animation_hvksw")
 }
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_42g2y"]

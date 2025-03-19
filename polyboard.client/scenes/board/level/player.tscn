@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://5sstb7cda6kr"]
 
-[ext_resource type="Script" path="res://scenes/board/figurehead/Figurehead.cs" id="1_86c2x"]
+[ext_resource type="Script" uid="uid://jjck14f1cwuj" path="res://scenes/board/figurehead/Figurehead.cs" id="1_86c2x"]
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="2_jcct3"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_vvfgh"]

@@ -1,7 +1,7 @@
 [gd_scene load_steps=12 format=4 uid="uid://gp7nt0o21wam"]
 
 [ext_resource type="PackedScene" uid="uid://c6p8loqwqv1rc" path="res://figureheads/czapka-absolwenta-pionek.glb" id="1_i5w7a"]
-[ext_resource type="Script" path="res://scenes/board/figurehead/Figurehead.cs" id="2_4x40n"]
+[ext_resource type="Script" uid="uid://jjck14f1cwuj" path="res://scenes/board/figurehead/Figurehead.cs" id="2_4x40n"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5cvfq"]
 resource_name = "Material"

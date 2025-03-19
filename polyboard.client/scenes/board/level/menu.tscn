@@ -1,10 +1,10 @@
 [gd_scene load_steps=7 format=3 uid="uid://uicwwtau32m7"]
 
-[ext_resource type="Script" path="res://scenes/board/level/game_menu.gd" id="1_vvfqc"]
+[ext_resource type="Script" uid="uid://b3dwsaoyyuagd" path="res://scenes/board/level/game_menu.gd" id="1_vvfqc"]
 [ext_resource type="PackedScene" uid="uid://cdxn460y08ix4" path="res://scenes/settings/settings_tab_container.tscn" id="2_m8ndh"]
-[ext_resource type="Script" path="res://scenes/board/level/game_settings.gd" id="2_o86wk"]
-[ext_resource type="Script" path="res://scenes/board/level/exit_confirm.gd" id="4_gh84u"]
-[ext_resource type="Script" path="res://scenes/board/level/exit_game_confirm.gd" id="5_4hk7i"]
+[ext_resource type="Script" uid="uid://dyllwyi171p07" path="res://scenes/board/level/game_settings.gd" id="2_o86wk"]
+[ext_resource type="Script" uid="uid://ccfqdmnsr8iks" path="res://scenes/board/level/exit_confirm.gd" id="4_gh84u"]
+[ext_resource type="Script" uid="uid://clclgmeo6c2dw" path="res://scenes/board/level/exit_game_confirm.gd" id="5_4hk7i"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5i8wj"]
 bg_color = Color(0.555276, 0, 0.109748, 1)

@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://x322yd2sw5rw"]
 
-[ext_resource type="Script" path="res://scenes/splash_screen/splash_screen_manager.gd" id="1_0nihf"]
+[ext_resource type="Script" uid="uid://bl40cjjklypjw" path="res://scenes/splash_screen/splash_screen_manager.gd" id="1_0nihf"]
 [ext_resource type="PackedScene" uid="uid://mhf8k7c58vc0" path="res://scenes/splash_screen/GodotSplashScreen.tscn" id="2_tbedc"]
 [ext_resource type="PackedScene" uid="uid://bggyt1jlrmlak" path="res://scenes/main.menu/main_menu.tscn" id="2_x1qjn"]
 [ext_resource type="PackedScene" uid="uid://i5oejjnclglt" path="res://scenes/splash_screen/PolitechnikaSplashScreen.tscn" id="3_2tr0i"]

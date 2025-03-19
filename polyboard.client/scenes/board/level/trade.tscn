@@ -1,7 +1,7 @@
 [gd_scene load_steps=16 format=3 uid="uid://h1ww7awlbuhf"]
 
 [ext_resource type="Texture2D" uid="uid://b6utbuj146gel" path="res://assets/images/trade.png" id="1_j5epo"]
-[ext_resource type="Script" path="res://scenes/board/level/trade.gd" id="1_o71mw"]
+[ext_resource type="Script" uid="uid://dqfcuqwj21adm" path="res://scenes/board/level/trade.gd" id="1_o71mw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6ncgk"]
 bg_color = Color(1, 0.560888, 0.247211, 1)

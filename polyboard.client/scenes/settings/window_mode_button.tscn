@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://der60ol1i53qe"]
 
 [ext_resource type="PackedScene" uid="uid://by5etgoibwuel" path="res://scenes/settings/options_display_button.tscn" id="1_fkpn6"]
-[ext_resource type="Script" path="res://scenes/settings/window_mode_button.gd" id="2_rxjmp"]
+[ext_resource type="Script" uid="uid://c11y8eblkutdq" path="res://scenes/settings/window_mode_button.gd" id="2_rxjmp"]
 
 [node name="window_mode_button" instance=ExtResource("1_fkpn6")]
 custom_minimum_size = Vector2(100, 0)

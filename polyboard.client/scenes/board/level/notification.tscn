@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://e5m3pfs0fwdx"]
 
-[ext_resource type="Script" path="res://scenes/board/level/notification.gd" id="1_1p6u2"]
+[ext_resource type="Script" uid="uid://bqq8fwctndr6g" path="res://scenes/board/level/notification.gd" id="1_1p6u2"]
 
 [node name="NotificationLayer" type="CanvasLayer"]
 script = ExtResource("1_1p6u2")

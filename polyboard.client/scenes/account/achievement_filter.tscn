@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bioeyv8t6aq7g"]
 
-[ext_resource type="Script" path="res://scenes/account/achievement_filter.gd" id="1_78s0s"]
+[ext_resource type="Script" uid="uid://co1mxqjje5tb2" path="res://scenes/account/achievement_filter.gd" id="1_78s0s"]
 
 [node name="AchievementFilter" type="Control"]
 custom_minimum_size = Vector2(844, 64)

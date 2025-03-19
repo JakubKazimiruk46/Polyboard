@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://i5oejjnclglt"]
 
 [ext_resource type="Texture2D" uid="uid://b770vb2xde3u8" path="res://assets/images/PolitechnikaBialostocka.png" id="1_m741p"]
-[ext_resource type="Script" path="res://scenes/splash_screen/splash_screen.gd" id="1_n6jwf"]
+[ext_resource type="Script" uid="uid://cjrwxapy1xmjr" path="res://scenes/splash_screen/splash_screen.gd" id="1_n6jwf"]
 
 [sub_resource type="SystemFont" id="SystemFont_ycxkf"]
 font_names = PackedStringArray("Impact")

@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://bry235jbe74xg"]
 
-[ext_resource type="Script" path="res://scenes/lobby/LobbyPerson.cs" id="1_wkikg"]
+[ext_resource type="Script" uid="uid://bua4bjvgk0xu5" path="res://scenes/lobby/LobbyPerson.cs" id="1_wkikg"]
 [ext_resource type="Texture2D" uid="uid://bk0w2lagf3e7o" path="res://assets/images/korona.png" id="2_ohhtn"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hmekg"]

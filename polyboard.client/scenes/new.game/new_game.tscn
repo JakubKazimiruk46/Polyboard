@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://csa6usilxq2w1"]
 
 [ext_resource type="Texture2D" uid="uid://e56daf0rtn6l" path="res://assets/images/background.jpg" id="1_ra2kx"]
-[ext_resource type="Script" path="res://scenes/new.game/new_game.gd" id="1_twkho"]
+[ext_resource type="Script" uid="uid://d3v124sx8oh18" path="res://scenes/new.game/new_game.gd" id="1_twkho"]
 [ext_resource type="ButtonGroup" uid="uid://gwoggf1vldhe" path="res://scenes/new.game/lobby_mode.tres" id="3_foa5h"]
 [ext_resource type="AudioStream" uid="uid://de3u564nysnh" path="res://assets/effects/click_2.wav" id="4_jigxp"]
 [ext_resource type="PackedScene" uid="uid://e6flyg7864a4" path="res://scenes/lobby/lobby.tscn" id="4_ww4u2"]

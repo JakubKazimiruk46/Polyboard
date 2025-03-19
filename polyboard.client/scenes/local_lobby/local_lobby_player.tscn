@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c5ql7v7oalj4x"]
 
-[ext_resource type="Script" uid="uid://p2wq4dt7xovl" path="res://scenes/local_lobby/local_lobby_player.gd" id="1_f301g"]
+[ext_resource type="Script" uid="uid://cbwa55dx78pay" path="res://scenes/local_lobby/local_lobby_player.gd" id="1_f301g"]
 
 [sub_resource type="Theme" id="Theme_ymor6"]
 
