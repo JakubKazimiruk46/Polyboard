@@ -33,6 +33,16 @@ public partial class Field : Node3D
 	public List<int> rentCost = new List<int>(6);
 	private GameManager gameManager;
 	
+	public void PayRent(Figurehead player, Field field)
+	{
+		if(field.isHotel)
+		{
+			player.SpendECTS(rentCost[5]);
+			field.Owner.AddECTS(rentCost[5]);
+		}
+		player.SpendECTS(rentCost[buildOccupied.Count]);
+		field.Owner.AddECTS(rentCost[buildOccupied.Count]);
+	}
 	public void BuyField(Figurehead player, Field field)
 	{
 		int id = gameManager.GetCurrentPlayerIndex();
