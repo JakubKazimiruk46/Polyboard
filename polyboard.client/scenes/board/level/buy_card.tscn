@@ -164,8 +164,8 @@ text = "VIEW BOARD"
 position = Vector2(275, 82.5)
 emitting = false
 amount = 300
-process_material = SubResource("ParticleProcessMaterial_c7xt8")
 texture = ExtResource("2_e05aa")
+process_material = SubResource("ParticleProcessMaterial_c7xt8")
 
 [node name="Timer" type="Timer" parent="."]
 

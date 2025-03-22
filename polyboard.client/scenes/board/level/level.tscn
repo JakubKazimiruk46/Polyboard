@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=40 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" uid="uid://emvyo0uo8qs7" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" uid="uid://bgtflv4fbokq6" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -8,13 +8,21 @@
 [ext_resource type="AudioStream" uid="uid://bvd8lde5mcmy0" path="res://assets/Music/construction_sound.mp3" id="6_h2q08"]
 [ext_resource type="PackedScene" uid="uid://bvlhympj7pq71" path="res://scenes/board/level/field.tscn" id="6_jcf5o"]
 [ext_resource type="PackedScene" uid="uid://cxbg61n0xrbda" path="res://scenes/board/level/corner_field.tscn" id="6_ms3uj"]
+[ext_resource type="AudioStream" uid="uid://drueptsgup5qw" path="res://assets/Music/mission_passed.mp3" id="7_mdrus"]
+[ext_resource type="AudioStream" uid="uid://c6x5tpj2hgt67" path="res://assets/Music/cryingno.mp3" id="8_ccl5p"]
 [ext_resource type="Script" uid="uid://b3al7nxinsfeo" path="res://scenes/board/level/MasterShot.cs" id="8_cd8t5"]
+[ext_resource type="AudioStream" uid="uid://bby1a3f02t8jd" path="res://assets/Music/wasted.mp3" id="8_q4f47"]
 [ext_resource type="PackedScene" uid="uid://uicwwtau32m7" path="res://scenes/board/level/menu.tscn" id="10_8um66"]
 [ext_resource type="PackedScene" uid="uid://e5m3pfs0fwdx" path="res://scenes/board/level/notification.tscn" id="10_dneql"]
+[ext_resource type="AudioStream" uid="uid://dt1luhd2vif68" path="res://assets/Music/dublet_rzuc_kostka_jeszcze_raz.mp3" id="10_we53p"]
 [ext_resource type="AudioStream" uid="uid://8nca3d2qfr0d" path="res://assets/effects/dice.mp3" id="11_i73ew"]
+[ext_resource type="AudioStream" uid="uid://ca1g2dv6344nb" path="res://assets/Music/sound_of_money.mp3" id="11_pxos0"]
+[ext_resource type="AudioStream" uid="uid://chhelvsuupe1x" path="res://assets/Music/twoja_tura.mp3" id="12_pxos0"]
 [ext_resource type="PackedScene" uid="uid://be5o85k4nbeu5" path="res://scenes/board/level/ui.tscn" id="13_ivesl"]
+[ext_resource type="AudioStream" uid="uid://b0h3rqyne3vd5" path="res://assets/Music/game_over.mp3" id="13_tpxi3"]
 [ext_resource type="Script" uid="uid://bwotmb86sxcxt" path="res://GameManager.cs" id="13_yovhc"]
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="14_u56ja"]
+[ext_resource type="AudioStream" uid="uid://bfpnbjuny3d1i" path="res://assets/Music/applause.mp3" id="14_wc3jh"]
 [ext_resource type="PackedScene" uid="uid://dvogx2n2lhbbd" path="res://scenes/board/level/buy_card.tscn" id="16_8p6lx"]
 [ext_resource type="PackedScene" uid="uid://bgdyps5dc54tx" path="res://scenes/board/figurehead/pizza_pionek.tscn" id="17_1m425"]
 [ext_resource type="Script" uid="uid://ip1fswlgagt8" path="res://scenes/board/level/players.gd" id="17_6omuv"]
@@ -216,6 +224,30 @@ shape = SubResource("BoxShape3D_8hnxd")
 [node name="ConstructionSound" type="AudioStreamPlayer3D" parent="Board"]
 stream = ExtResource("6_h2q08")
 pitch_scale = 1.39
+
+[node name="HotelConstructionSound" type="AudioStreamPlayer3D" parent="Board"]
+stream = ExtResource("7_mdrus")
+
+[node name="LostECTSSound" type="AudioStreamPlayer3D" parent="Board"]
+stream = ExtResource("8_q4f47")
+
+[node name="DeanOfficeSound" type="AudioStreamPlayer3D" parent="Board"]
+stream = ExtResource("8_ccl5p")
+
+[node name="DoubleSound" type="AudioStreamPlayer3D" parent="Board"]
+stream = ExtResource("10_we53p")
+
+[node name="GainECTSSound" type="AudioStreamPlayer3D" parent="Board"]
+stream = ExtResource("11_pxos0")
+
+[node name="NextTurnSound" type="AudioStreamPlayer3D" parent="Board"]
+stream = ExtResource("12_pxos0")
+
+[node name="BankruptSound" type="AudioStreamPlayer3D" parent="Board"]
+stream = ExtResource("13_tpxi3")
+
+[node name="ReviveSound" type="AudioStreamPlayer3D" parent="Board"]
+stream = ExtResource("14_wc3jh")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_7ajdt")

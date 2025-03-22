@@ -25,6 +25,7 @@ public partial class Field : Node3D
 	public int ECTSReward = 0; // Ilość ECTS przyznawana za lądowanie na tym polu
 	protected Sprite2D viewDetailsDialog;
 	protected AudioStreamPlayer3D constructionSoundPlayer;
+	protected AudioStreamPlayer3D hotelConstructionSoundPlayer;
 	protected Figurehead Owner;
 	public bool owned = false;
 	public int houseCost;
@@ -399,7 +400,7 @@ public partial class Field : Node3D
 		buildCamera.Current = true;
 
 		timer.Start();
-		PlayConstructionSound();
+		PlayHotelConstructionSound();
 		Tween tween = CreateTween();
 		tween.TweenProperty(hotelInstance, "scale", defaultHotelScale, 1.5f)
 			 .SetTrans(Tween.TransitionType.Linear)
@@ -463,7 +464,18 @@ private void PlayConstructionSound()
 			GD.PrintErr("Błąd: AudioStreamPlayer3D nie jest zainicjalizowany.");
 		}
 	}
-
+private void PlayHotelConstructionSound()
+	{
+		if (hotelConstructionSoundPlayer != null)
+		{
+			hotelConstructionSoundPlayer.Play();
+			GD.Print("Mission passed.");
+		}
+		else
+		{
+			GD.PrintErr("Błąd: AudioStreamPlayer3D nie jest zainicjalizowany.");
+		}
+	}
 	private void StopConstructionSound()
 	{
 		if (constructionSoundPlayer != null && constructionSoundPlayer.Playing)

@@ -71,9 +71,9 @@ func on_buyButtonPressed():
 			$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.text = ''
 			$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.add_theme_color_override("font_color","white")
 			turn_on_buttons()
-		else:
-			var n = "Nie masz wystarczającej ilości ECTS, aby kupić to pole"
-			game_manager.ShowNotification(n)
+		#else:
+		#	var n = "Nie masz wystarczającej ilości ECTS, aby kupić to pole"
+		#	game_manager.ShowNotification(n)
 			#print("Nie znaleziono instancji Board lub metoda GetFieldById nie istnieje!")
 
 func on_auctionButtonPressed():
