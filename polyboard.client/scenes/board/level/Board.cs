@@ -390,7 +390,7 @@ public partial class Board : StaticBody3D
 			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
 			endTurnButton.Visible = true;
 		}
-		else if (fieldId == 4 || fieldId == 38 || fieldId == 20 || fieldId == 30 || fieldId == 10)
+		else if (fieldId == 0 || fieldId == 4 || fieldId == 38 || fieldId == 20 || fieldId == 30 || fieldId == 10)
 		{
 			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
 			endTurnButton.Visible = true;
