@@ -29,10 +29,16 @@ Notifications="*res://scenes/board/level/notification.tscn"
 Authentication="*res://scenes/authentication/authentication.gd"
 HubConnectionService="*res://services/HubConnectionService.cs"
 FigureheadLoader="*res://services/figurehead_loader.gd"
+GameData="*res://services/game_data.gd"
+SkinManager="*res://services/skin_manager.gd"
 
 [dotnet]
 
 project/assembly_name="PolyBoard.Client"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gut/plugin.cfg")
 
 [filesystem]
 

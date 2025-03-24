@@ -20,6 +20,8 @@ public partial class Board : StaticBody3D
 	private Timer buyTime;
 	private Field field;
 	private PanelContainer ownerNicknameView;
+	protected AudioStreamPlayer3D deanOfficeSoundPlayer;
+	protected AudioStreamPlayer3D lostECTSSoundPlayer;
 
 	private readonly Dictionary<(string type, int number), (int ectsEffect, Func<Task> specialEffect)> cardEffects;
 
@@ -47,6 +49,8 @@ public partial class Board : StaticBody3D
 		buildButton = GetNodeOrNull<TextureButton>("/root/Level/UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3/build_button");
 		gameManager = GetNode<GameManager>("/root/Level/GameManager");
 		ownerNicknameView = GetNodeOrNull<PanelContainer>("/root/Level/CanvasLayer/OwnerNickname");
+		deanOfficeSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/DeanOfficeSound");
+		lostECTSSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/LostECTSSound");
 		if (textureDisplay == null || step_on_card == null)
 		{
 			GD.PrintErr("Błąd: Nie znaleziono wymaganych komponentów Sprite2D.");
@@ -342,6 +346,7 @@ public partial class Board : StaticBody3D
 				}
 				else
 				{
+					PlayLostECTSSound();
 					GD.Print($"Karta {cardType} {cardNumber}: Gracz stracił {-effect.ectsEffect} ECTS");
 				}
 
@@ -369,7 +374,30 @@ public partial class Board : StaticBody3D
 			endTurnButton.Visible = true;
 		}
 	}
-
+	private void PlayLostECTSSound()
+	{
+		if (lostECTSSoundPlayer != null)
+		{
+			lostECTSSoundPlayer.Play();
+			GD.Print("Odtwarzanie dźwięku stracenia punktów ECTS z karty szansy.");
+		}
+		else
+		{
+			GD.PrintErr("Błąd: AudioStreamPlayer3D nie jest zainicjalizowany.");
+		}
+	}
+	private void PlayDeanOfficeSound()
+	{
+		if (deanOfficeSoundPlayer != null)
+		{
+			deanOfficeSoundPlayer.Play();
+			GD.Print("Odtwarzanie dźwięku pójścia do dziekanatu.");
+		}
+		else
+		{
+			GD.PrintErr("Błąd: AudioStreamPlayer3D nie jest zainicjalizowany.");
+		}
+	}
 	public async void StepOnField(int fieldId)
 	{
 		// Wait for any animations to complete
@@ -377,7 +405,12 @@ public partial class Board : StaticBody3D
 
 		// Hide end turn button initially
 		endTurnButton.Visible = false;
-
+		if (fieldId == 4 || fieldId == 10 || fieldId == 30)
+		{
+			PlayDeanOfficeSound();
+			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
+			endTurnButton.Visible = true;
+		}
 		if (fieldId == 2 || fieldId == 17 || fieldId == 33)
 		{
 			await ShowRandomCard("community");

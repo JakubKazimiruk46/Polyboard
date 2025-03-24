@@ -13,5 +13,5 @@ func _input(event):
 
 	if event is InputEventMouseMotion and rotating:
 		var delta = event.position - last_mouse_position
-		model_3d.rotate_y(-delta.x * 0.01)  # Obrót wokół osi Y
+		model_3d.rotate_y(-delta.x * 0.01)  
 		last_mouse_position = event.position
