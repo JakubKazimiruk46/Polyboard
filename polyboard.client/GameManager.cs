@@ -33,6 +33,11 @@ public partial class GameManager : Node3D
 	private Button endTurnButton;
 	private VBoxContainer ectsUIContainer;
 	private bool isMovementInProgress = false;
+	private AudioStreamPlayer3D doubleSoundPlayer;
+	private AudioStreamPlayer3D gainECTSSoundPlayer;
+	private AudioStreamPlayer3D nextTurnSoundPlayer;
+	private AudioStreamPlayer3D bankruptSoundPlayer;
+	private AudioStreamPlayer3D reviveSoundPlayer;
 
 	private List<Label> playerNameLabels = new List<Label>();
 	private List<Label> playerECTSLabels = new List<Label>();
@@ -51,9 +56,9 @@ public partial class GameManager : Node3D
 		InitRollButton();
 		InitEndTurnButton();
 		InitPlayersUI();
+		InitSoundPlayers();
 		SetAllPlayersOnStart();
 	}
-	
 	public Figurehead getCurrentPlayer()
 	{
 		return players[currentPlayerIndex];
@@ -63,7 +68,18 @@ public partial class GameManager : Node3D
 	{
 		return board.GetFieldById(position);
 	}
-	
+	private void InitSoundPlayers()
+	{
+		doubleSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/DoubleSound");
+		gainECTSSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/GainECTSSound");
+		nextTurnSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/NextTurnSound");
+		bankruptSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/BankruptSound");
+		reviveSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/ReviveSound");
+		if (doubleSoundPlayer == null || doubleSoundPlayer == null || doubleSoundPlayer == null || bankruptSoundPlayer == null || reviveSoundPlayer == null)
+		{
+			GD.PrintErr("Błąd: Nie znaleziono jednego z odtwarzaczy dźwięku. Sprawdź ścieżki.");
+		}
+	}
 	private void InitCameras()
 	{
 		masterCamera = GetNodeOrNull<Camera3D>(masterCameraPath);
@@ -283,6 +299,7 @@ public partial class GameManager : Node3D
 		}
 		
 		// Show notification
+		PlaySound(bankruptSoundPlayer);
 		ShowNotification($"Gracz {player.Name} zbankrutował! Koniec gry dla tego gracza.", 5f);
 		GD.Print($"Gracz {player.Name} zbankrutował! Koniec gry dla tego gracza.");
 		
@@ -448,6 +465,7 @@ private void CheckDiceResults()
 		if (die1Result.Value == die2Result.Value)
 		{
 			GD.Print("Dublet! Kolejny rzut po ruchu.");
+			PlaySound(doubleSoundPlayer);
 			ShowNotification("Dublet! Powtórz rzut po ruchu.", 5f);
 		}
 		else
@@ -456,7 +474,18 @@ private void CheckDiceResults()
 			ShowNotification("Nie wyrzucono dubletu. Możesz zakończyć turę.", 3f);
 		}
 	}
-
+	private void PlaySound(AudioStreamPlayer3D player)
+	{
+		if (player != null)
+		{
+			player.Play();
+			GD.Print("Odtwarzanie dźwięku.");
+		}
+		else
+		{
+			GD.PrintErr("Błąd: AudioStreamPlayer3D nie jest zainicjalizowany.");
+		}
+	}
 	private async void MoveCurrentPlayerPawnSequentially(int steps)
 	{
 		if (currentPlayerIndex < 0 || currentPlayerIndex >= players.Count)
@@ -538,6 +567,7 @@ private void CheckDiceResults()
 		rollButton.Visible = true;
 		endTurnButton.Visible = false;
 		string nextPlayerName = GetCurrentPlayerName();
+		PlaySound(nextTurnSoundPlayer);
 		ShowNotification($"Tura gracza: {nextPlayerName}", 2f);
 		GD.Print($"Zakończono turę gracza. Teraz tura gracza: {nextPlayerName}");
 	}
@@ -653,6 +683,7 @@ private void CheckDiceResults()
 		if (playerIndex >= 0 && playerIndex < players.Count)
 		{
 			players[playerIndex].AddECTS(amount);
+			PlaySound(gainECTSSoundPlayer);
 			UpdateECTSUI(playerIndex);
 			
 			// If player was bankruptcy but got back to positive ECTS, remove bankruptcy status
@@ -683,7 +714,7 @@ private void CheckDiceResults()
 				// Reset text color
 				playerNameLabels[playerIndex].RemoveThemeColorOverride("font_color");
 			}
-			
+			PlaySound(reviveSoundPlayer);
 			ShowNotification($"Gracz {players[playerIndex].Name} wraca do gry!", 5f);
 			GD.Print($"Gracz {players[playerIndex].Name} wraca do gry!");
 		}
