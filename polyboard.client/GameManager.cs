@@ -53,7 +53,6 @@ public partial class GameManager : Node3D
 		InitPlayersUI();
 		SetAllPlayersOnStart();
 	}
-	
 	public Figurehead getCurrentPlayer()
 	{
 		return players[currentPlayerIndex];

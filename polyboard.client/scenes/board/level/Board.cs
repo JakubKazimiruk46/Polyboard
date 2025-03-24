@@ -114,11 +114,6 @@ public partial class Board : StaticBody3D
 					field.fieldCost = 140;
 					field.rentCost = new List<int> {10, 50, 150, 450, 625, 750};
 				}
-				else if (field.FieldId == 12)
-				{
-					field.Name = "Centrum Nowoczesnego Kształcenia";
-					field.fieldCost = 150;
-				}
 				else if (field.FieldId == 13)
 				{
 					field.Name = "Katedra Urbanistyki";
@@ -218,11 +213,6 @@ public partial class Board : StaticBody3D
 					field.hotelCost = 150;
 					field.fieldCost = 260;
 					field.rentCost = new List<int> {22, 110, 330, 800, 975, 1150};
-				}
-				else if (field.FieldId == 28)
-				{
-					field.Name = "Klub Gwint";
-					field.fieldCost = 150;
 				}
 				else if (field.FieldId == 29)
 				{
@@ -402,12 +392,10 @@ public partial class Board : StaticBody3D
 			Field field = gameManager.getCurrentField(current_position);
 			if(field.owned==false)
 				BuyField(fieldId);
-			else
+			else if(field.Owner != currentFigureHead)
 			{
-				endTurnButton.Visible = true;
-				GD.Print(field.Owner.Name);
+				field.PayRent(currentFigureHead,field);
 			}
-
 		}
 	}
 
