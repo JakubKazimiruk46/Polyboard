@@ -36,7 +36,7 @@ theme = SubResource("Theme_ymor6")
 layout_mode = 2
 size_flags_horizontal = 5
 theme_override_font_sizes/font_size = 27
-text = "Player1"
+text = "Player"
 
 [node name="HSplitContainer" type="HSplitContainer" parent="PlayerContainer"]
 custom_minimum_size = Vector2(30, 0)

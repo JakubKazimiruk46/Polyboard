@@ -34,11 +34,9 @@ func update_menu_visibility():
 		join_game_button.visible = false
 		account_button.visible = false
 		logout_button.visible = false
-		local_game_button.visible = false
 		login_button.visible = true
 
 	else:
-		local_game_button.visible = true
 		account_button.visible = true
 		login_button.visible = false
 		logout_button.visible = true
@@ -132,7 +130,7 @@ func on_exit_pressed() -> void:
 	
 func on_local_game_pressed() -> void:
 	click_sound.play()
-	get_tree().change_scene_to_file("res://scenes/local_lobby/local_lobby.gd")
+	get_tree().change_scene_to_file("res://scenes/local_lobby/local_lobby.tscn")
 
 func handle_connecting_signals() -> void:
 	board_button.button_down.connect(on_board_pressed)
