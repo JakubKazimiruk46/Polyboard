@@ -37,7 +37,6 @@ public partial class GameManager : Node3D
 	private List<Label> playerNameLabels = new List<Label>();
 	private List<Label> playerECTSLabels = new List<Label>();
 	private List<bool> playerBankruptcyStatus = new List<bool>(); // Track bankruptcy status for each player
-
 	private enum GameState { WaitingForInput, RollingDice, MovingPawn, EndTurn }
 	private GameState currentState = GameState.WaitingForInput;
 
@@ -70,7 +69,7 @@ public partial class GameManager : Node3D
 		diceCamera = GetNodeOrNull<Camera3D>(diceCameraPath);
 		if (masterCamera == null || diceCamera == null)
 		{
-			GD.PrintErr("Błąd: Nie znaleziono jednej z kamer. Sprawdź ścieżki.");
+			ShowError("Błąd: Nie znaleziono jednej z kamer. Sprawdź ścieżki.");
 		}
 		else
 		{
@@ -90,7 +89,7 @@ public partial class GameManager : Node3D
 		board = GetNodeOrNull<Board>(boardPath);
 		if (board == null)
 		{
-			GD.PrintErr("Błąd: Nie znaleziono planszy.");
+			ShowError("Błąd: Nie znaleziono planszy.");
 		}
 		else
 		{
@@ -103,7 +102,7 @@ public partial class GameManager : Node3D
 		Node playersContainer = GetNodeOrNull(playersContainerPath);
 		if (playersContainer == null)
 		{
-			GD.PrintErr("Błąd: Nie znaleziono węzła Players (3D).");
+			ShowError("Błąd: Nie znaleziono węzła Players (3D).");
 			return;
 		}
 		foreach (Node child in playersContainer.GetChildren())
@@ -116,7 +115,7 @@ public partial class GameManager : Node3D
 		}
 		if (players.Count == 0)
 		{
-			GD.PrintErr("Błąd: Nie znaleziono żadnych pionków.");
+			ShowError("Błąd: Nie znaleziono żadnych pionków.");
 		}
 		else
 		{
@@ -130,7 +129,7 @@ public partial class GameManager : Node3D
 		dieNode2 = GetNodeOrNull<RigidBody3D>(dieNodePath2);
 		if (dieNode1 == null || dieNode2 == null)
 		{
-			GD.PrintErr("Błąd: Nie znaleziono jednej z kostek.");
+			ShowError("Błąd: Nie znaleziono jednej z kostek.");
 			return;
 		}
 		dieNode1.Connect("roll_finished", new Callable(this, nameof(OnDie1RollFinished)));
@@ -143,7 +142,7 @@ public partial class GameManager : Node3D
 		rollButton = GetNodeOrNull<Button>(rollButtonPath);
 		if (rollButton == null)
 		{
-			GD.PrintErr("Błąd: Nie znaleziono przycisku do rzucania kostkami.");
+			ShowError("Błąd: Nie znaleziono przycisku do rzucania kostkami.");
 			return;
 		}
 		rollButton.Connect("pressed", new Callable(this, nameof(OnRollButtonPressed)));
@@ -155,7 +154,7 @@ public partial class GameManager : Node3D
 		endTurnButton = GetNodeOrNull<Button>(endTurnButtonPath);
 		if (endTurnButton == null)
 		{
-			GD.PrintErr("Błąd: Nie znaleziono przycisku do zakończenia tury.");
+			ShowError("Błąd: Nie znaleziono przycisku do zakończenia tury.");
 			return;
 		}
 		endTurnButton.Connect("pressed", new Callable(this, nameof(OnEndTurnButtonPressed)));
@@ -167,7 +166,7 @@ public partial class GameManager : Node3D
 		Node playersUIContainer = GetNodeOrNull(playersUIContainerPath);
 		if (playersUIContainer == null)
 		{
-			GD.PrintErr("Błąd: Nie znaleziono kontenera UI/Players.");
+			ShowError("Błąd: Nie znaleziono kontenera UI/Players.");
 			return;
 		}
 
@@ -176,35 +175,35 @@ public partial class GameManager : Node3D
 			Node playerUINode = playersUIContainer.GetChild(i);
 			if (playerUINode == null)
 			{
-				GD.PrintErr($"Błąd: Nie znaleziono węzła UI dla gracza {i+1}");
+				ShowError($"Błąd: Nie znaleziono węzła UI dla gracza {i+1}");
 				continue;
 			}
 
 			var marginContainer = playerUINode.GetNodeOrNull<MarginContainer>("MarginContainer");
 			if (marginContainer == null)
 			{
-				GD.PrintErr($"Błąd: Nieprawidłowa struktura UI (MarginContainer).");
+				ShowError($"Błąd: Nieprawidłowa struktura UI (MarginContainer).");
 				continue;
 			}
 
 			var vBoxContainer = marginContainer.GetNodeOrNull<VBoxContainer>("VBoxContainer");
 			if (vBoxContainer == null)
 			{
-				GD.PrintErr($"Błąd: Nieprawidłowa struktura UI (VBoxContainer).");
+				ShowError($"Błąd: Nieprawidłowa struktura UI (VBoxContainer).");
 				continue;
 			}
 
 			var nameLabel = vBoxContainer.GetNodeOrNull<Label>("Label");
 			if (nameLabel == null)
 			{
-				GD.PrintErr($"Błąd: Nie znaleziono Label z nazwą gracza.");
+				ShowError($"Błąd: Nie znaleziono Label z nazwą gracza.");
 				continue;
 			}
 
 			var hBoxContainer = vBoxContainer.GetNodeOrNull<HBoxContainer>("HBoxContainer");
 			if (hBoxContainer == null)
 			{
-				GD.PrintErr($"Błąd: Nie znaleziono HBoxContainer dla ECTS.");
+				ShowError($"Błąd: Nie znaleziono HBoxContainer dla ECTS.");
 				continue;
 			}
 
@@ -220,7 +219,7 @@ public partial class GameManager : Node3D
 
 			if (ectsLabel == null)
 			{
-				GD.PrintErr($"Błąd: Nie znaleziono Label ECTS.");
+				ShowError($"Błąd: Nie znaleziono Label ECTS.");
 				continue;
 			}
 
@@ -236,7 +235,7 @@ public partial class GameManager : Node3D
 	{
 		if (playerIndex < 0 || playerIndex >= playerECTSLabels.Count)
 		{
-			GD.PrintErr("Błąd: Indeks gracza poza zakresem podczas aktualizacji ECTS UI.");
+			ShowError("Błąd: Indeks gracza poza zakresem podczas aktualizacji ECTS UI.");
 			return;
 		}
 
@@ -337,7 +336,7 @@ public partial class GameManager : Node3D
 	{
 		if (board == null)
 		{
-			GD.PrintErr("Board is not initialized. Cannot set players on start.");
+			ShowError("Board is not initialized. Cannot set players on start.");
 			return;
 		}
 		for (int i = 0; i < players.Count; i++)
@@ -346,7 +345,7 @@ public partial class GameManager : Node3D
 			Vector3? startPosition = board.GetPositionForPawn(0, i % board.GetFieldById(0).positions.Count);
 			if (!startPosition.HasValue)
 			{
-				GD.PrintErr($"Błąd: Nie znaleziono pozycji startowej dla gracza {i + 1}.");
+				ShowError($"Błąd: Nie znaleziono pozycji startowej dla gracza {i + 1}.");
 				continue;
 			}
 			player.CurrentPositionIndex = 0;
@@ -402,7 +401,7 @@ public partial class GameManager : Node3D
 	{
 		if (dieNode1 == null || dieNode2 == null)
 		{
-			GD.PrintErr("Nie można rzucić kostkami: kostki nie są zainicjalizowane.");
+			ShowError("Nie można rzucić kostkami: kostki nie są zainicjalizowane.");
 			return;
 		}
 		currentState = GameState.RollingDice;
@@ -447,13 +446,16 @@ private void CheckDiceResults()
 
 		if (die1Result.Value == die2Result.Value)
 		{
+			//TODO
+			//ZOSTAWIONE TYLKO W CELU POKAZANIA
+			//DO ZMIANY NA ShowNotification!!!!
 			GD.Print("Dublet! Kolejny rzut po ruchu.");
-			ShowNotification("Dublet! Powtórz rzut po ruchu.", 5f);
+			ShowError("Dublet! Powtórz rzut po ruchu.", 5f);
 		}
 		else
 		{
 			GD.Print("Nie wyrzucono dubletu. Przygotowanie do zakończenia tury.");
-			ShowNotification("Nie wyrzucono dubletu. Możesz zakończyć turę.", 3f);
+			ShowError("Nie wyrzucono dubletu. Możesz zakończyć turę.", 3f);
 		}
 	}
 
@@ -461,7 +463,7 @@ private void CheckDiceResults()
 	{
 		if (currentPlayerIndex < 0 || currentPlayerIndex >= players.Count)
 		{
-			GD.PrintErr("Błąd: Indeks aktualnego gracza poza zakresem.");
+			ShowError("Błąd: Indeks aktualnego gracza poza zakresem.");
 			return;
 		}
 
@@ -583,18 +585,35 @@ private void CheckDiceResults()
 		}
 		else
 		{
-			GD.PrintErr("Błąd: Próba aktywacji nieistniejącej kamery.");
+			ShowError("Błąd: Próba aktywacji nieistniejącej kamery.");
 		}
 	}
 
 	public void ShowNotification(string message, float duration = 3f)
 	{
-		if (notificationLabel == null || notificationPanel == null) return;
-		notificationLabel.Text = message;
-		notificationPanel.Visible = true;
-		notificationLabel.Visible = true;
-		var timer = GetTree().CreateTimer(duration);
-		timer.Connect("timeout", new Callable(this, nameof(HideNotification)));
+		var notifications = GetNode<Node>("/root/Notifications");
+		if (notifications != null)
+		{
+			notifications.Call("show_notification", message, duration);
+		}
+		else
+		{
+			GD.PrintErr("NotificationLayer singleton not found. Make sure it's added as an Autoload.");
+		}
+	}
+
+	public void ShowError(string message, float duration = 4f)
+	{
+		var notifications = GetNode<Node>("/root/Notifications");
+		if (notifications != null)
+		{
+			notifications.Call("show_error", message, duration);
+		}
+		else
+		{
+			GD.PrintErr("NotificationLayer singleton not found. Make sure it's added as an Autoload.");
+			GD.PrintErr(message);
+		}
 	}
 
 	private void HideNotification()
@@ -636,7 +655,7 @@ private void CheckDiceResults()
 	{
 		if (currentPlayerIndex < 0 || currentPlayerIndex >= players.Count)
 		{
-			GD.PrintErr("Błąd: Indeks aktualnego gracza poza zakresem podczas pobierania nazwy.");
+			ShowError("Błąd: Indeks aktualnego gracza poza zakresem podczas pobierania nazwy.");
 			return "Nieznany";
 		}
 		return players[currentPlayerIndex].Name;

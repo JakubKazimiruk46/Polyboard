@@ -245,12 +245,8 @@ stream = ExtResource("11_i73ew")
 bus = &"Sfx"
 
 [node name="NotificationLayer" parent="." instance=ExtResource("10_dneql")]
-
-[node name="NotificationPanel" parent="NotificationLayer" index="0"]
-metadata/_edit_use_anchors_ = true
-
-[node name="NotificationLabel" parent="NotificationLayer/NotificationPanel" index="0"]
-metadata/_edit_use_anchors_ = true
+layer = 128
+script = null
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 

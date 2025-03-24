@@ -31,17 +31,20 @@ public partial class Figurehead : CharacterBody3D
 		walkSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>(walkSoundPlayerPath);
 		if (walkSoundPlayer == null)
 		{
+			ShowError("Błąd: Nie znaleziono AudioStreamPlayer3D. Sprawdź walkSoundPlayerPath.");
 			GD.PrintErr("Błąd: Nie znaleziono AudioStreamPlayer3D. Sprawdź walkSoundPlayerPath.");
 		}
 		var pawnInstance = GetNodeOrNull<Node>(pawnInstancePath);
 		if (pawnInstance == null)
 		{
+			ShowError($"Błąd: Nie znaleziono instancji pionka pod ścieżką {pawnInstancePath}.");
 			GD.PrintErr($"Błąd: Nie znaleziono instancji pionka pod ścieżką {pawnInstancePath}.");
 			return;
 		}
 		 animationPlayer = pawnInstance.GetNodeOrNull<AnimationPlayer>("AnimationPlayer");
 		if (animationPlayer != null)
 		{
+			ShowNotification("Znaleziono AnimationPlayer w instancji pionka.");
 			GD.Print("Znaleziono AnimationPlayer w instancji pionka.");
 		}
 		else
@@ -86,6 +89,7 @@ public partial class Figurehead : CharacterBody3D
 				{
 					AddECTS(200);
 					GD.Print($"Gracz {Name} przeszedł przez pole startowe i otrzymał 200 ECTS.");
+					ShowNotification($"Gracz {Name} przeszedł przez pole startowe i otrzymał 200 ECTS.");
 					ShowECTSUpdate();
 				}
 			}
@@ -101,6 +105,7 @@ public partial class Figurehead : CharacterBody3D
 			if (nextField == null || nextField.positions.Count == 0)
 			{
 				GD.PrintErr($"Błąd: Nie znaleziono pola docelowego lub brak pozycji na polu {CurrentPositionIndex}.");
+				ShowError($"Błąd: Nie znaleziono pola docelowego lub brak pozycji na polu {CurrentPositionIndex}.");
 				StopWalkSound();
 				return;
 			}
@@ -110,6 +115,7 @@ public partial class Figurehead : CharacterBody3D
 			if (freeIndex == -1)
 			{
 				GD.PrintErr($"Błąd: Brak wolnych pozycji na polu {CurrentPositionIndex}.");
+				ShowError($"Błąd: Brak wolnych pozycji na polu {CurrentPositionIndex}.");
 				StopWalkSound();
 				return;
 			}
@@ -213,6 +219,7 @@ public partial class Figurehead : CharacterBody3D
 		{
 			AddECTS(field.ECTSReward);
 			GD.Print($"Gracz {Name} otrzymał {field.ECTSReward} ECTS za lądowanie na polu {field.Name}.");
+			ShowNotification($"Gracz {Name} otrzymał {field.ECTSReward} ECTS za lądowanie na polu {field.Name}.");
 			ShowECTSUpdate();
 		}
 	}
@@ -221,6 +228,7 @@ public partial class Figurehead : CharacterBody3D
 	{
 		ECTS += amount;
 		GD.Print($"Gracz {Name} otrzymał {amount} ECTS. Łączna ilość: {ECTS}");
+		ShowNotification($"Gracz {Name} otrzymał {amount} ECTS. Łączna ilość: {ECTS}");
 		UpdateECTSUI();
 	}
 
@@ -230,10 +238,12 @@ public partial class Figurehead : CharacterBody3D
 		{
 			ECTS -= amount;
 			GD.Print($"Gracz {Name} wydał {amount} ECTS. Pozostało: {ECTS}");
+			ShowNotification($"Gracz {Name} otrzymał {amount} ECTS. Łączna ilość: {ECTS}");
 			UpdateECTSUI();
 			return true;
 		}
 		GD.Print($"Gracz {Name} nie ma wystarczającej ilości ECTS.");
+		ShowNotification($"Gracz {Name} otrzymał {amount} ECTS. Łączna ilość: {ECTS}");
 		return false;
 	}
 
@@ -251,4 +261,34 @@ public partial class Figurehead : CharacterBody3D
 	{
 		return CurrentPositionIndex;
 	}
+
+	public void ShowNotification(string message, float duration = 3f)
+	{
+		var notifications = GetNode<Node>("/root/Notifications");
+		if (notifications != null)
+		{
+			notifications.Call("show_notification", message, duration);
+		}
+		else
+		{
+			GD.PrintErr("NotificationLayer singleton not found. Make sure it's added as an Autoload.");
+		}
+	}
+
+	public void ShowError(string message, float duration = 4f)
+	{
+		var notifications = GetNode<Node>("/root/Notifications");
+		if (notifications != null)
+		{
+			notifications.Call("show_error", message, duration);
+		}
+		else
+		{
+			GD.PrintErr("NotificationLayer singleton not found. Make sure it's added as an Autoload.");
+			GD.PrintErr(message);
+		}
+	}
+
 }
+
+
