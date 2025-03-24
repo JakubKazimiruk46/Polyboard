@@ -262,6 +262,7 @@ public partial class Figurehead : CharacterBody3D
 		return CurrentPositionIndex;
 	}
 
+	//TODO DRY! if exactly the same function is needed in multiple classes it should be a separate service injected to them
 	public void ShowNotification(string message, float duration = 3f)
 	{
 		var notifications = GetNode<Node>("/root/Notifications");

@@ -295,6 +295,7 @@ public partial class GameManager : Node3D
 			playerNameLabels[playerIndex].Text = $"{player.Name} (BANKRUT)";
 			// Optionally change color to red or gray
 			playerNameLabels[playerIndex].AddThemeColorOverride("font_color", new Color(1, 0, 0)); // Red color
+			player.Visible = false;
 		}
 		
 		// Show notification
@@ -434,6 +435,7 @@ public partial class GameManager : Node3D
 		dieNode2.Call("_roll");
 	}
 
+	//TODO merge in one function with reference to die?
 	private void OnDie1RollFinished(int value)
 	{
 		GD.Print($"Wynik pierwszej kostki: {value}");
@@ -619,6 +621,7 @@ private void CheckDiceResults()
 		}
 	}
 
+	//TODO check if it is possible to  merge it to one function with Enum that says if its notification or error (?)
 	public void ShowNotification(string message, float duration = 3f)
 	{
 		var notifications = GetNode<Node>("/root/Notifications");
@@ -653,6 +656,7 @@ private void CheckDiceResults()
 		notificationLabel.Visible = false;
 	}
 
+	//TODO merge it to one function with bool in argument (setBoardInteractions(isInteractive))
 	private void BlockBoardInteractions()
 	{
 		if (board == null) return;
@@ -734,6 +738,7 @@ private void CheckDiceResults()
 				playerNameLabels[playerIndex].RemoveThemeColorOverride("font_color");
 			}
 			PlaySound(reviveSoundPlayer);
+			players[playerIndex].Visible = true;
 			ShowNotification($"Gracz {players[playerIndex].Name} wraca do gry!", 5f);
 			GD.Print($"Gracz {players[playerIndex].Name} wraca do gry!");
 		}
