@@ -343,6 +343,7 @@ public partial class Field : Node3D
 	}
 	else
 	{
+		ShowError("Nie udało się stworzyć sceny domku.");
 		GD.PrintErr("Nie udało się stworzyć sceny domku.");
 		return;
 	}
@@ -361,12 +362,14 @@ public partial class Field : Node3D
 		
 	if (hotelScene == null)
 	{
+		ShowError("Nie udało się załadować sceny hotelu.");
 		GD.PrintErr("Nie udało się załadować sceny hotelu.");
 		return;
 	}
 	
 	if (puffScene == null)
 	{
+		ShowError("Nie udało się załadować sceny efektu");
 		GD.PrintErr("Nie udało się załadować sceny efektu");
 		return;
 	}
@@ -426,6 +429,7 @@ public partial class Field : Node3D
 	}
 	else
 	{
+		ShowError("Nie udało się stworzyć sceny hotelu.");
 		GD.PrintErr("Nie udało się stworzyć sceny hotelu.");
 	}
 	}
@@ -461,6 +465,7 @@ private void PlayConstructionSound()
 		}
 		else
 		{
+			ShowError("Błąd: AudioStreamPlayer3D nie jest zainicjalizowany.");
 			GD.PrintErr("Błąd: AudioStreamPlayer3D nie jest zainicjalizowany.");
 		}
 	}
@@ -496,5 +501,32 @@ private void PlayHotelConstructionSound()
 	public override void _Process(double delta)
 	{
 		// Any additional logic that you want to execute every frame
+	}
+
+	public void ShowNotification(string message, float duration = 3f)
+	{
+		var notifications = GetNode<Node>("/root/Notifications");
+		if (notifications != null)
+		{
+			notifications.Call("show_notification", message, duration);
+		}
+		else
+		{
+			GD.PrintErr("NotificationLayer singleton not found. Make sure it's added as an Autoload.");
+		}
+	}
+
+	public void ShowError(string message, float duration = 4f)
+	{
+		var notifications = GetNode<Node>("/root/Notifications");
+		if (notifications != null)
+		{
+			notifications.Call("show_error", message, duration);
+		}
+		else
+		{
+			GD.PrintErr("NotificationLayer singleton not found. Make sure it's added as an Autoload.");
+			GD.PrintErr(message);
+		}
 	}
 }

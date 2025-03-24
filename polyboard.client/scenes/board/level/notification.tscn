@@ -1,19 +1,25 @@
-[gd_scene load_steps=2 format=3 uid="uid://e5m3pfs0fwdx"]
+[gd_scene load_steps=3 format=3 uid="uid://e5m3pfs0fwdx"]
 
 [ext_resource type="Script" uid="uid://bqq8fwctndr6g" path="res://scenes/board/level/notification.gd" id="1_1p6u2"]
+[ext_resource type="Texture2D" uid="uid://dwu650aat2p6n" path="res://assets/images/notification.png" id="2_6lcqt"]
 
 [node name="NotificationLayer" type="CanvasLayer"]
 script = ExtResource("1_1p6u2")
 
-[node name="NotificationPanel" type="Panel" parent="."]
+[node name="NotificationPanel" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0)
+light_mask = 7
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -239.0
-offset_right = 244.0
-offset_bottom = 46.0
+offset_left = 239.0
+offset_top = 1.0
+offset_right = 577.0
+offset_bottom = 66.0
 grow_horizontal = 2
+size_flags_horizontal = 4
 size_flags_vertical = 0
+texture = ExtResource("2_6lcqt")
 
 [node name="NotificationLabel" type="Label" parent="NotificationPanel"]
 layout_mode = 1
@@ -22,4 +28,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_font_sizes/font_size = 19
 horizontal_alignment = 1
+autowrap_mode = 2
