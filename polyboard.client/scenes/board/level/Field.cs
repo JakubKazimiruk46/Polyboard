@@ -503,6 +503,7 @@ private void PlayHotelConstructionSound()
 		// Any additional logic that you want to execute every frame
 	}
 
+	//TODO merge in one function. also is it needed? Single responsibility principle! - field should not be responsible for UI notification
 	public void ShowNotification(string message, float duration = 3f)
 	{
 		var notifications = GetNode<Node>("/root/Notifications");
