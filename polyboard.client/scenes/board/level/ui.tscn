@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://be5o85k4nbeu5"]
+[gd_scene load_steps=20 format=3 uid="uid://be5o85k4nbeu5"]
 
 [ext_resource type="Script" uid="uid://phhlfshpbr6k" path="res://scenes/board/level/ui.gd" id="1_e26wc"]
 [ext_resource type="Texture2D" uid="uid://dhxn8lostrjd4" path="res://assets/images/cards.png" id="2_oospi"]
@@ -10,11 +10,19 @@
 [ext_resource type="Texture2D" uid="uid://bof7cx2xbx3k1" path="res://assets/images/question_card.png" id="7_q3a1k"]
 [ext_resource type="PackedScene" uid="uid://d2arsk7nm7cu3" path="res://scenes/board/level/timer.tscn" id="8_8lgx8"]
 [ext_resource type="Texture2D" uid="uid://dhyf7dobwsaob" path="res://assets/images/house.png" id="9_mvhbk"]
+[ext_resource type="Texture2D" uid="uid://canj32siuexxe" path="res://assets/images/get_money.png" id="11_8whly"]
+[ext_resource type="Texture2D" uid="uid://c2rcjvbudk1ip" path="res://assets/images/pay_money.png" id="12_ul3un"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5ptj7"]
 bg_color = Color(1, 0.258617, 0.62817, 1)
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_s8lvn"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(30, 20, 1)
+gravity = Vector3(0, 98, 0)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_51ihl"]
 bg_color = Color(0, 0.682449, 0.715222, 1)
@@ -64,6 +72,13 @@ theme_override_constants/margin_bottom = 5
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Players/Player1/MarginContainer"]
 layout_mode = 2
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Players/Player1/MarginContainer/VBoxContainer"]
+visible = false
+position = Vector2(55, 10.5)
+amount = 3
+texture = ExtResource("11_8whly")
+process_material = SubResource("ParticleProcessMaterial_s8lvn")
 
 [node name="Label" type="Label" parent="Players/Player1/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -125,6 +140,13 @@ theme_override_constants/margin_bottom = 5
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Players/Player3/MarginContainer"]
 layout_mode = 2
+
+[node name="GPUParticles2D2" type="GPUParticles2D" parent="Players/Player3/MarginContainer/VBoxContainer"]
+visible = false
+position = Vector2(46, 6.5)
+amount = 3
+texture = ExtResource("12_ul3un")
+process_material = SubResource("ParticleProcessMaterial_s8lvn")
 
 [node name="Label" type="Label" parent="Players/Player3/MarginContainer/VBoxContainer"]
 layout_mode = 2
