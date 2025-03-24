@@ -27,6 +27,7 @@ public partial class Field : Node3D
 	protected AudioStreamPlayer3D constructionSoundPlayer;
 	protected AudioStreamPlayer3D hotelConstructionSoundPlayer;
 	protected Figurehead Owner;
+	protected int OwnerId;
 	public bool owned = false;
 	public int houseCost;
 	public int hotelCost;
@@ -34,12 +35,30 @@ public partial class Field : Node3D
 	public List<int> rentCost = new List<int>(6);
 	private GameManager gameManager;
 	
+	public void PayRent(Figurehead player, Field field)
+	{
+		if(field.isHotel == true)
+		{
+			player.SpendECTS(rentCost[5]);
+			Owner.AddECTS(rentCost[5]);
+		}
+		else
+		{
+			int houses = field.CheckHouseQuantity(field);
+			player.SpendECTS(rentCost[houses]);
+			Owner.AddECTS(rentCost[houses]);
+		}
+		gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
+		gameManager.UpdateECTSUI(OwnerId);
+	}
+	
 	public void BuyField(Figurehead player, Field field)
 	{
 		int id = gameManager.GetCurrentPlayerIndex();
 		player.SpendECTS(field.fieldCost);
 		gameManager.UpdateECTSUI(id);
 		field.Owner = player;
+		field.OwnerId = id;
 		field.owned = true;
 		player.ownedFields[field.FieldId]=true;
 		GD.Print(player.Name,"Kupił pole o numerze Id ",field.FieldId);
@@ -58,6 +77,18 @@ public partial class Field : Node3D
 	// Ustawienie koloru i widoczności ramki
 	_ownerBorder.Modulate = field.Owner.playerColor;
 	_ownerBorder.Visible = true;
+	}
+	
+	public int CheckHouseQuantity(Field field)
+	{
+		int i=0;
+		while(i<=field.buildOccupied.Count)
+		{
+			if(field.buildOccupied[i] == false)
+				break;
+			i++;
+		}
+		return i;
 	}
 	
 	public string GetUserNickname(Field field)

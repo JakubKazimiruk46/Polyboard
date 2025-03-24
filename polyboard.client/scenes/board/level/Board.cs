@@ -410,12 +410,10 @@ public partial class Board : StaticBody3D
 			Field field = gameManager.getCurrentField(current_position);
 			if(field.owned==false)
 				BuyField(fieldId);
-			else
+			else if(field.Owner != currentFigureHead)
 			{
-				endTurnButton.Visible = true;
-				GD.Print(field.Owner.Name);
+				field.PayRent(currentFigureHead,field);
 			}
-
 		}
 	}
 
