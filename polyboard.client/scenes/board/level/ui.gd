@@ -93,41 +93,45 @@ func on_view_buttons_pressed():
 func display_owned_fields():
 	var currentFigureHead = game_manager.getCurrentPlayer() as Figurehead
 
-	# Hide all TextureRect children
 	for child in card_hbox_container.get_children():
-		if child is ColorRect:
-			var texture_rect = child.get_child(0) 
-			if texture_rect is TextureRect:
-				texture_rect.visible = false
-				# Remove any existing mouse signals
-				if texture_rect.is_connected("mouse_entered", Callable(self, "_on_card_mouse_entered")):
-					texture_rect.disconnect("mouse_entered", Callable(self, "_on_card_mouse_entered"))
-				if texture_rect.is_connected("mouse_exited", Callable(self, "_on_card_mouse_exited")):
-					texture_rect.disconnect("mouse_exited", Callable(self, "_on_card_mouse_exited"))
+		child.visible = false
+		if child.get_child_count() > 0 and child.get_child(0) is TextureRect:
+			child.get_child(0).visible = false
+			if child.get_child(0).is_connected("mouse_entered", Callable(self, "_on_card_mouse_entered")):
+				child.get_child(0).disconnect("mouse_entered", Callable(self, "_on_card_mouse_entered"))
+			if child.get_child(0).is_connected("mouse_exited", Callable(self, "_on_card_mouse_exited")):
+				child.get_child(0).disconnect("mouse_exited", Callable(self, "_on_card_mouse_exited"))
 
-	var displayed_index = 0
 	var owned_fields = currentFigureHead.GetOwnedFieldsAsArray()
+	var has_any_cards = false
 
 	for i in range(owned_fields.size()):
-		if owned_fields[i]: 
-			if displayed_index < card_hbox_container.get_child_count():
-				var colorrect = card_hbox_container.get_child(displayed_index)
+		if owned_fields[i]:
+			has_any_cards = true
+			break
+
+	if not has_any_cards:
+		return
+
+	var displayed_index = 0
+	for i in range(owned_fields.size()):
+		if owned_fields[i] and displayed_index < card_hbox_container.get_child_count():
+			var colorrect = card_hbox_container.get_child(displayed_index)
+			colorrect.visible = true
+			
+			if colorrect.get_child_count() > 0 and colorrect.get_child(0) is TextureRect:
 				var texture_rect = colorrect.get_child(0)
-				if texture_rect is TextureRect:
-					var texture_path = "res://scenes/board/level/textures/Field" + str(i) + ".png"
-					var texture = load(texture_path)
-					if texture:
-						texture_rect.texture = texture
-						texture_rect.visible = true
-						# Connect mouse signals with the field ID as parameter
-						texture_rect.connect("mouse_entered", Callable(self, "_on_card_mouse_entered").bind(i))
-						texture_rect.connect("mouse_exited", Callable(self, "_on_card_mouse_exited"))
-						displayed_index += 1
-					else:
-						print("Failed to load texture: ", texture_path)
-			else:
-				print("Error: Not enough TextureRect nodes in card_hbox_container!")
-				break
+				var texture_path = "res://scenes/board/level/textures/Field" + str(i) + ".png"
+				var texture = load(texture_path)
+				
+				if texture:
+					texture_rect.texture = texture
+					texture_rect.visible = true
+					texture_rect.connect("mouse_entered", Callable(self, "_on_card_mouse_entered").bind(i))
+					texture_rect.connect("mouse_exited", Callable(self, "_on_card_mouse_exited"))
+					displayed_index += 1
+				else:
+					colorrect.visible = false
 
 func _on_card_mouse_entered(field_id: int):
 	if board and board.has_method("ShowFieldTexture"):
