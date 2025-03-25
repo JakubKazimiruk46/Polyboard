@@ -232,7 +232,7 @@ skin = SubResource("Skin_6s641")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_1ijl8")
+&"": SubResource("AnimationLibrary_1ijl8")
 }
 speed_scale = 5.0
 

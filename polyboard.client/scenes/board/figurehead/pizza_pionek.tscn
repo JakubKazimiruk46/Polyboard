@@ -145,7 +145,7 @@ bones/13/rotation = Quaternion(-0.512343, -0.0862348, -0.236444, 0.821074)
 
 [node name="AnimationPlayer" parent="." index="2"]
 libraries = {
-"": SubResource("AnimationLibrary_tikjf")
+&"": SubResource("AnimationLibrary_tikjf")
 }
 speed_scale = 6.0
 
