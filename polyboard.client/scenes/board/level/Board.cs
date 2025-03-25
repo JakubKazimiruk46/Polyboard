@@ -521,6 +521,21 @@ public async void ShowFieldTexture(int fieldId)
 			await ToSignal(tween, "finished");
 		}
 	}
+	
+	public void HideFieldTexture()
+{
+	Tween tween = CreateTween();
+	tween.TweenProperty(textureDisplay, "scale", Vector2.Zero, 0.15f)
+		.SetTrans(Tween.TransitionType.Linear)
+		.SetEase(Tween.EaseType.InOut);
+   
+	ownerNickname.Visible = false;
+	ownerNicknameView.Visible = false;
+	
+	tween.TweenCallback(Callable.From(() => {
+		textureDisplay.Visible = false;
+	}));
+}
 
 	public async Task MovePawn(Figurehead pawn, int fieldId, int positionIndex)
 	{

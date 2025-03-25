@@ -9,10 +9,14 @@ extends CanvasLayer
 var cards_view = false
 var buttons_view = false
 const Figurehead=preload("res://scenes/board/figurehead/Figurehead.cs")
+var game_manager = null
+var board = null
 
 
 func _ready() -> void:
-	pass
+	game_manager = $"../GameManager"
+	board = $"../Board"
+
 
 func on_cards_button_pressed():
 	if cards_view == false:
@@ -34,42 +38,33 @@ func on_cards_button_pressed():
 		tween.tween_property($Cards, "anchor_bottom", target_anchor_bottom, 0.5)
 		tween.set_parallel(false)
 		cards_view = false
-		hide_owned_fields()
-# Called every frame. 'delta' is the elapsed time since the previous frame.
+
 func on_trade_button_pressed():
-	trade.visible = true;
+	trade.visible = true
 
 func on_build_button_pressed():
 	var figurehead_script = preload("res://scenes/board/figurehead/Figurehead.cs")
-	var board = $"../Board"
-	var game_manager = $"../GameManager"
 	var currentFigureHead = game_manager.getCurrentPlayer()
 	var current_position = currentFigureHead.GetCurrentPositionIndex()
 	var Field = game_manager.getCurrentField(current_position)
 	var id = game_manager.GetCurrentPlayerIndex()
 	if board and board.has_method("GetFieldById"):
-		# Pobierz pole jako Node (lub Field, jeśli typowanie jest zaimplementowane)
 		print(Field.FieldId)
 		print(current_position)
 		if Field and currentFigureHead == Field.Owner and Field.houseCost <= currentFigureHead.ECTS and Field.isHotel == false:
 			currentFigureHead.ECTS -= Field.houseCost
 			game_manager.UpdateECTSUI(id)
-			
 			Field.BuildingHouse(current_position)
 		else:
 			print("Nie znaleziono pola dla indeksu: %d / Pole nie należy do gracza" % current_position)
-	#else:
-		#print("Nie znaleziono instancji Board lub metoda GetFieldById nie istnieje!")
 
 func on_remove_owner_button_pressed():
 	print("REMOVE OWNER button pressed")
-	var game_manager = $"../GameManager"
 	var currentFigureHead = game_manager.getCurrentPlayer()
 	var current_position = currentFigureHead.GetCurrentPositionIndex()
 	var field = game_manager.getCurrentField(current_position)
 	
 	if field and field.owned:
-		# Reset field ownership
 		field.RemoveOwner()
 		print("Field ownership removed from: " + field.Name)
 	else:
@@ -85,7 +80,6 @@ func on_view_buttons_pressed():
 		tween.tween_property($HBoxContainer, "anchor_left", target_anchor_left, 0.5)
 		tween.tween_property($HBoxContainer, "anchor_right", target_anchor_right, 0.5)
 		tween.set_parallel(false)
-		
 	else:
 		var target_anchor_left = 0.95
 		var target_anchor_right = 1.14
@@ -95,46 +89,57 @@ func on_view_buttons_pressed():
 		tween.tween_property($HBoxContainer, "anchor_right", target_anchor_right, 0.5)
 		tween.set_parallel(false)
 		buttons_view = false
-		
 
 func display_owned_fields():
-	var figurehead_script = preload("res://scenes/board/figurehead/Figurehead.cs")
-	var board = $"../Board"
-	var game_manager = $"../GameManager"
 	var currentFigureHead = game_manager.getCurrentPlayer() as Figurehead
 
-	for i in range(card_hbox_container.get_child_count()):
-		var texture_rect = card_hbox_container.get_child(i)
-		if texture_rect is TextureRect:
-			texture_rect.visible = false
-	var displayed_index = 0  
+	for child in card_hbox_container.get_children():
+		child.visible = false
+		if child.get_child_count() > 0 and child.get_child(0) is TextureRect:
+			child.get_child(0).visible = false
+			if child.get_child(0).is_connected("mouse_entered", Callable(self, "_on_card_mouse_entered")):
+				child.get_child(0).disconnect("mouse_entered", Callable(self, "_on_card_mouse_entered"))
+			if child.get_child(0).is_connected("mouse_exited", Callable(self, "_on_card_mouse_exited")):
+				child.get_child(0).disconnect("mouse_exited", Callable(self, "_on_card_mouse_exited"))
+
 	var owned_fields = currentFigureHead.GetOwnedFieldsAsArray()
+	var has_any_cards = false
+
 	for i in range(owned_fields.size()):
 		if owned_fields[i]:
-			if displayed_index < card_hbox_container.get_child_count():
-				var colorrect = card_hbox_container.get_child(displayed_index)
-				var texture_rect=colorrect.get_child(0);
-				if texture_rect is TextureRect:
-					var texture_path = "res://scenes/board/level/textures/Field" + str(i) + ".png"
-					var texture = load(texture_path)
-					if texture:
-						texture_rect.texture = texture
-						texture_rect.visible = true
-						displayed_index += 1  
-					else:
-						print("Nie udało się załadować tekstury: ", texture_path)
-			else:
-				print("Błąd: Brak wystarczającej liczby TextureRect w card_hbox_container!")
-				break
+			has_any_cards = true
+			break
 
-func hide_owned_fields():
-	for child in card_hbox_container.get_children():
-		if child is ColorRect:
-			child.visible = false
+	if not has_any_cards:
+		return
+
+	var displayed_index = 0
+	for i in range(owned_fields.size()):
+		if owned_fields[i] and displayed_index < card_hbox_container.get_child_count():
+			var colorrect = card_hbox_container.get_child(displayed_index)
+			colorrect.visible = true
+			
+			if colorrect.get_child_count() > 0 and colorrect.get_child(0) is TextureRect:
+				var texture_rect = colorrect.get_child(0)
+				var texture_path = "res://scenes/board/level/textures/Field" + str(i) + ".png"
+				var texture = load(texture_path)
+				
+				if texture:
+					texture_rect.texture = texture
+					texture_rect.visible = true
+					texture_rect.connect("mouse_entered", Callable(self, "_on_card_mouse_entered").bind(i))
+					texture_rect.connect("mouse_exited", Callable(self, "_on_card_mouse_exited"))
+					displayed_index += 1
+				else:
+					colorrect.visible = false
+
+func _on_card_mouse_entered(field_id: int):
+	if board and board.has_method("ShowFieldTexture"):
+		board.ShowFieldTexture(field_id)
+
+func _on_card_mouse_exited():
+	if board and board.has_method("HideFieldTexture"):
+		board.HideFieldTexture()
 
 func _process(delta: float) -> void:
 	pass
-
-
-func _on_remove_owner_button_pressed() -> void:
-	pass # Replace with function body.
