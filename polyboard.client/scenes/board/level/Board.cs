@@ -20,8 +20,12 @@ public partial class Board : StaticBody3D
 	private Timer buyTime;
 	private Field field;
 	private PanelContainer ownerNicknameView;
+	private PopupMenu _contextMenu;
+	private Vector2 _lastMousePosition;
+	private Label _popupInfoLabel;
 	protected AudioStreamPlayer3D deanOfficeSoundPlayer;
 	protected AudioStreamPlayer3D lostECTSSoundPlayer;
+
 
 	private readonly Dictionary<(string type, int number), (int ectsEffect, Func<Task> specialEffect)> cardEffects;
 
@@ -51,6 +55,7 @@ public partial class Board : StaticBody3D
 		ownerNicknameView = GetNodeOrNull<PanelContainer>("/root/Level/CanvasLayer/OwnerNickname");
 		deanOfficeSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/DeanOfficeSound");
 		lostECTSSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/LostECTSSound");
+		
 		if (textureDisplay == null || step_on_card == null)
 		{
 			GD.PrintErr("Błąd: Nie znaleziono wymaganych komponentów Sprite2D.");

@@ -119,10 +119,12 @@ public partial class Field : Node3D
 		if (!owned || Owner == null)
 		{
 			GD.Print("Field is not owned, cannot remove owner");
+			ShowNotification("Field is not owned, cannot remove owner");
 			return;
 		}
 		
 		GD.Print($"Removing ownership of {Name} from {Owner.Name}");
+		ShowNotification($"Removing ownership of {Name} from {Owner.Name}");
 		
 		// Reset ownership state
 		owned = false;
