@@ -323,29 +323,32 @@ public partial class Board : StaticBody3D
 
 private void TrySellProperty(Field field, Figurehead player)
 {
-	// Check if the player owns this property
-	if (field.owned && field.Owner == player)
-	{
-		// Calculate sell value (typically half of purchase price)
-		int sellValue = field.fieldCost / 2;
+	// Figurehead currentFigureHead = gameManager.getCurrentPlayer();
+	// // Check if the player owns this property
+	// if (field.owned && field.OwnerId == id)
+	// {
+	// 	// Calculate sell value (typically half of purchase price)
+	// 	int sellValue = field.fieldCost / 2;
 		
-		// Return the property to the bank
-		field.RemoveOwner();
-		player.ownedFields[field.FieldId] = false;
+	// 	// Return the property to the bank
+	// 	field.RemoveOwner();
+	// 	player.ownedFields[field.FieldId] = false;
 		
-		// Give ECTS to the player
-		player.AddECTS(sellValue);
+	// 	// Give ECTS to the player
+	// 	player.AddECTS(sellValue);
 		
-		// Show notification
-		ShowPopupNotification($"Sold {field.Name} for {sellValue} ECTS", 3.0f);
+	// 	// Show notification
+	// 	ShowPopupNotification($"Sold {field.Name} for {sellValue} ECTS", 3.0f);
 		
-		// Update UI
-		gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
-	}
-	else
-	{
-		ShowPopupNotification("You don't own this property!", 2.0f);
-	}
+	// 	// Update UI
+	// 	gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
+	// }
+	// else
+	// {
+	// 	ShowPopupNotification("You don't own this property!", 2.0f);
+	// 	GD.Print("Owner: ", field.Owner, " ", currentFigureHead);
+		
+	// }
 }
 
 // Add this method to try to sell a house

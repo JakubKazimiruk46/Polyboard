@@ -78,6 +78,37 @@ public partial class Field : Node3D
 	_ownerBorder.Modulate = field.Owner.playerColor;
 	_ownerBorder.Visible = true;
 	}
+
+	public void RemoveOwner(Figurehead player, Field field)	{
+		
+		int id = gameManager.GetCurrentPlayerIndex();
+		if(id == field.OwnerId){
+			player.AddECTS((field.fieldCost)/2);
+			gameManager.UpdateECTSUI(id);
+			//TODO zmienic na bank jak bedzie system zastawu
+			field.Owner = null;
+			field.OwnerId = 0;
+			field.owned = false;
+			player.ownedFields[field.FieldId]=false;
+			//GD.Print(player.Name,"Kupił pole o numerze Id ",field.FieldId);
+			//GD.Print(player.Name);
+			//GD.Print("Nowy owner pola: ",field.Owner.Name);
+			//GD.Print(field.Owner.playerColor);
+			// Pobranie referencji do obiektu ramki
+			_ownerBorder = GetNodeOrNull<Sprite3D>("OwnerBorder");
+		
+			if (_ownerBorder == null)
+			{
+				GD.PrintErr("Błąd: Nie znaleziono OwnerBorder!");
+				return;
+			}
+
+		// Ustawienie koloru i widoczności ramki
+		//TODO usunąć?
+		//_ownerBorder.Modulate = ;
+		_ownerBorder.Visible = false;
+		}
+	}
 	
 	public int CheckHouseQuantity(Field field)
 	{
@@ -111,36 +142,6 @@ public partial class Field : Node3D
 		for (int i = 0; i < 5; i++)
 		{
 			buildOccupied.Add(false);
-		}
-	}
-
-	public void RemoveOwner()
-	{
-		if (!owned || Owner == null)
-		{
-			GD.Print("Field is not owned, cannot remove owner");
-			ShowNotification("Field is not owned, cannot remove owner");
-			return;
-		}
-		
-		GD.Print($"Removing ownership of {Name} from {Owner.Name}");
-		ShowNotification($"Removing ownership of {Name} from {Owner.Name}");
-		
-		// Reset ownership state
-		owned = false;
-		Owner = null;
-		
-		// Hide owner border
-		if (_ownerBorder != null)
-		{
-			_ownerBorder.Visible = false;
-		}
-		
-		// Remove any houses or hotels if they exist
-		if (builtHouses.Count > 0 || isHotel)
-		{
-			RemoveAllHouses();
-			isHotel = false;
 		}
 	}
 
