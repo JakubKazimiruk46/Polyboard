@@ -31,6 +31,7 @@ HubConnectionService="*res://services/HubConnectionService.cs"
 FigureheadLoader="*res://services/figurehead_loader.gd"
 GameData="*res://services/game_data.gd"
 SkinManager="*res://services/skin_manager.gd"
+NotificationService="*res://services/NotificationService/NotificationService.cs"
 
 [dotnet]
 
