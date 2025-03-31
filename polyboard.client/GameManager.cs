@@ -16,6 +16,7 @@ public partial class GameManager : Node3D
 	[Export] public NodePath endTurnButtonPath;
 	[Export] public NodePath ectsUIContainerPath;
 	[Export] public NodePath playersUIContainerPath;
+	[Export] public NodePath playerInitializerPath;
 	[Export] public float turnTimeLimit = 60.0f; // czas tury w sekundach
 
 	private Board board;
@@ -49,7 +50,7 @@ public partial class GameManager : Node3D
 	private GameState currentState = GameState.WaitingForInput;
 
 	public override void _Ready()
-	{
+	{	
 		InitCameras();
 		InitNotifications();
 		InitBoard();
@@ -158,33 +159,46 @@ public partial class GameManager : Node3D
 		}
 	}
 
-	private void InitPlayers()
+private void InitPlayers()
+{
+	GD.Print($"Szukanie PlayerInitializer pod ścieżką: {playerInitializerPath}");
+	Node playerInitializer = GetNodeOrNull(playerInitializerPath); 
+	if (playerInitializer == null)
 	{
-		Node playersContainer = GetNodeOrNull(playersContainerPath);
-		if (playersContainer == null)
-		{
-			ShowError("Błąd: Nie znaleziono węzła Players (3D).");
-			return;
-		}
+		ShowError("Błąd: Nie znaleziono PlayerInitializer w scenie!");
+		return;
+	}
 
-		foreach (Node child in playersContainer.GetChildren())
-		{
-			if (child is Figurehead fh)
-			{
-				players.Add(fh);
-				playerBankruptcyStatus.Add(false);
-			}
-		}
+	playerInitializer.Call("initialize_players");
 
-		if (players.Count == 0)
+	Node playersContainer = GetNodeOrNull(playersContainerPath);
+	if (playersContainer == null)
+	{
+		ShowError("Błąd: Nie znaleziono węzła Players (3D).");
+		return;
+	}
+
+	foreach (Node child in playersContainer.GetChildren())
+	{
+		GD.Print($"Sprawdzam węzeł: {child.Name}");
+		if (child is Figurehead fh)
 		{
-			ShowError("Błąd: Nie znaleziono żadnych pionków.");
-		}
-		else
-		{
-			GD.Print($"Znaleziono {players.Count} graczy.");
+			players.Add(fh);
+			playerBankruptcyStatus.Add(false);
 		}
 	}
+
+
+	if (players.Count == 0)
+	{
+		ShowError("Błąd: Nie znaleziono żadnych pionków.");
+	}
+	else
+	{
+		GD.Print($"Znaleziono {players.Count} graczy.");
+	}
+}
+
 
 	private void InitDice()
 	{
@@ -293,6 +307,14 @@ public partial class GameManager : Node3D
 			ectsLabel.Text = players[i].ECTS.ToString();
 			playerNameLabels.Add(nameLabel);
 			playerECTSLabels.Add(ectsLabel);
+		}
+		
+		for (int i = players.Count; i < 4; i++){
+			CanvasItem playerUINodeToHide = playersUIContainer.GetChild<CanvasItem>(i);
+			
+			if (playerUINodeToHide != null){
+				playerUINodeToHide.Visible = false;
+			}
 		}
 	}
 

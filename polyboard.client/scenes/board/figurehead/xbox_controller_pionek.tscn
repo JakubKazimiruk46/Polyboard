@@ -1,4 +1,6 @@
-[gd_scene load_steps=12 format=4 uid="uid://b2til4lqp6c80"]
+[gd_scene load_steps=13 format=4 uid="uid://b2til4lqp6c80"]
+
+[ext_resource type="Script" uid="uid://jjck14f1cwuj" path="res://scenes/board/figurehead/Figurehead.cs" id="1_1da7l"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7cssx"]
 resource_name = "Material.001"
@@ -182,9 +184,12 @@ _data = {
 }
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_mqlp4"]
+size = Vector3(17.0056, 5.71558, 12.1573)
 
 [node name="pad" type="CharacterBody3D"]
-transform = Transform3D(1, 0, 0, 0, 0.151261, -0.988494, 0, 0.988494, 0.151261, 0, 0, 0)
+transform = Transform3D(0.1, 0, 0, 0, 0.0151261, -0.0988494, 0, 0.0988494, 0.0151261, 0, 0.605686, 0)
+script = ExtResource("1_1da7l")
+pawnInstancePath = NodePath(".")
 
 [node name="Armature" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.51758, -0.494609, 2.7072)
@@ -237,4 +242,5 @@ libraries = {
 speed_scale = 5.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(0.999984, 0, 0, 0, 1, 0, 0, 0, 1, 0.108424, -1.27527, 5.57864)
 shape = SubResource("BoxShape3D_mqlp4")
