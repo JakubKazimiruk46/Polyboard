@@ -118,11 +118,12 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_xdloe")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_liqo1"]
-size = Vector3(1.06885, 0.417023, 1.13062)
+size = Vector3(1.06885, 0.629707, 1.13062)
 
 [node name="czapka-absolwenta-pionek" instance=ExtResource("1_i5w7a")]
 transform = Transform3D(-0.215, 0, -0.372391, 0, 0.43, 0, 0.372391, 0, -0.215, 0, 0.78, 0)
 script = ExtResource("2_4x40n")
+pawnInstancePath = NodePath(".")
 
 [node name="Empty" parent="." index="0"]
 physics_interpolation_mode = 2
@@ -141,5 +142,5 @@ transform = Transform3D(0.0105891, 0, 0, 0, -0.0259705, 0.0107579, 0, -0.35177, 
 mesh = SubResource("ArrayMesh_ecd80")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." index="4"]
-transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0.0390483, -1.71727, -0.195923)
+transform = Transform3D(3, 0, -2.38419e-07, 0, 3, 0, 2.38419e-07, 0, 3, 0.0390483, -2.42123, -0.195923)
 shape = SubResource("BoxShape3D_liqo1")

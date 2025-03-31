@@ -45,7 +45,13 @@ func get_player_name_by_id(player_id: int) -> String:
 	if player_id >= 0 and player_id < players.size():
 		return players[player_id]["name"]
 	else:
-		return ""  # Zwraca pusty string, jeśli ID jest niepoprawne
+		return ""
+
+func get_player_skin_id_by_id(player_id: int) -> int:
+	if player_id >= 0 and player_id < players.size():
+		return players[player_id]["skin"]
+	else:
+		return -1
 
 func set_current_player_editing_skin(player_id: int):
 	if player_id >= 0 and player_id < players.size():

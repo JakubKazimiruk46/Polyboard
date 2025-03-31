@@ -7,8 +7,9 @@
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vs5g1"]
 
 [node name="Figurehead" type="CharacterBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25558, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0286895, 0)
 script = ExtResource("1_rwqsc")
+pawnInstancePath = NodePath(".")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("CapsuleMesh_nhme2")

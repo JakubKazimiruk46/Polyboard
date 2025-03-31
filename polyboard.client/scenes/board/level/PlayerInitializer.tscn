@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://6xidqmymycod"]
+
+[ext_resource type="Script" uid="uid://cvq6ynyqtlk15" path="res://services/player_initializer.gd" id="1_bm1dh"]
+
+[node name="PlayerInitializer" type="Node"]
+script = ExtResource("1_bm1dh")
+player_container_path = NodePath("PlayersContainer")
+
+[node name="PlayersContainer" type="Node3D" parent="."]
