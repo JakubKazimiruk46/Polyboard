@@ -208,6 +208,7 @@ public partial class GameManager : Node3D
 		if (rollButton == null)
 		{
 			ShowError("Błąd: Nie znaleziono przycisku do rzucania kostkami.");
+			return;
 		}
 
 		rollButton.Connect("pressed", new Callable(this, nameof(OnRollButtonPressed)));
