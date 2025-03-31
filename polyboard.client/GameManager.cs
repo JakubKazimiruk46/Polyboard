@@ -44,6 +44,7 @@ public partial class GameManager : Node3D
 	private List<bool> playerBankruptcyStatus = new List<bool>();
 	private Timer turnTimer;
 	private Label turnTimerLabel;
+	public bool regularRoll = true;
 
 	private enum GameState { WaitingForInput, RollingDice, MovingPawn, EndTurn }
 	private GameState currentState = GameState.WaitingForInput;
@@ -201,13 +202,12 @@ public partial class GameManager : Node3D
 		GD.Print("Kostki podłączone.");
 	}
 
-	private void InitRollButton()
+	public void InitRollButton()
 	{
 		rollButton = GetNodeOrNull<Button>(rollButtonPath);
 		if (rollButton == null)
 		{
 			ShowError("Błąd: Nie znaleziono przycisku do rzucania kostkami.");
-			return;
 		}
 
 		rollButton.Connect("pressed", new Callable(this, nameof(OnRollButtonPressed)));
@@ -493,19 +493,28 @@ public partial class GameManager : Node3D
 		ShowNotification($"Łączna suma oczek: {totalSteps}", 3f);
 		GD.Print($"Łączna suma oczek: {totalSteps}");
 		SwitchToMasterCamera();
-		MoveCurrentPlayerPawnSequentially(totalSteps);
-		if (die1Result.Value == die2Result.Value)
+		if (regularRoll)
 		{
-			GD.Print("Dublet! Kolejny rzut po ruchu.");
-			PlaySound(doubleSoundPlayer);
-			ShowError("Dublet! Powtórz rzut po ruchu.", 5f);
+			MoveCurrentPlayerPawnSequentially(totalSteps);
+			if (die1Result.Value == die2Result.Value)
+			{
+				GD.Print("Dublet! Kolejny rzut po ruchu.");
+				PlaySound(doubleSoundPlayer);
+				ShowError("Dublet! Powtórz rzut po ruchu.", 5f);
+			}
+			else
+			{
+				GD.Print("Nie wyrzucono dubletu. Przygotowanie do zakończenia tury.");
+				ShowError("Nie wyrzucono dubletu. Możesz zakończyć turę.", 3f);
+			}
 		}
-		else
+		else if (!regularRoll)
 		{
-			GD.Print("Nie wyrzucono dubletu. Przygotowanie do zakończenia tury.");
-			ShowError("Nie wyrzucono dubletu. Możesz zakończyć turę.", 3f);
+			regularRoll = true;
+			board.publicFee = totalSteps;
+			board.publicFacilityDone = true;
 		}
-	}
+		}
 
 	private void PlaySound(AudioStreamPlayer3D player)
 	{

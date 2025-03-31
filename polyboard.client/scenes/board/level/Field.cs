@@ -26,8 +26,8 @@ public partial class Field : Node3D
 	protected Sprite2D viewDetailsDialog;
 	protected AudioStreamPlayer3D constructionSoundPlayer;
 	protected AudioStreamPlayer3D hotelConstructionSoundPlayer;
-	protected Figurehead Owner;
-	protected int OwnerId;
+	public Figurehead Owner;
+	public int OwnerId;
 	public bool owned = false;
 	public int houseCost;
 	public int hotelCost;
