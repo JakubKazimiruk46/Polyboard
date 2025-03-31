@@ -44,6 +44,7 @@ public partial class GameManager : Node3D
 	private List<bool> playerBankruptcyStatus = new List<bool>();
 	private Timer turnTimer;
 	private Label turnTimerLabel;
+	public bool regularRoll = true;
 
 	private enum GameState { WaitingForInput, RollingDice, MovingPawn, EndTurn }
 	private GameState currentState = GameState.WaitingForInput;
@@ -201,7 +202,7 @@ public partial class GameManager : Node3D
 		GD.Print("Kostki podłączone.");
 	}
 
-	private void InitRollButton()
+	public void InitRollButton()
 	{
 		rollButton = GetNodeOrNull<Button>(rollButtonPath);
 		if (rollButton == null)
@@ -493,19 +494,27 @@ public partial class GameManager : Node3D
 		ShowNotification($"Łączna suma oczek: {totalSteps}", 3f);
 		GD.Print($"Łączna suma oczek: {totalSteps}");
 		SwitchToMasterCamera();
-		MoveCurrentPlayerPawnSequentially(totalSteps);
-		if (die1Result.Value == die2Result.Value)
+		if (regularRoll)
 		{
-			GD.Print("Dublet! Kolejny rzut po ruchu.");
-			PlaySound(doubleSoundPlayer);
-			ShowNotification("Dublet! Powtórz rzut po ruchu.", 5f);
-		}
-		else
+			MoveCurrentPlayerPawnSequentially(totalSteps);
+			if (die1Result.Value == die2Result.Value)
+			{
+				GD.Print("Dublet! Kolejny rzut po ruchu.");
+				PlaySound(doubleSoundPlayer);
+				ShowNotification("Dublet! Powtórz rzut po ruchu.", 5f);
+			}
+			else
+			{
+				GD.Print("Nie wyrzucono dubletu. Przygotowanie do zakończenia tury.");
+				ShowNotification("Nie wyrzucono dubletu. Możesz zakończyć turę.", 3f);
+			}
+			else if (!regularRoll)
 		{
-			GD.Print("Nie wyrzucono dubletu. Przygotowanie do zakończenia tury.");
-			ShowNotification("Nie wyrzucono dubletu. Możesz zakończyć turę.", 3f);
+			regularRoll = true;
+			board.publicFee = totalSteps;
+			board.publicFacilityDone = true;
 		}
-	}
+		}
 
 	private void PlaySound(AudioStreamPlayer3D player)
 	{
