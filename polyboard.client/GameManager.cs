@@ -501,15 +501,14 @@ public partial class GameManager : Node3D
 			{
 				GD.Print("Dublet! Kolejny rzut po ruchu.");
 				PlaySound(doubleSoundPlayer);
-				ShowError("Dublet! Powtórz rzut po ruchu.", 5f);
+				ShowNotification("Dublet! Powtórz rzut po ruchu.", 5f);
 			}
 			else
 			{
 				GD.Print("Nie wyrzucono dubletu. Przygotowanie do zakończenia tury.");
-				ShowError("Nie wyrzucono dubletu. Możesz zakończyć turę.", 3f);
+				ShowNotification("Nie wyrzucono dubletu. Możesz zakończyć turę.", 3f);
 			}
-		}
-		else if (!regularRoll)
+			else if (!regularRoll)
 		{
 			regularRoll = true;
 			board.publicFee = totalSteps;

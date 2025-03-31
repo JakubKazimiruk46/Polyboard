@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://bspeerrufkdyb"]
+
+[ext_resource type="Script" uid="uid://c7f7fkwd7kb7y" path="res://scenes/board/level/pop_up_menu.gd" id="1_5sl4l"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="PopupMenu" type="PopupMenu" parent="."]
+script = ExtResource("1_5sl4l")
+
+[node name="Label" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[connection signal="id_pressed" from="PopupMenu" to="PopupMenu" method="_on_id_pressed"]

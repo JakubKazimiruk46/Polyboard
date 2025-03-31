@@ -22,6 +22,16 @@ public partial class Board : StaticBody3D
 	private PanelContainer ownerNicknameView;
 	protected AudioStreamPlayer3D deanOfficeSoundPlayer;
 	protected AudioStreamPlayer3D lostECTSSoundPlayer;
+	private PopupMenu _contextMenu;
+	private Vector2 _lastMousePosition;
+	private Label _popupInfoLabel;
+	private enum PopupIds
+	{
+		SellProperty = 100,
+		SellHouse = 101,
+		BuildHouse = 102,
+		Cancel = 103
+	}
 	protected int multiplier;
 	public int publicFee;
 	public bool publicFacilityDone = false;
@@ -37,6 +47,7 @@ public partial class Board : StaticBody3D
 	{
 		InitializeComponents();
 		InitializeCardEffects();
+		InitializePopupMenu();
 	}
 
 	private void InitializeComponents()
@@ -54,6 +65,7 @@ public partial class Board : StaticBody3D
 		ownerNicknameView = GetNodeOrNull<PanelContainer>("/root/Level/CanvasLayer/OwnerNickname");
 		deanOfficeSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/DeanOfficeSound");
 		lostECTSSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/LostECTSSound");
+		
 		if (textureDisplay == null || step_on_card == null)
 		{
 			GD.PrintErr("Błąd: Nie znaleziono wymaganych komponentów Sprite2D.");
@@ -253,6 +265,317 @@ public partial class Board : StaticBody3D
 						break;
 				}
 				fields.Add(field);
+			}
+		}
+	}
+	private void InitializePopupMenu()
+	{
+		_contextMenu = new PopupMenu();
+		AddChild(_contextMenu);
+		//GD.Print("Menu kontekstowe zostało utworzone i dodane do drzewa!");
+
+		_contextMenu.AddItem("Sell Property", (int)PopupIds.SellProperty);
+		_contextMenu.AddItem("Sell House", (int)PopupIds.SellHouse);
+		_contextMenu.AddItem("Build House", (int)PopupIds.BuildHouse);
+		_contextMenu.AddSeparator();
+		_contextMenu.AddItem("Cancel", (int)PopupIds.Cancel);
+		
+		_contextMenu.IdPressed += OnPopupMenuItemPressed;
+		
+		_popupInfoLabel = new Label();
+		_popupInfoLabel.Visible = false;
+		_popupInfoLabel.Position = new Vector2(50, 50);
+		var canvasLayer = GetTree().Root.GetNode<CanvasLayer>("Level/CanvasLayer");
+		canvasLayer.AddChild(_popupInfoLabel);
+	}
+	
+	private void OnPopupMenuItemPressed(long id)
+	{
+		// Use raycasting to find the field in 3D space
+		var camera = GetViewport().GetCamera3D();
+		var from = camera.ProjectRayOrigin(_lastMousePosition);
+		var to = from + camera.ProjectRayNormal(_lastMousePosition) * 100;
+		
+		var spaceState = GetWorld3D().DirectSpaceState;
+		var query = PhysicsRayQueryParameters3D.Create(from, to);
+		var result = spaceState.IntersectRay(query);
+		
+		Field selectedField = null;
+		
+		// If ray hit something, check if it's a field
+		if (result.Count > 0)
+		{
+			var collider = result["collider"].AsGodotObject();
+			if (collider is Field field)
+			{
+				selectedField = field;
+			}
+			else
+			{
+				// Try to find the nearest field if we didn't hit one directly
+				Vector3 hitPosition = (Vector3)result["position"];
+				selectedField = FindNearestField(hitPosition);
+			}
+		}
+		
+		Figurehead currentPlayer = gameManager.getCurrentPlayer();
+		
+		if (selectedField != null && currentPlayer != null)
+		{
+			switch ((PopupIds)id)
+			{
+				case PopupIds.SellProperty:
+					TrySellProperty(selectedField, currentPlayer);
+					break;
+					
+				case PopupIds.SellHouse:
+					TrySellHouse(selectedField, currentPlayer);
+					break;
+					
+				case PopupIds.BuildHouse:
+					TryBuildHouse(selectedField, currentPlayer);
+					break;
+					
+				case PopupIds.Cancel:
+					break;
+			}
+		}
+		else
+		{
+			if (selectedField == null)
+			{
+				ShowPopupNotification("No field selected. Click closer to a field.", 2.0f);
+			}
+		}
+	}
+
+private void TrySellProperty(Field field, Figurehead player)
+{
+	int currentPlayerIndex = gameManager.GetCurrentPlayerIndex();
+	
+	string ownerClassName = field.Owner?.GetType().Name ?? "null";
+	
+	// GD.Print($"Field: {field.Name}, FieldId: {field.FieldId}");
+	// GD.Print($"Field owned: {field.owned}, Owner name: {field.Owner?.Name}");
+	// GD.Print($"Owner class name: {ownerClassName}");
+	// GD.Print($"Current player name: {player.Name}, Index: {currentPlayerIndex}");
+	
+	// Check if the player's owned fields array shows ownership
+	bool playerOwnsAccordingToArray = player.ownedFields[field.FieldId];
+	// GD.Print($"Player owns according to ownedFields array: {playerOwnsAccordingToArray}");
+	
+	if (field.owned && playerOwnsAccordingToArray)
+	{
+		// Calculate sell value (half of purchase price)
+		int sellValue = field.fieldCost / 2;
+		
+		// GD.Print($"Selling field: {field.Name} for {sellValue} ECTS");
+		
+		// Return the property to the bank
+		field.RemoveOwner(player, field);
+		
+		// Show notification
+		ShowPopupNotification($"Sold {field.Name} for {sellValue} ECTS", 3.0f);
+		
+		// Update UI
+		gameManager.UpdateECTSUI(currentPlayerIndex);
+	}
+	else
+	{
+		ShowPopupNotification("You don't own this property!", 2.0f);
+		GD.Print($"Ownership check failed: owned={field.owned}, playerOwnsAccordingToArray={playerOwnsAccordingToArray}");
+	}
+}
+
+private void TrySellHouse(Field field, Figurehead player)
+{
+	if (field.owned && field.Owner == player)
+	{
+		int houseCount = field.CheckHouseQuantity(field);
+		if (houseCount > 0)
+		{
+			if (field.isHotel)
+			{
+				ShowPopupNotification("Cannot sell individual houses from a hotel. Sell the hotel instead.", 3.0f);
+				return;
+			}
+			
+			int sellValue = field.houseCost / 2;
+			
+			RemoveLastHouse(field);
+			
+			player.AddECTS(sellValue);
+			
+			ShowPopupNotification($"Sold house on {field.Name} for {sellValue} ECTS", 3.0f);
+			
+			gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
+		}
+		else
+		{
+			ShowPopupNotification("No houses to sell on this property!", 2.0f);
+		}
+	}
+	else
+	{
+		ShowPopupNotification("You don't own this property!", 2.0f);
+	}
+}
+
+private void RemoveLastHouse(Field field)
+{
+	int lastIndex = -1;
+	for (int i = field.buildOccupied.Count - 1; i >= 0; i--)
+	{
+		if (field.buildOccupied[i])
+		{
+			lastIndex = i;
+			break;
+		}
+	}
+	
+	if (lastIndex >= 0 && lastIndex < field.builtHouses.Count)
+	{
+		if (field.builtHouses[lastIndex] != null)
+		{
+			field.builtHouses[lastIndex].QueueFree();
+			field.builtHouses.RemoveAt(lastIndex);
+		}
+		
+		// Oznacz pozycję jako niezajętą
+		field.buildOccupied[lastIndex] = false;
+	}
+}
+
+private void TryBuildHouse(Field field, Figurehead player)
+{
+	if (field.owned && field.Owner == player)
+	{
+		HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
+		if (invalidFieldIds.Contains(field.FieldId))
+		{
+			ShowPopupNotification("Cannot build houses on this type of property!", 2.0f);
+			return;
+		}
+		
+		if (player.ECTS >= field.houseCost)
+		{
+			if (field.isHotel)
+			{
+				ShowPopupNotification("There's already a hotel on this property!", 2.0f);
+				return;
+			}
+			
+			int houseCount = field.CheckHouseQuantity(field);
+			if (houseCount < 4)
+			{
+				player.SpendECTS(field.houseCost);
+				
+				field.BuildingHouse(field.FieldId);
+				
+				ShowPopupNotification($"Building house on {field.Name} for {field.houseCost} ECTS", 3.0f);
+
+				gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
+			}
+			else
+			{
+				ShowPopupNotification("Maximum number of houses reached! Consider building a hotel.", 2.0f);
+			}
+		}
+		else
+		{
+			ShowPopupNotification("Not enough ECTS to build a house!", 2.0f);
+		}
+	}
+	else
+	{
+		ShowPopupNotification("You don't own this property!", 2.0f);
+	}
+}
+
+private async void TryBuildHotel(Field field, Figurehead player)
+{
+	if (field.owned && field.Owner == player)
+	{
+		HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
+		if (invalidFieldIds.Contains(field.FieldId))
+		{
+			ShowPopupNotification("Cannot build a hotel on this type of property!", 2.0f);
+			return;
+		}
+		
+		if (player.ECTS >= field.hotelCost)
+		{
+			if (field.isHotel)
+			{
+				ShowPopupNotification("There's already a hotel on this property!", 2.0f);
+				return;
+			}
+			
+			int houseCount = field.CheckHouseQuantity(field);
+			if (houseCount == 4)
+			{
+				player.SpendECTS(field.hotelCost);
+				
+				await field.BuildHotel(field.FieldId);
+				
+				ShowPopupNotification($"Built hotel on {field.Name} for {field.hotelCost} ECTS", 3.0f);
+				
+				gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
+			}
+			else
+			{
+				ShowPopupNotification($"You need 4 houses before building a hotel! (Current: {houseCount})", 3.0f);
+			}
+		}
+		else
+		{
+			ShowPopupNotification("Not enough ECTS to build a hotel!", 2.0f);
+		}
+	}
+	else
+	{
+		ShowPopupNotification("You don't own this property!", 2.0f);
+	}
+}
+
+
+	private void ShowPopupNotification(string message, float duration = 3.0f)
+	{
+		_popupInfoLabel.Text = message;
+		_popupInfoLabel.Visible = true;
+		
+		GetTree().CreateTimer(duration).Timeout += () => _popupInfoLabel.Visible = false;
+	}
+	
+	private Field FindNearestField(Vector3 position)
+	{
+		Field nearestField = null;
+		float minDistance = float.MaxValue;
+		
+		foreach (Field field in fields)
+		{
+			float distance = field.GlobalPosition.DistanceTo(position);
+			if (distance < minDistance)
+			{
+				minDistance = distance;
+				nearestField = field;
+			}
+		}
+		
+		return nearestField;
+	}
+	
+	
+	public override void _Input(InputEvent @event)
+	{
+		if (@event is InputEventMouseButton mouseEvent)
+		{
+			if (mouseEvent.ButtonIndex == MouseButton.Right && mouseEvent.Pressed)
+			{
+				_lastMousePosition = mouseEvent.Position;
+				
+				_contextMenu.Position = new Vector2I((int)_lastMousePosition.X, (int)_lastMousePosition.Y);
+				_contextMenu.Popup();
 			}
 		}
 	}

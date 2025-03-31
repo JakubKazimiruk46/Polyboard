@@ -65,7 +65,7 @@ func on_remove_owner_button_pressed():
 	var field = game_manager.getCurrentField(current_position)
 	
 	if field and field.owned:
-		field.RemoveOwner()
+		field.RemoveOwner(currentFigureHead, field)
 		print("Field ownership removed from: " + field.Name)
 	else:
 		print("Cannot remove ownership: field is not owned")
