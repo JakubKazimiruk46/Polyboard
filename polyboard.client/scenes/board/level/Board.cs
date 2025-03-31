@@ -22,6 +22,9 @@ public partial class Board : StaticBody3D
 	private PanelContainer ownerNicknameView;
 	protected AudioStreamPlayer3D deanOfficeSoundPlayer;
 	protected AudioStreamPlayer3D lostECTSSoundPlayer;
+	protected int multiplier;
+	public int publicFee;
+	public bool publicFacilityDone = false;
 
 	private readonly Dictionary<(string type, int number), (int ectsEffect, Func<Task> specialEffect)> cardEffects;
 
@@ -365,13 +368,55 @@ public partial class Board : StaticBody3D
 			GD.PrintErr("Błąd: AudioStreamPlayer3D nie jest zainicjalizowany.");
 		}
 	}
+	public void PublicUtilityFacility(int fieldId)
+	{
+		var publicField = (fieldId == 12) ? GetFieldById(12) : GetFieldById(28);
+		var otherPublicField = (fieldId == 12) ? GetFieldById(28) : GetFieldById(12);
+		if (publicField.Owner == gameManager.getCurrentPlayer())
+		{
+			return;
+		}
+		multiplier = (publicField.Owner == otherPublicField.Owner) ? 10 : 4;
+		GD.Print("Mnożnik za posiadanie pól: ", multiplier);
+		gameManager.regularRoll = false;
+		GD.Print(gameManager.regularRoll);
+		while (!publicFacilityDone)
+		{
+			gameManager.InitRollButton();
+		}
+		GD.Print(publicFee);
+		publicFee *= multiplier;
+		GD.Print(publicFee);
+		var currentPlayer = gameManager.getCurrentPlayer();
+		currentPlayer.SpendECTS(publicFee);
+		gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
+		var publicFieldOwner = publicField.Owner;
+		publicFieldOwner.AddECTS(publicFee);
+		gameManager.UpdateECTSUI(publicField.OwnerId);
+			
+	}
 	public async void StepOnField(int fieldId)
 	{
 		// Wait for any animations to complete
 		await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
-
 		// Hide end turn button initially
 		endTurnButton.Visible = false;
+		if (fieldId == 12 || fieldId == 28)
+		{
+			var field = GetFieldById(fieldId);
+			GD.Print("Pole użytku publicznego.");
+			GD.Print(field.owned);
+			if (!field.owned)
+			{
+				GD.Print("Kupienie publicznego pola z powodu braku właściciela.");
+				BuyField(fieldId);
+				return;
+			}
+			GD.Print("Rozliczenie pola.");
+			PublicUtilityFacility(fieldId);
+			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
+			endTurnButton.Visible = true;
+		}
 		if (fieldId == 4 || fieldId == 10 || fieldId == 30)
 		{
 			PlayDeanOfficeSound();

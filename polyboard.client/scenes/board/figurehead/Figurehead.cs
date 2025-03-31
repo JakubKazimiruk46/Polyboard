@@ -291,5 +291,3 @@ public partial class Figurehead : CharacterBody3D
 	}
 
 }
-
-
