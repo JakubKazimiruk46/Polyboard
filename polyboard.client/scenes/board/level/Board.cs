@@ -288,8 +288,33 @@ public partial class Board : StaticBody3D
 	
 	private void OnPopupMenuItemPressed(long id)
 	{
-		Vector3 worldPos = GetViewport().GetCamera3D().ProjectPosition(_lastMousePosition, 0.5f);
-		Field selectedField = FindNearestField(worldPos);
+		// Use raycasting to find the field in 3D space
+		var camera = GetViewport().GetCamera3D();
+		var from = camera.ProjectRayOrigin(_lastMousePosition);
+		var to = from + camera.ProjectRayNormal(_lastMousePosition) * 100;
+		
+		var spaceState = GetWorld3D().DirectSpaceState;
+		var query = PhysicsRayQueryParameters3D.Create(from, to);
+		var result = spaceState.IntersectRay(query);
+		
+		Field selectedField = null;
+		
+		// If ray hit something, check if it's a field
+		if (result.Count > 0)
+		{
+			var collider = result["collider"].AsGodotObject();
+			if (collider is Field field)
+			{
+				selectedField = field;
+			}
+			else
+			{
+				// Try to find the nearest field if we didn't hit one directly
+				Vector3 hitPosition = (Vector3)result["position"];
+				selectedField = FindNearestField(hitPosition);
+			}
+		}
+		
 		Figurehead currentPlayer = gameManager.getCurrentPlayer();
 		
 		if (selectedField != null && currentPlayer != null)
@@ -323,64 +348,63 @@ public partial class Board : StaticBody3D
 
 private void TrySellProperty(Field field, Figurehead player)
 {
-	// Figurehead currentFigureHead = gameManager.getCurrentPlayer();
-	// // Check if the player owns this property
-	// if (field.owned && field.OwnerId == id)
-	// {
-	// 	// Calculate sell value (typically half of purchase price)
-	// 	int sellValue = field.fieldCost / 2;
+	int currentPlayerIndex = gameManager.GetCurrentPlayerIndex();
+	
+	string ownerClassName = field.Owner?.GetType().Name ?? "null";
+	
+	// GD.Print($"Field: {field.Name}, FieldId: {field.FieldId}");
+	// GD.Print($"Field owned: {field.owned}, Owner name: {field.Owner?.Name}");
+	// GD.Print($"Owner class name: {ownerClassName}");
+	// GD.Print($"Current player name: {player.Name}, Index: {currentPlayerIndex}");
+	
+	// Check if the player's owned fields array shows ownership
+	bool playerOwnsAccordingToArray = player.ownedFields[field.FieldId];
+	// GD.Print($"Player owns according to ownedFields array: {playerOwnsAccordingToArray}");
+	
+	if (field.owned && playerOwnsAccordingToArray)
+	{
+		// Calculate sell value (half of purchase price)
+		int sellValue = field.fieldCost / 2;
 		
-	// 	// Return the property to the bank
-	// 	field.RemoveOwner();
-	// 	player.ownedFields[field.FieldId] = false;
+		// GD.Print($"Selling field: {field.Name} for {sellValue} ECTS");
 		
-	// 	// Give ECTS to the player
-	// 	player.AddECTS(sellValue);
+		// Return the property to the bank
+		field.RemoveOwner(player, field);
 		
-	// 	// Show notification
-	// 	ShowPopupNotification($"Sold {field.Name} for {sellValue} ECTS", 3.0f);
+		// Show notification
+		ShowPopupNotification($"Sold {field.Name} for {sellValue} ECTS", 3.0f);
 		
-	// 	// Update UI
-	// 	gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
-	// }
-	// else
-	// {
-	// 	ShowPopupNotification("You don't own this property!", 2.0f);
-	// 	GD.Print("Owner: ", field.Owner, " ", currentFigureHead);
-		
-	// }
+		// Update UI
+		gameManager.UpdateECTSUI(currentPlayerIndex);
+	}
+	else
+	{
+		ShowPopupNotification("You don't own this property!", 2.0f);
+		GD.Print($"Ownership check failed: owned={field.owned}, playerOwnsAccordingToArray={playerOwnsAccordingToArray}");
+	}
 }
 
-// Add this method to try to sell a house
 private void TrySellHouse(Field field, Figurehead player)
 {
-	// Check if the player owns this property
 	if (field.owned && field.Owner == player)
 	{
-		// Check if there are houses to sell
 		int houseCount = field.CheckHouseQuantity(field);
 		if (houseCount > 0)
 		{
-			// If it's a hotel, can't sell individual houses
 			if (field.isHotel)
 			{
 				ShowPopupNotification("Cannot sell individual houses from a hotel. Sell the hotel instead.", 3.0f);
 				return;
 			}
 			
-			// Calculate sell value (half of house cost)
 			int sellValue = field.houseCost / 2;
 			
-			// Remove one house
 			RemoveLastHouse(field);
 			
-			// Give ECTS to the player
 			player.AddECTS(sellValue);
 			
-			// Show notification
 			ShowPopupNotification($"Sold house on {field.Name} for {sellValue} ECTS", 3.0f);
 			
-			// Update UI
 			gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
 		}
 		else
@@ -396,7 +420,6 @@ private void TrySellHouse(Field field, Figurehead player)
 
 private void RemoveLastHouse(Field field)
 {
-	// Znajdź indeks ostatniego zbudowanego domu
 	int lastIndex = -1;
 	for (int i = field.buildOccupied.Count - 1; i >= 0; i--)
 	{
@@ -409,7 +432,6 @@ private void RemoveLastHouse(Field field)
 	
 	if (lastIndex >= 0 && lastIndex < field.builtHouses.Count)
 	{
-		// Usuń ostatni dom
 		if (field.builtHouses[lastIndex] != null)
 		{
 			field.builtHouses[lastIndex].QueueFree();
@@ -421,13 +443,10 @@ private void RemoveLastHouse(Field field)
 	}
 }
 
-// Add this method to try to build a house
 private void TryBuildHouse(Field field, Figurehead player)
 {
-	// Check if the player owns this property
 	if (field.owned && field.Owner == player)
 	{
-		// Don't allow building on fields that don't support it
 		HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
 		if (invalidFieldIds.Contains(field.FieldId))
 		{
@@ -435,30 +454,23 @@ private void TryBuildHouse(Field field, Figurehead player)
 			return;
 		}
 		
-		// Check if the player has enough ECTS
 		if (player.ECTS >= field.houseCost)
 		{
-			// Check if there's a hotel (can't add more houses)
 			if (field.isHotel)
 			{
 				ShowPopupNotification("There's already a hotel on this property!", 2.0f);
 				return;
 			}
 			
-			// Check if we haven't reached the maximum number of houses
 			int houseCount = field.CheckHouseQuantity(field);
 			if (houseCount < 4)
 			{
-				// Spend ECTS
 				player.SpendECTS(field.houseCost);
 				
-				// Build a house
 				field.BuildingHouse(field.FieldId);
 				
-				// Show notification
 				ShowPopupNotification($"Building house on {field.Name} for {field.houseCost} ECTS", 3.0f);
-				
-				// Update UI
+
 				gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
 			}
 			else
@@ -477,13 +489,10 @@ private void TryBuildHouse(Field field, Figurehead player)
 	}
 }
 
-// Add this method to try to build a hotel
 private async void TryBuildHotel(Field field, Figurehead player)
 {
-	// Check if the player owns this property
 	if (field.owned && field.Owner == player)
 	{
-		// Don't allow building on fields that don't support it
 		HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
 		if (invalidFieldIds.Contains(field.FieldId))
 		{
@@ -491,30 +500,23 @@ private async void TryBuildHotel(Field field, Figurehead player)
 			return;
 		}
 		
-		// Check if the player has enough ECTS
 		if (player.ECTS >= field.hotelCost)
 		{
-			// Check if we already have a hotel
 			if (field.isHotel)
 			{
 				ShowPopupNotification("There's already a hotel on this property!", 2.0f);
 				return;
 			}
 			
-			// Check if we have 4 houses (requirement for hotel)
 			int houseCount = field.CheckHouseQuantity(field);
 			if (houseCount == 4)
 			{
-				// Spend ECTS
 				player.SpendECTS(field.hotelCost);
 				
-				// Build a hotel
 				await field.BuildHotel(field.FieldId);
 				
-				// Show notification
 				ShowPopupNotification($"Built hotel on {field.Name} for {field.hotelCost} ECTS", 3.0f);
 				
-				// Update UI
 				gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
 			}
 			else
@@ -534,16 +536,14 @@ private async void TryBuildHotel(Field field, Figurehead player)
 }
 
 
-private void ShowPopupNotification(string message, float duration = 3.0f)
-{
-	_popupInfoLabel.Text = message;
-	_popupInfoLabel.Visible = true;
+	private void ShowPopupNotification(string message, float duration = 3.0f)
+	{
+		_popupInfoLabel.Text = message;
+		_popupInfoLabel.Visible = true;
+		
+		GetTree().CreateTimer(duration).Timeout += () => _popupInfoLabel.Visible = false;
+	}
 	
-	// Hide the label after specified duration
-	GetTree().CreateTimer(duration).Timeout += () => _popupInfoLabel.Visible = false;
-}
-	
-	// Find the nearest field to a world position
 	private Field FindNearestField(Vector3 position)
 	{
 		Field nearestField = null;
@@ -563,17 +563,15 @@ private void ShowPopupNotification(string message, float duration = 3.0f)
 	}
 	
 	
-	// ovveride inputu dla menu kontekstowego
 	public override void _Input(InputEvent @event)
 	{
 		if (@event is InputEventMouseButton mouseEvent)
 		{
 			if (mouseEvent.ButtonIndex == MouseButton.Right && mouseEvent.Pressed)
 			{
-				//GD.Print("Prawy przycisk myszy naciśnięty!");
 				_lastMousePosition = mouseEvent.Position;
+				
 				_contextMenu.Position = new Vector2I((int)_lastMousePosition.X, (int)_lastMousePosition.Y);
-				//GD.Print("Próba wyświetlenia menu kontekstowego na pozycji: " + _lastMousePosition);
 				_contextMenu.Popup();
 			}
 		}
