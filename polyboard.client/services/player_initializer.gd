@@ -54,7 +54,10 @@ func create_player(player_id):
 	
 	var label = Label3D.new()
 	label.text = player_name
-	label.position = Vector3(0, 5, 0) 
+	label.position = Vector3(0, 5, 0)
+	var parent_scale = player_instance.scale
+	label.scale = Vector3(0.1 / parent_scale.x, 0.1 / parent_scale.y, 0.1 / parent_scale.z)
+	label.top_level = false
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED  
 	label.modulate = Color(1, 1, 1)  
 	label.font_size = 600  
