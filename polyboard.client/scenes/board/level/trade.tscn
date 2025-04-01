@@ -10,18 +10,18 @@ border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
 
-[sub_resource type="SystemFont" id="SystemFont_vodpx"]
+[sub_resource type="SystemFont" id="SystemFont_bnqyb"]
 subpixel_positioning = 0
 
 [sub_resource type="LabelSettings" id="LabelSettings_mdfrh"]
-font = SubResource("SystemFont_vodpx")
+font = SubResource("SystemFont_bnqyb")
 font_size = 22
 
-[sub_resource type="SystemFont" id="SystemFont_s5qps"]
+[sub_resource type="SystemFont" id="SystemFont_fssgb"]
 subpixel_positioning = 0
 
 [sub_resource type="LabelSettings" id="LabelSettings_x6cg4"]
-font = SubResource("SystemFont_s5qps")
+font = SubResource("SystemFont_fssgb")
 
 [sub_resource type="SystemFont" id="SystemFont_7xje2"]
 font_names = PackedStringArray("Impact")
