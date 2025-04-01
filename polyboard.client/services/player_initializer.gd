@@ -31,39 +31,53 @@ func initialize_players():
 
 
 func create_player(player_id):
-	print("Inicjalizacja gracza ID:", player_id)
 	var skin_id = GameData.get_player_skin_id_by_id(player_id)
 	var player_name = GameData.get_player_name_by_id(player_id)
-
+	
 	var skin_manager = get_node("/root/SkinManager")
-	if skin_manager == null:
-		printerr("Nie znaleziono SkinManager!")
-		return null
-
 	var skin_scene = skin_manager.get_skin_by_index(skin_id)
-	if skin_scene == null:
-		printerr("Błąd podczas pobierania sceny skina dla gracza %s (ID: %d)" % [player_name, skin_id])
-		return null
-
 	var player_instance = skin_scene.instantiate()
-	if player_instance == null:
-		printerr("Błąd podczas instancjacji pionka dla gracza %s" % player_name)
-		return null
-
 	player_instance.name = player_name
 	
-	var label = Label3D.new()
-	label.text = player_name
-	label.position = Vector3(0, 5, 0)
+	# Znajdź najwyższy punkt modelu
+	var max_height = find_highest_point(player_instance)
+	print("Najwyższy punkt pionka: ", max_height)
 	var parent_scale = player_instance.scale
-	label.scale = Vector3(0.1 / parent_scale.x, 0.1 / parent_scale.y, 0.1 / parent_scale.z)
-	label.top_level = false
-	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED  
-	label.modulate = Color(1, 1, 1)  
-	label.font_size = 600  
-	
+	var label = create_player_label(player_name, max_height, parent_scale, player_instance)
 	player_instance.add_child(label)
 	
-	print("Utworzono pionek dla gracza:", player_name)
-
 	return player_instance
+
+func find_highest_point(node: Node) -> float:
+	var max_y = -INF
+	for child in node.get_children():
+		if child is MeshInstance3D:
+			var aabb = child.get_aabb()
+		
+			max_y = max(max_y, aabb.position.y + aabb.size.y)
+		if child.get_child_count() > 0:
+			max_y = max(max_y, find_highest_point(child))
+		
+	return max_y
+
+func create_player_label(name: String, height: float,parent_scale:Vector3,parent_node:Node3D) -> Label3D:
+	var label = Label3D.new()
+	label.text = name
+	var model_up = parent_node.global_transform.basis.y
+	var model_forward = parent_node.global_transform.basis.z
+	
+	var needs_correction = abs(model_up.dot(Vector3.UP)) < 0.9
+	var base_offset = Vector3(0, height + 0.5, 0)
+	
+	if needs_correction:
+		var correction = model_forward * -0.5 * height 
+		base_offset += correction
+	
+	
+	label.position = base_offset
+	
+	label.scale = Vector3(0.1 / parent_scale.x, 0.1 / parent_scale.y, 0.1 / parent_scale.z)
+	label.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
+	label.modulate = Color(1, 1, 1)
+	label.font_size = 600
+	return label
