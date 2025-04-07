@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using Polyboard.Enums;
 using System.Threading.Tasks;
 
 public partial class GameManager : Node3D
@@ -58,14 +59,27 @@ public partial class GameManager : Node3D
 	private CanvasLayer gameEndScreen;
 	private Button returnToMenuButton;
 	private VBoxContainer gameResultsContainer;
+
 	private bool isGameOver = false;
-	public bool regularRoll = true;
 	//public dla wymian
 	public List<Figurehead> Players
 	{
 		get { return players; }
 	}
-
+	public bool IsSpecialRollHappening = false;
+	public bool IsLastRegularRollDouble = false;
+	
+	[Signal]
+	public delegate void DicesStoppedRollingEventHandler();
+	[Signal]
+	public delegate void SpecialRollEndedEventHandler();
+	
+	private int lastDiceTotal;
+	public int GetLastDiceTotal()
+	{
+		return lastDiceTotal;
+	}
+	
 	private enum GameState
 	{
 		WaitingForInput,
@@ -74,6 +88,7 @@ public partial class GameManager : Node3D
 		EndTurn
 	}
 
+	private DiceRollMode diceRollMode = DiceRollMode.ForMovement;
 	private GameState currentState = GameState.WaitingForInput;
 
 	public override void _Ready()
@@ -230,6 +245,7 @@ public partial class GameManager : Node3D
 		}
 	}
 
+
 	private void InitDice()
 	{
 		dieNode1 = GetNodeOrNull<RigidBody3D>(dieNodePath1);
@@ -299,6 +315,7 @@ public partial class GameManager : Node3D
 		rollButton.Connect("pressed", new Callable(this, nameof(OnRollButtonPressed)));
 		rollButton.Visible = true;
 	}
+
 	private void InitEndTurnButton()
 	{
 		endTurnButton = GetNodeOrNull<Button>(endTurnButtonPath);
@@ -780,6 +797,7 @@ private void ShowEndGameScreen(string resultMessage)
 		EndTurn();
 	}
 
+	
 	// Metoda do aktualizacji licznika rund
 	private void UpdateRoundCounter()
 	{
@@ -796,14 +814,17 @@ private void ShowEndGameScreen(string resultMessage)
 		}
 	}
 
-	private void StartDiceRollForCurrentPlayer()
+	public void StartDiceRollForCurrentPlayer(DiceRollMode mode = DiceRollMode.ForMovement)
 	{
 		if (dieNode1 == null || dieNode2 == null)
 		{
 			notificationService.ShowNotification("Nie można rzucić kostkami: kostki nie są zainicjalizowane.");
 			return;
 		}
-
+		
+		die1Result = null;
+		die2Result = null;
+		
 		StopTurnTimer();
 
 		currentState = GameState.RollingDice;
@@ -811,6 +832,9 @@ private void ShowEndGameScreen(string resultMessage)
 		SwitchToDiceCamera();
 		rollButton.Visible = false;
 		endTurnButton.Visible = false;
+		
+		diceRollMode = mode;
+		
 		string currentPlayerName = GetCurrentPlayerName();
 		notificationService.ShowNotification($"Gracz {currentPlayerName} rzuca kostkami...", NotificationService.NotificationType.Normal, 2f);
 		GD.Print($"Rzut kostkami dla gracza: {currentPlayerName}");
@@ -822,48 +846,75 @@ private void ShowEndGameScreen(string resultMessage)
 	{
 		GD.Print($"Wynik pierwszej kostki: {value}");
 		die1Result = value;
-		CheckDiceResults();
+		
+		if (BothDicesFinished())
+			HandleBothDicesFinished();
 	}
 
 	private void OnDie2RollFinished(int value)
 	{
 		GD.Print($"Wynik drugiej kostki: {value}");
 		die2Result = value;
-		CheckDiceResults();
+		
+		if (BothDicesFinished())
+			HandleBothDicesFinished();
 	}
-
-	private void CheckDiceResults()
-	{
+	
+	private bool BothDicesFinished(){
 		if (!die1Result.HasValue || !die2Result.HasValue)
 		{
-			return;
+			return false;
 		}
-
-		int rollSum = die1Result.Value + die2Result.Value;
-		totalSteps = rollSum;
-		notificationService.ShowNotification($"Łączna suma oczek: {totalSteps}", NotificationService.NotificationType.Normal, 5f);
-		GD.Print($"Łączna suma oczek: {totalSteps}");
-		SwitchToMasterCamera();
-		if (regularRoll)
+		
+		return true;
+	}
+	
+	private void HandleBothDicesFinished()
+	{
+		GD.Print($"Oba rzuty zakończone. Wynik sumaryczny: {lastDiceTotal}");
+		switch (diceRollMode)
 		{
-			MoveCurrentPlayerPawnSequentially(totalSteps);
-			if (die1Result.Value == die2Result.Value)
-			{
-				GD.Print("Dublet! Kolejny rzut po ruchu.");
-				PlaySound(doubleSoundPlayer);
-				notificationService.ShowNotification("Dublet! Powtórz rzut po ruchu.", NotificationService.NotificationType.Normal, 5f);
-			}
-			else if (!regularRoll)
-			{
-				regularRoll = true;
-				board.publicFee = totalSteps;
-				board.publicFacilityDone = true;
-			}
-			else
-			{
-				GD.Print("Nie wyrzucono dubletu. Przygotowanie do zakończenia tury.");
-				notificationService.ShowNotification("Nie wyrzucono dubletu. Możesz zakończyć turę.", NotificationService.NotificationType.Normal, 2f);
-			}
+			case DiceRollMode.ForMovement:
+				HandleRegularRoll(CheckDiceResults());
+				break;
+
+			case DiceRollMode.JustForDisplay:
+				lastDiceTotal = CheckDiceResults();
+				EmitSignal(SignalName.DicesStoppedRolling);
+				EmitSignal(SignalName.SpecialRollEnded);
+				ShowDiceResultsOnly(lastDiceTotal);
+				break;
+		}
+	}
+	
+	private void ShowDiceResultsOnly(int total)
+	{
+		GD.Print($"Wyrzucono {die1Result}+{die2Result} = {total} (tylko podgląd)");
+		SwitchToMasterCamera();
+		SetBoardInteractions(true);
+		
+		AdjustGameStateAfterRoll();
+	}
+	
+	private int CheckDiceResults()
+	{
+		int rollSum = die1Result.Value + die2Result.Value;
+		
+		return rollSum;
+	}
+	
+	private void HandleRegularRoll(int totalSteps){
+		SwitchToMasterCamera();
+		MoveCurrentPlayerPawnSequentially(totalSteps);
+		if (die1Result.Value == die2Result.Value)
+		{
+			GD.Print("Dublet! Kolejny rzut po ruchu.");
+			IsLastRegularRollDouble = true;
+			PlaySound(doubleSoundPlayer);
+		}
+		else
+		{
+			GD.Print("Nie wyrzucono dubletu. Przygotowanie do zakończenia tury.");
 		}
 	}
 	
@@ -880,247 +931,229 @@ private void ShowEndGameScreen(string resultMessage)
 		}
 	}
 
-	private async void MoveCurrentPlayerPawnSequentially(int steps)
-	{
-		if (currentPlayerIndex < 0 || currentPlayerIndex >= players.Count)
-		{
-			notificationService.ShowNotification("Błąd: Indeks aktualnego gracza poza zakresem.");
-			return;
-		}
+		private async void MoveCurrentPlayerPawnSequentially(int steps)
+		{	
+			if (currentPlayerIndex < 0 || currentPlayerIndex >= players.Count)
+			{
+				notificationService.ShowNotification("Błąd: Indeks aktualnego gracza poza zakresem.");
+				return;
+			}
 
-		currentState = GameState.MovingPawn;
-		Figurehead currentPlayer = players[currentPlayerIndex];
-		endTurnButton.Visible = false;
-		isMovementInProgress = true;
-		
-		// Play walking sound before starting movement
-		PlaySound(walkingSoundPlayer);
-		
-		await currentPlayer.MovePawnSequentially(steps, board);
-		
-		// Stop walking sound after movement is complete
-		StopSound(walkingSoundPlayer);
-		
-		isMovementInProgress = false;
-		
-		// Poczekaj na zakończenie wszystkich animacji i efektów
-		await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
-		// Check for bankruptcy after movement (ECTS might have changed during movement)
-		CheckForBankruptcy(currentPlayerIndex);
-		// If the player is now bankrupt, end their turn
-		if (IsCurrentPlayerBankrupt())
-		{
-			die1Result = null;
-			die2Result = null;
-			currentState = GameState.WaitingForInput;
-			EndTurn();
-			return;
+			currentState = GameState.MovingPawn;
+			Figurehead currentPlayer = players[currentPlayerIndex];
+			endTurnButton.Visible = false;
+			isMovementInProgress = true;
+			await currentPlayer.MovePawnSequentially(steps, board); //zamien 12 na steps
+			isMovementInProgress = false;
+			// Poczekaj na zakończenie wszystkich animacji i efektów
+			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
+			// Check for bankruptcy after movement (ECTS might have changed during movement)
+			CheckForBankruptcy(currentPlayerIndex);
+			// If the player is now bankrupt, end their turn
+			if (IsCurrentPlayerBankrupt())
+			{
+				die1Result = null;
+				die2Result = null;
+				currentState = GameState.WaitingForInput;
+				EndTurn();
+				return;
+			}
+			StartTurnTimer();
+			
+			AdjustGameStateAfterRoll();
 		}
-		StartTurnTimer();
-
-		if (die1Result.HasValue && die2Result.HasValue)
-		{
-			if (die1Result.Value != die2Result.Value)
+		
+		private async void AdjustGameStateAfterRoll(){
+			if (IsSpecialRollHappening){
+				await ToSignal(this, SignalName.SpecialRollEnded);
+				IsSpecialRollHappening = false;
+			}
+			
+			if (IsLastRegularRollDouble){
+				PrepareForNextRoll();
+				IsLastRegularRollDouble = false;
+			}
+			else
 			{
 				currentState = GameState.WaitingForInput;
 				endTurnButton.Visible = true;
 			}
+			UpdateECTSUI(currentPlayerIndex);
+
+		}
+		
+		private void PrepareForNextRoll()
+		{
+			if (isMovementInProgress) return;
+
+			StopTurnTimer(); // zatrzymujemy timer
+			StartTurnTimer(); // resetujemy timer dla tego samego gracza
+
+			die1Result = null;
+			die2Result = null;
+			totalSteps = 0;
+			SetBoardInteractions(true);
+			currentState = GameState.WaitingForInput;
+			rollButton.Visible = true;
+			endTurnButton.Visible = false;
+			string currentPlayerName = GetCurrentPlayerName();
+			notificationService.ShowNotification($"Gracz {currentPlayerName}, rzuć ponownie!", NotificationService.NotificationType.Normal, 2f);
+			GD.Print($"Gracz {currentPlayerName} może wykonać kolejny rzut.");
+		}
+
+		private void EndTurn()
+		{
+			if (isMovementInProgress) return;
+
+			StopTurnTimer(); // zatrzymujemy timer przed zmianą gracza
+
+			die1Result = null;
+			die2Result = null;
+			totalSteps = 0;
+			// Find next active (non-bankrupt) player
+			FindNextActivePlayer();
+			SetBoardInteractions(true);
+			currentState = GameState.WaitingForInput;
+			rollButton.Visible = true;
+			endTurnButton.Visible = false;
+			string nextPlayerName = GetCurrentPlayerName();
+			PlaySound(nextTurnSoundPlayer);
+			notificationService.ShowNotification($"Tura gracza: {nextPlayerName}", NotificationService.NotificationType.Normal, 3f);
+			GD.Print($"Zakończono turę gracza. Teraz tura gracza: {nextPlayerName}");
+
+			// Uruchamiamy timer dla nowego gracza
+			StartTurnTimer();
+		}
+
+		/// Find the next non-bankrupt player
+		private void FindNextActivePlayer()
+		{
+			int originalIndex = currentPlayerIndex;
+			int nextPlayerIndex;
+			do
+			{
+				nextPlayerIndex = (currentPlayerIndex + 1) % players.Count;
+				currentPlayerIndex = nextPlayerIndex;
+				// If we've checked all players and returned to the original index, break to avoid infinite loop
+				if (nextPlayerIndex == originalIndex)
+				{
+					break;
+				}
+			} while (playerBankruptcyStatus[currentPlayerIndex]);
+			// If everyone is bankrupt, currentPlayerIndex will remain unchanged
+		}
+
+		private void SwitchToMasterCamera()
+		{
+			SetActiveCamera(masterCamera);
+		}
+
+		private void SwitchToDiceCamera()
+		{
+			SetActiveCamera(diceCamera);
+		}
+
+		private void SetActiveCamera(Camera3D cameraToActivate)
+		{
+			if (masterCamera != null) masterCamera.Current = false;
+			if (diceCamera != null) diceCamera.Current = false;
+			if (cameraToActivate != null)
+			{
+				cameraToActivate.Current = true;
+				GD.Print($"Przełączono na kamerę: {cameraToActivate.Name}");
+			}
 			else
 			{
-				PrepareForNextRoll();
+				notificationService.ShowNotification("Błąd: Próba aktywacji nieistniejącej kamery.", NotificationService.NotificationType.Error);
 			}
 		}
-		UpdateECTSUI(currentPlayerIndex);
-	}
-	
-	private void StopSound(AudioStreamPlayer3D player)
-	{
-		if (player != null && player.Playing)
+
+		private void HideNotification()
 		{
-			player.Stop();
-			GD.Print("Zatrzymano dźwięk.");
-		}
-	}
-
-	private void PrepareForNextRoll()
-	{
-		if (isMovementInProgress) return;
-
-		StopTurnTimer(); // zatrzymujemy timer
-		StartTurnTimer(); // resetujemy timer dla tego samego gracza
-
-		die1Result = null;
-		die2Result = null;
-		totalSteps = 0;
-		SetBoardInteractions(true);
-		currentState = GameState.WaitingForInput;
-		rollButton.Visible = true;
-		endTurnButton.Visible = false;
-		string currentPlayerName = GetCurrentPlayerName();
-		notificationService.ShowNotification($"Gracz {currentPlayerName}, rzuć ponownie!", NotificationService.NotificationType.Normal, 2f);
-		GD.Print($"Gracz {currentPlayerName} może wykonać kolejny rzut.");
-	}
-
-	private void EndTurn()
-	{
-		if (isMovementInProgress || isGameOver) return;
-
-		StopTurnTimer(); // zatrzymujemy timer przed zmianą gracza
-
-		die1Result = null;
-		die2Result = null;
-		totalSteps = 0;
-		// Find next active (non-bankrupt) player
-		FindNextActivePlayer();
-		
-		// Sprawdź, czy rozpoczyna się nowa runda
-		if (currentPlayerIndex == 0)
-		{
-			UpdateRoundCounter();
+			if (notificationLabel == null || notificationPanel == null) return;
+			notificationPanel.Visible = false;
+			notificationLabel.Visible = false;
 		}
 		
-		SetBoardInteractions(true);
-		currentState = GameState.WaitingForInput;
-		rollButton.Visible = true;
-		endTurnButton.Visible = false;
-		string nextPlayerName = GetCurrentPlayerName();
-		PlaySound(nextTurnSoundPlayer);
-		notificationService.ShowNotification($"Tura gracza: {nextPlayerName}", NotificationService.NotificationType.Normal, 3f);
-		GD.Print($"Zakończono turę gracza. Teraz tura gracza: {nextPlayerName}");
-
-		// Uruchamiamy timer dla nowego gracza
-		StartTurnTimer();
-	}
-
-	/// Find the next non-bankrupt player
-	private void FindNextActivePlayer()
-	{
-		int originalIndex = currentPlayerIndex;
-		int nextPlayerIndex;
-		do
+		private void SetBoardInteractions(bool isInteractive)
 		{
-			nextPlayerIndex = (currentPlayerIndex + 1) % players.Count;
-			currentPlayerIndex = nextPlayerIndex;
-			// If we've checked all players and returned to the original index, break to avoid infinite loop
-			if (nextPlayerIndex == originalIndex)
+			if (board == null) return;
+			foreach (Field field in board.GetFields())
 			{
-				break;
-			}
-		} while (playerBankruptcyStatus[currentPlayerIndex]);
-		// If everyone is bankrupt, currentPlayerIndex will remain unchanged
-	}
-
-	private void SwitchToMasterCamera()
-	{
-		SetActiveCamera(masterCamera);
-	}
-
-	private void SwitchToDiceCamera()
-	{
-		SetActiveCamera(diceCamera);
-	}
-
-	private void SetActiveCamera(Camera3D cameraToActivate)
-	{
-		if (masterCamera != null) masterCamera.Current = false;
-		if (diceCamera != null) diceCamera.Current = false;
-		if (cameraToActivate != null)
-		{
-			cameraToActivate.Current = true;
-			GD.Print($"Przełączono na kamerę: {cameraToActivate.Name}");
-		}
-		else
-		{
-			notificationService.ShowNotification("Błąd: Próba aktywacji nieistniejącej kamery.", NotificationService.NotificationType.Error);
-		}
-	}
-
-	private void HideNotification()
-	{
-		if (notificationLabel == null || notificationPanel == null) return;
-		notificationPanel.Visible = false;
-		notificationLabel.Visible = false;
-	}
-	
-	private void SetBoardInteractions(bool isInteractive)
-	{
-		if (board == null) return;
-		foreach (Field field in board.GetFields())
-		{
-			field.isMouseEventEnabled = isInteractive;
-		}
-	}
-
-	public void UpdateECTS(int playerIndex)
-	{
-		UpdateECTSUI(playerIndex);
-	}
-
-	private string GetCurrentPlayerName()
-	{
-		if (currentPlayerIndex < 0 || currentPlayerIndex >= players.Count)
-		{
-			notificationService.ShowNotification("Błąd: Indeks aktualnego gracza poza zakresem podczas pobierania nazwy.", NotificationService.NotificationType.Error);
-			return "Nieznany";
-		}
-		return players[currentPlayerIndex].Name;
-	}
-
-	// Metody do obsługi kart
-	public int GetCurrentPlayerIndex()
-	{
-		return currentPlayerIndex;
-	}
-
-	public void AddEctsToPlayer(int playerIndex, int amount)
-	{
-		if (playerIndex >= 0 && playerIndex < players.Count)
-		{
-			players[playerIndex].AddECTS(amount);
-			PlaySound(gainECTSSoundPlayer);
-			UpdateECTSUI(playerIndex);
-			// If player was bankruptcy but got back to positive ECTS, remove bankruptcy status
-			if (amount > 0 && playerBankruptcyStatus[playerIndex] && players[playerIndex].ECTS > 0)
-			{
-				RevivePlayer(playerIndex);
+				field.isMouseEventEnabled = isInteractive;
 			}
 		}
-	}
 
-	/// Method to revive a player if they gain ECTS after bankruptcy
-	private void RevivePlayer(int playerIndex)
-	{
-		if (playerIndex < 0 || playerIndex >= players.Count)
+		public void UpdateECTS(int playerIndex)
 		{
-			return;
-		}
-
-		// Only revive if the player has positive ECTS
-		if (players[playerIndex].ECTS > 0)
-		{
-			playerBankruptcyStatus[playerIndex] = false;
-			// Update UI to remove bankrupt status
-			if (playerIndex < playerNameLabels.Count)
-			{
-				playerNameLabels[playerIndex].Text = players[playerIndex].Name;
-				// Reset text color
-				playerNameLabels[playerIndex].RemoveThemeColorOverride("font_color");
-			}
-
-			PlaySound(reviveSoundPlayer);
-			players[playerIndex].Visible = true;
-			notificationService.ShowNotification($"Gracz {players[playerIndex].Name} wraca do gry!", NotificationService.NotificationType.Normal, 5f);
-			GD.Print($"Gracz {players[playerIndex].Name} wraca do gry!");
-		}
-	}
-
-	public void SubtractEctsFromPlayer(int playerIndex, int amount)
-	{
-		if (playerIndex >= 0 && playerIndex < players.Count)
-		{
-			GD.Print("...");
-			players[playerIndex].SpendECTS(amount);
 			UpdateECTSUI(playerIndex);
 		}
+
+		private string GetCurrentPlayerName()
+		{
+			if (currentPlayerIndex < 0 || currentPlayerIndex >= players.Count)
+			{
+				notificationService.ShowNotification("Błąd: Indeks aktualnego gracza poza zakresem podczas pobierania nazwy.", NotificationService.NotificationType.Error);
+				return "Nieznany";
+			}
+			return players[currentPlayerIndex].Name;
+		}
+
+		// Metody do obsługi kart
+		public int GetCurrentPlayerIndex()
+		{
+			return currentPlayerIndex;
+		}
+
+		public void AddEctsToPlayer(int playerIndex, int amount)
+		{
+			if (playerIndex >= 0 && playerIndex < players.Count)
+			{
+				players[playerIndex].AddECTS(amount);
+				PlaySound(gainECTSSoundPlayer);
+				UpdateECTSUI(playerIndex);
+				// If player was bankruptcy but got back to positive ECTS, remove bankruptcy status
+				if (amount > 0 && playerBankruptcyStatus[playerIndex] && players[playerIndex].ECTS > 0)
+				{
+					RevivePlayer(playerIndex);
+				}
+			}
+		}
+
+		/// Method to revive a player if they gain ECTS after bankruptcy
+		private void RevivePlayer(int playerIndex)
+		{
+			if (playerIndex < 0 || playerIndex >= players.Count)
+			{
+				return;
+			}
+
+			// Only revive if the player has positive ECTS
+			if (players[playerIndex].ECTS > 0)
+			{
+				playerBankruptcyStatus[playerIndex] = false;
+				// Update UI to remove bankrupt status
+				if (playerIndex < playerNameLabels.Count)
+				{
+					playerNameLabels[playerIndex].Text = players[playerIndex].Name;
+					// Reset text color
+					playerNameLabels[playerIndex].RemoveThemeColorOverride("font_color");
+				}
+
+				PlaySound(reviveSoundPlayer);
+				players[playerIndex].Visible = true;
+				notificationService.ShowNotification($"Gracz {players[playerIndex].Name} wraca do gry!", NotificationService.NotificationType.Normal, 5f);
+				GD.Print($"Gracz {players[playerIndex].Name} wraca do gry!");
+			}
+		}
+
+		public void SubtractEctsFromPlayer(int playerIndex, int amount)
+		{
+			if (playerIndex >= 0 && playerIndex < players.Count)
+			{
+				GD.Print("...");
+				players[playerIndex].SpendECTS(amount);
+				UpdateECTSUI(playerIndex);
+			}
+		}
 	}
-}
