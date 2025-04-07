@@ -1,6 +1,7 @@
 using Godot;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 public partial class Board : StaticBody3D
@@ -820,7 +821,15 @@ private void ShowPopupError(string message, float duration = 4.0f)
 		await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
 		// Hide end turn button initially
 		endTurnButton.Visible = false;
-		if (fieldId == 12 || fieldId == 28)
+		const int goToDeanOfficeFieldId = 30;
+		int[] publicUtilities = [12, 28];
+		int[] deanOffice = [4, 10, goToDeanOfficeFieldId];
+		int[] communityCards = [2, 17, 33];
+		int[] chanceCards = [7, 22, 36];
+		int[] noActionFields = [0, 4, 10, 20, 38];
+		int[] fineFields = [4, 38];
+
+		if (publicUtilities.Contains(fieldId))
 		{
 			var field = GetFieldById(fieldId);
 			GD.Print("Pole użytku publicznego.");
@@ -836,47 +845,53 @@ private void ShowPopupError(string message, float duration = 4.0f)
 			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
 			endTurnButton.Visible = true;
 		}
-		if (fieldId == 4 || fieldId == 10 || fieldId == 30)
+		if (deanOffice.Contains(fieldId))
 		{
 			PlayDeanOfficeSound();
+			if (fieldId == goToDeanOfficeFieldId)
+			{
+				var currentPlayer = gameManager.getCurrentPlayer();
+				await currentPlayer.MoveBackward(20, this);
+			}
 			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
 			endTurnButton.Visible = true;
 		}
-		if (fieldId == 2 || fieldId == 17 || fieldId == 33)
+		if (communityCards.Contains(fieldId))
 		{
 			await ShowRandomCard("community");
 			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
 			endTurnButton.Visible = true;
 		}
-		else if (fieldId == 7 || fieldId == 22 || fieldId == 36)
+		else if (chanceCards.Contains(fieldId))
 		{
 			await ShowRandomCard("chance");
 			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
 			endTurnButton.Visible = true;
 		}
-		else if (fieldId == 0 || fieldId == 4 || fieldId == 38 || fieldId == 20 || fieldId == 30 || fieldId == 10)
+		else if (noActionFields.Contains(fieldId))
 		{
-			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
-			endTurnButton.Visible = true;
-		}
-		else if (fieldId == 4 || fieldId == 38)
-		{
-			var currentPlayer = gameManager.getCurrentPlayer();
-			currentPlayer.SpendECTS(150);
-			gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
-			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
-			endTurnButton.Visible = true;
-		}
-		else
-		{
-			Figurehead currentFigureHead = gameManager.getCurrentPlayer();
-			int current_position = currentFigureHead.GetCurrentPositionIndex();
-			Field field = gameManager.getCurrentField(current_position);
-			if(field.owned==false)
-				BuyField(fieldId);
-			else if(field.Owner != currentFigureHead)
+			if (fineFields.Contains(fieldId))
 			{
-				field.PayRent(currentFigureHead,field);
+				var currentPlayer = gameManager.getCurrentPlayer();
+				currentPlayer.SpendECTS(150);
+				gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
+			}
+			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
+			endTurnButton.Visible = true;
+		}
+		else {
+			// Domyślna akcja: zakup pola lub płacenie czynszu
+			Figurehead currentFigureHead = gameManager.getCurrentPlayer();
+			int currentPosition = currentFigureHead.GetCurrentPositionIndex();
+			Field field = gameManager.getCurrentField(currentPosition);
+
+			if (!field.owned)
+			{
+				BuyField(fieldId);
+			}
+			else if (field.Owner != currentFigureHead)
+			{
+				field.PayRent(currentFigureHead, field);
 			}
 		}
 	}
