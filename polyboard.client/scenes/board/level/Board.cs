@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Polyboard.Enums;
+
 
 public partial class Board : StaticBody3D
 {
@@ -35,9 +37,6 @@ public partial class Board : StaticBody3D
 		Cancel = 104,
 		UseSpecialCard = 105
 	}
-	protected int multiplier;
-	public int publicFee;
-	public bool publicFacilityDone = false;
 
 	private readonly Dictionary<(string type, int number), (int ectsEffect, Func<Task> specialEffect)> cardEffects;
 
@@ -788,32 +787,29 @@ private void ShowPopupError(string message, float duration = 4.0f)
 			GD.PrintErr("Błąd: AudioStreamPlayer3D nie jest zainicjalizowany.");
 		}
 	}
-	public void PublicUtilityFacility(int fieldId)
+	public void PublicUtilityFacility(int fieldId, int diceTotal)
 	{
 		var publicField = (fieldId == 12) ? GetFieldById(12) : GetFieldById(28);
 		var otherPublicField = (fieldId == 12) ? GetFieldById(28) : GetFieldById(12);
+		
 		if (publicField.Owner == gameManager.getCurrentPlayer())
 		{
 			return;
 		}
-		multiplier = (publicField.Owner == otherPublicField.Owner) ? 10 : 4;
+		
+		var multiplier = (publicField.Owner == otherPublicField.Owner) ? 10 : 4;
+		var fee = multiplier * diceTotal;
+		
 		GD.Print("Mnożnik za posiadanie pól: ", multiplier);
-		gameManager.regularRoll = false;
-		GD.Print(gameManager.regularRoll);
-		while (!publicFacilityDone)
-		{
-			gameManager.InitRollButton();
-		}
-		GD.Print(publicFee);
-		publicFee *= multiplier;
-		GD.Print(publicFee);
+		GD.Print($"Wyrzucone oczka: {diceTotal}, opłata: {fee}");
+		
 		var currentPlayer = gameManager.getCurrentPlayer();
-		currentPlayer.SpendECTS(publicFee);
+		currentPlayer.SpendECTS(fee);
 		gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
+		
 		var publicFieldOwner = publicField.Owner;
-		publicFieldOwner.AddECTS(publicFee);
+		publicFieldOwner.AddECTS(fee);
 		gameManager.UpdateECTSUI(publicField.OwnerId);
-			
 	}
 	public async void StepOnField(int fieldId)
 	{
@@ -841,7 +837,14 @@ private void ShowPopupError(string message, float duration = 4.0f)
 				return;
 			}
 			GD.Print("Rozliczenie pola.");
-			PublicUtilityFacility(fieldId);
+			
+			gameManager.IsSpecialRollHappening = true;
+			
+			gameManager.StartDiceRollForCurrentPlayer(DiceRollMode.JustForDisplay);
+			await ToSignal(gameManager, GameManager.SignalName.DicesStoppedRolling);
+			int diceTotal = gameManager.GetLastDiceTotal();
+			PublicUtilityFacility(fieldId, diceTotal);
+			
 			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
 			endTurnButton.Visible = true;
 		}
