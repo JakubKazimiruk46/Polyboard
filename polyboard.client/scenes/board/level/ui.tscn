@@ -825,6 +825,44 @@ theme = SubResource("Theme_s8lvn")
 text = "PASS
 "
 
+[node name="SpecialCards" type="PanelContainer" parent="."]
+anchors_preset = -1
+anchor_top = 1.2
+anchor_right = 1.0
+anchor_bottom = 1.2
+offset_top = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_vertical = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="SpecialCards"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="SpecialCards/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="CardHBoxContainer" type="HBoxContainer" parent="SpecialCards/ScrollContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="ColorRect" type="ColorRect" parent="SpecialCards/ScrollContainer/MarginContainer/CardHBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+color = Color(1, 1, 1, 0)
+
+[node name="ColorRect2" type="ColorRect" parent="SpecialCards/ScrollContainer/MarginContainer/CardHBoxContainer"]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+color = Color(1, 1, 1, 0.00392157)
+
 [connection signal="pressed" from="HBoxContainer/view_buttons" to="." method="on_view_buttons_pressed"]
 [connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer/card_button" to="." method="on_cards_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2/trade_button" to="." method="on_trade_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer5/special_card_button" to="." method="_on_special_card_button_pressed"]
