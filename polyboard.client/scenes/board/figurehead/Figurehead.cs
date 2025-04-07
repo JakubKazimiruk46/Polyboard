@@ -11,7 +11,7 @@ public partial class Figurehead : CharacterBody3D
 	[Export]
 	public NodePath pawnInstancePath;
 	[Export]
-	public int StartingECTS = 10000 ;
+	public int StartingECTS = 100 ;
 	[Export]
 	public Color playerColor;
 	private AudioStreamPlayer3D walkSoundPlayer;

@@ -241,10 +241,51 @@ private void InitPlayers()
 			return;
 		}
 
+		// Create a custom style for the roll button
+		var buttonStyle = new StyleBoxFlat();
+		buttonStyle.BgColor = new Color(0.2f, 0.2f, 0.2f, 0.95f);
+		buttonStyle.BorderWidthBottom = 3;
+		buttonStyle.BorderWidthLeft = 3;
+		buttonStyle.BorderWidthRight = 3;
+		buttonStyle.BorderWidthTop = 3;
+		buttonStyle.BorderColor = new Color("#62ff45");
+		buttonStyle.CornerRadiusBottomLeft = 8;
+		buttonStyle.CornerRadiusBottomRight = 8;
+		buttonStyle.CornerRadiusTopLeft = 8;
+		buttonStyle.CornerRadiusTopRight = 8;
+		buttonStyle.ContentMarginLeft = 15;
+		buttonStyle.ContentMarginRight = 15;
+		buttonStyle.ContentMarginTop = 8;
+		buttonStyle.ContentMarginBottom = 8;
+
+		var hoverStyle = new StyleBoxFlat();
+		hoverStyle.BgColor = new Color(0.3f, 0.3f, 0.3f, 0.95f);
+		hoverStyle.BorderWidthBottom = 3;
+		hoverStyle.BorderWidthLeft = 3;
+		hoverStyle.BorderWidthRight = 3;
+		hoverStyle.BorderWidthTop = 3;
+		hoverStyle.BorderColor = new Color("#62ff45");
+		hoverStyle.CornerRadiusBottomLeft = 8;
+		hoverStyle.CornerRadiusBottomRight = 8;
+		hoverStyle.CornerRadiusTopLeft = 8;
+		hoverStyle.CornerRadiusTopRight = 8;
+		hoverStyle.ContentMarginLeft = 15;
+		hoverStyle.ContentMarginRight = 15;
+		hoverStyle.ContentMarginTop = 8;
+		hoverStyle.ContentMarginBottom = 8;
+
+		rollButton.AddThemeStyleboxOverride("normal", buttonStyle);
+		rollButton.AddThemeStyleboxOverride("hover", hoverStyle);
+		rollButton.AddThemeStyleboxOverride("pressed", hoverStyle);
+		
+		rollButton.AddThemeColorOverride("font_color", new Color(1, 1, 1)); 
+		rollButton.AddThemeColorOverride("font_hover_color", new Color("#FFFFFF")); 
+		
+		rollButton.AddThemeFontSizeOverride("font_size", 20);
+
 		rollButton.Connect("pressed", new Callable(this, nameof(OnRollButtonPressed)));
 		rollButton.Visible = true;
 	}
-
 	private void InitEndTurnButton()
 	{
 		endTurnButton = GetNodeOrNull<Button>(endTurnButtonPath);
@@ -253,6 +294,48 @@ private void InitPlayers()
 			notificationService.ShowNotification("Błąd: Nie znaleziono przycisku do zakończenia tury.", NotificationService.NotificationType.Error);
 			return;
 		}
+
+		var buttonStyle = new StyleBoxFlat();
+		buttonStyle.BgColor = new Color(0.2f, 0.2f, 0.2f, 0.95f); 
+		buttonStyle.BorderWidthBottom = 3;
+		buttonStyle.BorderWidthLeft = 3;
+		buttonStyle.BorderWidthRight = 3;
+		buttonStyle.BorderWidthTop = 3;
+		buttonStyle.BorderColor = new Color("#ff4545"); 
+		buttonStyle.CornerRadiusBottomLeft = 8;
+		buttonStyle.CornerRadiusBottomRight = 8;
+		buttonStyle.CornerRadiusTopLeft = 8;
+		buttonStyle.CornerRadiusTopRight = 8;
+		buttonStyle.ContentMarginLeft = 15;
+		buttonStyle.ContentMarginRight = 15;
+		buttonStyle.ContentMarginTop = 8;
+		buttonStyle.ContentMarginBottom = 8;
+
+		var hoverStyle = new StyleBoxFlat();
+		hoverStyle.BgColor = new Color(0.3f, 0.3f, 0.3f, 0.95f);
+		hoverStyle.BorderWidthBottom = 3;
+		hoverStyle.BorderWidthLeft = 3;
+		hoverStyle.BorderWidthRight = 3;
+		hoverStyle.BorderWidthTop = 3;
+		hoverStyle.BorderColor = new Color("#ff4545");
+		hoverStyle.CornerRadiusBottomLeft = 8;
+		hoverStyle.CornerRadiusBottomRight = 8;
+		hoverStyle.CornerRadiusTopLeft = 8;
+		hoverStyle.CornerRadiusTopRight = 8;
+		hoverStyle.ContentMarginLeft = 15;
+		hoverStyle.ContentMarginRight = 15;
+		hoverStyle.ContentMarginTop = 8;
+		hoverStyle.ContentMarginBottom = 8;
+
+
+		endTurnButton.AddThemeStyleboxOverride("normal", buttonStyle);
+		endTurnButton.AddThemeStyleboxOverride("hover", hoverStyle);
+		endTurnButton.AddThemeStyleboxOverride("pressed", hoverStyle);
+
+		endTurnButton.AddThemeColorOverride("font_color", new Color(1, 1, 1));
+		endTurnButton.AddThemeColorOverride("font_hover_color", new Color("#FFFFFF")); 
+
+		endTurnButton.AddThemeFontSizeOverride("font_size", 20);
 
 		endTurnButton.Connect("pressed", new Callable(this, nameof(OnEndTurnButtonPressed)));
 		endTurnButton.Visible = false;

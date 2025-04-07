@@ -117,6 +117,7 @@ func display_owned_fields():
 					displayed_index += 1
 				else:
 					colorrect.visible = false
+					
 
 func _on_card_mouse_entered(field_id: int):
 	if board and board.has_method("ShowFieldTexture"):
