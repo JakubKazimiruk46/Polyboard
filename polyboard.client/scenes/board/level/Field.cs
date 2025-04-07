@@ -102,10 +102,6 @@ public partial class Field : Node3D
 				GD.PrintErr("Błąd: Nie znaleziono OwnerBorder!");
 				return;
 			}
-
-		// Ustawienie koloru i widoczności ramki
-		//TODO usunąć?
-		//_ownerBorder.Modulate = ;
 		_ownerBorder.Visible = false;
 		}
 	}

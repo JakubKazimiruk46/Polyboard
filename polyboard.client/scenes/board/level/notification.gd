@@ -3,8 +3,6 @@ extends CanvasLayer
 @onready var notification_label = $NotificationPanel/NotificationLabel
 @onready var notification_panel = $NotificationPanel
 
-var original_position_x: float = 0
-var original_position_y: float = 0
 var fade_tween: Tween
 var slide_tween: Tween
 
@@ -17,8 +15,6 @@ func _ready():
 	notification_panel.visible = false
 	notification_label.visible = false
 	
-	original_position_x = notification_panel.position.x
-	original_position_y = notification_panel.position.y
 	
 	notification_label.add_theme_font_size_override("font_size", 19)
 
@@ -41,16 +37,13 @@ func _display_notification(message: String, color: Color, duration: float) -> vo
 	notification_panel.modulate.a = 1
 	notification_label.modulate.a = 1
 	
-	notification_panel.position.x = original_position_x
-	notification_panel.position.y = original_position_y - notification_panel.size.y - 20
-	
 	notification_panel.visible = true
 	notification_label.visible = true
 	
 	slide_tween = create_tween()
 	slide_tween.set_trans(Tween.TRANS_BACK)
 	slide_tween.set_ease(Tween.EASE_OUT)
-	slide_tween.tween_property(notification_panel, "position:y", original_position_y, SLIDE_DURATION)
+	slide_tween.tween_property(notification_panel, "position:y", 0, SLIDE_DURATION)
 	slide_tween.finished.connect(_start_shake_effect)
 	
 	var timer = get_tree().create_timer(duration)
@@ -58,9 +51,10 @@ func _display_notification(message: String, color: Color, duration: float) -> vo
 
 func _start_shake_effect() -> void:
 	var shake_tween = create_tween()
-	shake_tween.tween_property(notification_panel, "position:x", original_position_x - 10, 0.05)
-	shake_tween.tween_property(notification_panel, "position:x", original_position_x + 10, 0.05)
-	shake_tween.tween_property(notification_panel, "position:x", original_position_x, 0.05)
+	var current_x = notification_panel.position.x
+	shake_tween.tween_property(notification_panel, "position:x", current_x - 10, 0.05)
+	shake_tween.tween_property(notification_panel, "position:x", current_x + 10, 0.05)
+	shake_tween.tween_property(notification_panel, "position:x", current_x, 0.05)
 
 func _start_fade_out() -> void:
 	fade_tween = create_tween()

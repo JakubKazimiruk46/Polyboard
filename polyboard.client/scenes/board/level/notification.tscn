@@ -9,17 +9,16 @@ script = ExtResource("1_1p6u2")
 [node name="NotificationPanel" type="TextureRect" parent="."]
 modulate = Color(1, 1, 1, 0)
 light_mask = 7
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = 239.0
-offset_top = 1.0
-offset_right = 577.0
-offset_bottom = 66.0
-grow_horizontal = 2
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -338.0
+offset_bottom = 65.0
+grow_horizontal = 0
 size_flags_horizontal = 4
 size_flags_vertical = 0
 texture = ExtResource("2_6lcqt")
+metadata/_edit_use_anchors_ = true
 
 [node name="NotificationLabel" type="Label" parent="NotificationPanel"]
 layout_mode = 1

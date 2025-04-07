@@ -4,7 +4,6 @@ extends CanvasLayer
 @onready var buycard = $"../BuyCard"
 @onready var tradebutton = $HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2/trade_button
 @onready var buildbutton = $HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3/build_button
-@onready var remove_owner_button = $HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer6/remove_owner_button
 @onready var card_hbox_container = $Cards/ScrollContainer/MarginContainer/CardHBoxContainer
 var cards_view = false
 var buttons_view = false
@@ -12,11 +11,9 @@ const Figurehead=preload("res://scenes/board/figurehead/Figurehead.cs")
 var game_manager = null
 var board = null
 
-
 func _ready() -> void:
 	game_manager = $"../GameManager"
 	board = $"../Board"
-
 
 func on_cards_button_pressed():
 	if cards_view == false:
@@ -57,18 +54,6 @@ func on_build_button_pressed():
 			Field.BuildingHouse(current_position)
 		else:
 			print("Nie znaleziono pola dla indeksu: %d / Pole nie należy do gracza" % current_position)
-
-func on_remove_owner_button_pressed():
-	print("REMOVE OWNER button pressed")
-	var currentFigureHead = game_manager.getCurrentPlayer()
-	var current_position = currentFigureHead.GetCurrentPositionIndex()
-	var field = game_manager.getCurrentField(current_position)
-	
-	if field and field.owned:
-		field.RemoveOwner(currentFigureHead, field)
-		print("Field ownership removed from: " + field.Name)
-	else:
-		print("Cannot remove ownership: field is not owned")
 
 func on_view_buttons_pressed():
 	if buttons_view == false:
