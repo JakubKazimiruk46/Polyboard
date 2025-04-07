@@ -74,7 +74,6 @@ public partial class Board : StaticBody3D
 
 		targetPosition = GlobalPosition;
 		BuyCard = GetTree().Root.GetNode<CanvasLayer>("Level/BuyCard");
-		
 		foreach (Node child in GetChildren())
 		{
 			if (child is Field field)

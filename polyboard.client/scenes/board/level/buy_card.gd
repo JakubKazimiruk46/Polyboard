@@ -3,6 +3,8 @@ extends CanvasLayer
 @onready var endturnbutton = $"../UI/ZakończTure"
 @onready var tradeButton = $"../UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2/trade_button" as TextureButton
 @onready var buildButton = $"../UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3/build_button" as TextureButton
+@onready var auction = $AuctionCard as CanvasLayer
+@onready var auction_time = $AuctionCard/AuctionTime as Timer
 
 var board_view = false
 var total_time_in_secs : int = 30
@@ -77,10 +79,12 @@ func on_buyButtonPressed():
 			#print("Nie znaleziono instancji Board lub metoda GetFieldById nie istnieje!")
 
 func on_auctionButtonPressed():
-	self.visible = false
 	$Timer.stop()
-	$Ticking.stop()
 	total_time_in_secs = 30
+	self.visible = false
+	auction.visible = true
+	auction_time.start()
+	$Ticking.stop()
 	$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.text = ''
 	$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.add_theme_color_override("font_color","white")
 	turn_on_buttons()
