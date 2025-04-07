@@ -30,7 +30,9 @@ public partial class Board : StaticBody3D
 		SellProperty = 100,
 		SellHouse = 101,
 		BuildHouse = 102,
-		Cancel = 103
+		ExchangeProperty = 103,
+		Cancel = 104,
+		UseSpecialCard = 105
 	}
 	protected int multiplier;
 	public int publicFee;
@@ -268,30 +270,58 @@ public partial class Board : StaticBody3D
 			}
 		}
 	}
-	private void InitializePopupMenu()
-	{
-		_contextMenu = new PopupMenu();
-		AddChild(_contextMenu);
-		//GD.Print("Menu kontekstowe zostało utworzone i dodane do drzewa!");
+private void InitializePopupMenu()
+{
+	_contextMenu = new PopupMenu();
+	AddChild(_contextMenu);
+	
+	var theme = new Theme();
 
-		_contextMenu.AddItem("Sell Property", (int)PopupIds.SellProperty);
-		_contextMenu.AddItem("Sell House", (int)PopupIds.SellHouse);
-		_contextMenu.AddItem("Build House", (int)PopupIds.BuildHouse);
-		_contextMenu.AddSeparator();
-		_contextMenu.AddItem("Cancel", (int)PopupIds.Cancel);
-		
-		_contextMenu.IdPressed += OnPopupMenuItemPressed;
-		
-		_popupInfoLabel = new Label();
-		_popupInfoLabel.Visible = false;
-		_popupInfoLabel.Position = new Vector2(50, 50);
-		var canvasLayer = GetTree().Root.GetNode<CanvasLayer>("Level/CanvasLayer");
-		canvasLayer.AddChild(_popupInfoLabel);
-	}
+	var panelStyle = new StyleBoxFlat();
+	panelStyle.BgColor = new Color(0.2f, 0.2f, 0.2f, 0.95f);
+	panelStyle.BorderWidthBottom = 3;
+	panelStyle.BorderWidthLeft = 3;
+	panelStyle.BorderWidthRight = 3;
+	panelStyle.BorderWidthTop = 3;
+	panelStyle.BorderColor = new Color("#62ff45"); 
+	panelStyle.CornerRadiusBottomLeft = 8;
+	panelStyle.CornerRadiusBottomRight = 8;
+	panelStyle.CornerRadiusTopLeft = 8;
+	panelStyle.CornerRadiusTopRight = 8;
+	panelStyle.ContentMarginLeft = 10;
+	panelStyle.ContentMarginRight = 10;
+	panelStyle.ContentMarginTop = 5;
+	panelStyle.ContentMarginBottom = 5;
+	
+	var hoverStyle = new StyleBoxFlat();
+	hoverStyle.BgColor = new Color(0.3f, 0.3f, 0.3f); 
+	hoverStyle.CornerRadiusBottomLeft = 8;
+	hoverStyle.CornerRadiusBottomRight = 8;
+	hoverStyle.CornerRadiusTopLeft = 8;
+	hoverStyle.CornerRadiusTopRight = 8;
+	
+	theme.SetStylebox("panel", "PopupMenu", panelStyle);
+	theme.SetStylebox("hover", "PopupMenu", hoverStyle);
+	theme.SetColor("font_color", "PopupMenu", new Color(1, 1, 1)); 
+	theme.SetColor("font_hover_color", "PopupMenu", new Color("#62ff45")); 
+	
+	_contextMenu.Theme = theme;
+	
+	_contextMenu.AddItem("Sell Property", (int)PopupIds.SellProperty);
+	_contextMenu.AddItem("Sell House", (int)PopupIds.SellHouse);
+	_contextMenu.AddItem("Build House", (int)PopupIds.BuildHouse);
+	_contextMenu.AddItem("Exchange Property", (int)PopupIds.ExchangeProperty);
+	_contextMenu.AddItem("Use Special Card", (int)PopupIds.UseSpecialCard);
+	
+	_contextMenu.AddSeparator();
+	_contextMenu.AddItem("Cancel", (int)PopupIds.Cancel);
+	
+	_contextMenu.IdPressed += OnPopupMenuItemPressed;
+
+}
 	
 	private void OnPopupMenuItemPressed(long id)
 	{
-		// Use raycasting to find the field in 3D space
 		var camera = GetViewport().GetCamera3D();
 		var from = camera.ProjectRayOrigin(_lastMousePosition);
 		var to = from + camera.ProjectRayNormal(_lastMousePosition) * 100;
@@ -302,7 +332,6 @@ public partial class Board : StaticBody3D
 		
 		Field selectedField = null;
 		
-		// If ray hit something, check if it's a field
 		if (result.Count > 0)
 		{
 			var collider = result["collider"].AsGodotObject();
@@ -312,7 +341,6 @@ public partial class Board : StaticBody3D
 			}
 			else
 			{
-				// Try to find the nearest field if we didn't hit one directly
 				Vector3 hitPosition = (Vector3)result["position"];
 				selectedField = FindNearestField(hitPosition);
 			}
@@ -320,26 +348,34 @@ public partial class Board : StaticBody3D
 		
 		Figurehead currentPlayer = gameManager.getCurrentPlayer();
 		
-		if (selectedField != null && currentPlayer != null)
+	if (selectedField != null && currentPlayer != null)
+	{
+		switch ((PopupIds)id)
 		{
-			switch ((PopupIds)id)
-			{
-				case PopupIds.SellProperty:
-					TrySellProperty(selectedField, currentPlayer);
-					break;
-					
-				case PopupIds.SellHouse:
-					TrySellHouse(selectedField, currentPlayer);
-					break;
-					
-				case PopupIds.BuildHouse:
-					TryBuildHouse(selectedField, currentPlayer);
-					break;
-					
-				case PopupIds.Cancel:
-					break;
-			}
+			case PopupIds.SellProperty:
+				TrySellProperty(selectedField, currentPlayer);
+				break;
+				
+			case PopupIds.SellHouse:
+				TrySellHouse(selectedField, currentPlayer);
+				break;
+				
+			case PopupIds.BuildHouse:
+				TryBuildHouse(selectedField, currentPlayer);
+				break;
+				
+			case PopupIds.ExchangeProperty:
+				TryExchangeProperty(selectedField, currentPlayer);
+				break;
+				
+			case PopupIds.UseSpecialCard:
+				//TryUseSpecialCard(currentPlayer);
+				break;
+				
+			case PopupIds.Cancel:
+				break;
 		}
+	}
 		else
 		{
 			if (selectedField == null)
@@ -359,8 +395,7 @@ private void TrySellProperty(Field field, Figurehead player)
 	// GD.Print($"Field owned: {field.owned}, Owner name: {field.Owner?.Name}");
 	// GD.Print($"Owner class name: {ownerClassName}");
 	// GD.Print($"Current player name: {player.Name}, Index: {currentPlayerIndex}");
-	
-	// Check if the player's owned fields array shows ownership
+
 	bool playerOwnsAccordingToArray = player.ownedFields[field.FieldId];
 	// GD.Print($"Player owns according to ownedFields array: {playerOwnsAccordingToArray}");
 	
@@ -371,13 +406,10 @@ private void TrySellProperty(Field field, Figurehead player)
 		
 		// GD.Print($"Selling field: {field.Name} for {sellValue} ECTS");
 		
-		// Return the property to the bank
 		field.RemoveOwner(player, field);
 		
-		// Show notification
 		ShowPopupNotification($"Sold {field.Name} for {sellValue} ECTS", 3.0f);
 		
-		// Update UI
 		gameManager.UpdateECTSUI(currentPlayerIndex);
 	}
 	else
@@ -538,14 +570,78 @@ private async void TryBuildHotel(Field field, Figurehead player)
 	}
 }
 
-
-	private void ShowPopupNotification(string message, float duration = 3.0f)
+private void TryExchangeProperty(Field field, Figurehead player)
+{
+	if (field.owned && field.Owner == player)
 	{
+		// Get the trade scene
+		var tradeScene = GetNode<Node>("/root/Level/Trade");
+		if (tradeScene != null)
+		{
+			// Create an array of player names and IDs that can be converted to Variant
+			Godot.Collections.Array playerData = new Godot.Collections.Array();
+			for (int i = 0; i < gameManager.Players.Count; i++)
+			{
+				var p = gameManager.Players[i];
+				var playerInfo = new Godot.Collections.Dictionary
+				{
+					{ "name", p.Name },
+					{ "id", i }
+				};
+				playerData.Add(playerInfo);
+			}
+			
+			// Call the setup_trade method with convert-friendly parameters
+			tradeScene.Call("setup_trade", player.Name, playerData, field.FieldId);
+			
+			ShowPopupNotification("Opening property exchange interface...", 2.0f);
+		}
+		else
+		{
+			GD.PrintErr("Trade scene not found!");
+			ShowPopupNotification("Trade interface unavailable!", 2.0f);
+		}
+	}
+	else
+	{
+		ShowPopupNotification("You don't own this property!", 2.0f);
+	}
+}
+private void ShowPopupNotification(string message, float duration = 3.0f)
+{
+	var notifications = GetNode<Node>("/root/Notifications");
+	if (notifications != null)
+	{
+		notifications.Call("show_notification", message, duration);
+	}
+	else
+	{
+		GD.PrintErr("NotificationLayer singleton not found. Make sure it's added as an Autoload.");
+		
 		_popupInfoLabel.Text = message;
 		_popupInfoLabel.Visible = true;
 		
 		GetTree().CreateTimer(duration).Timeout += () => _popupInfoLabel.Visible = false;
 	}
+}
+private void ShowPopupError(string message, float duration = 4.0f)
+{
+	var notifications = GetNode<Node>("/root/Notifications");
+	if (notifications != null)
+	{
+		notifications.Call("show_error", message, duration);
+	}
+	else
+	{
+		GD.PrintErr("NotificationLayer singleton not found. Make sure it's added as an Autoload.");
+		GD.PrintErr(message);
+		
+		_popupInfoLabel.Text = message;
+		_popupInfoLabel.Visible = true;
+		
+		GetTree().CreateTimer(duration).Timeout += () => _popupInfoLabel.Visible = false;
+	}
+}
 	
 	private Field FindNearestField(Vector3 position)
 	{

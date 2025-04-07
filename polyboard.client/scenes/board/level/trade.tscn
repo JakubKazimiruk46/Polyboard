@@ -10,18 +10,18 @@ border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
 
+[sub_resource type="SystemFont" id="SystemFont_fssgb"]
+subpixel_positioning = 0
+
+[sub_resource type="LabelSettings" id="LabelSettings_x6cg4"]
+font = SubResource("SystemFont_fssgb")
+
 [sub_resource type="SystemFont" id="SystemFont_bnqyb"]
 subpixel_positioning = 0
 
 [sub_resource type="LabelSettings" id="LabelSettings_mdfrh"]
 font = SubResource("SystemFont_bnqyb")
 font_size = 22
-
-[sub_resource type="SystemFont" id="SystemFont_fssgb"]
-subpixel_positioning = 0
-
-[sub_resource type="LabelSettings" id="LabelSettings_x6cg4"]
-font = SubResource("SystemFont_fssgb")
 
 [sub_resource type="SystemFont" id="SystemFont_7xje2"]
 font_names = PackedStringArray("Impact")
@@ -125,13 +125,10 @@ theme_override_constants/margin_bottom = 12
 layout_mode = 2
 alignment = 1
 
-[node name="Label" type="Label" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer"]
+[node name="Label" type="OptionButton" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_horizontal = 4
-text = "USERNAME1"
-label_settings = SubResource("LabelSettings_mdfrh")
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer2/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -259,5 +256,6 @@ size_flags_vertical = 8
 theme = SubResource("Theme_hnh02")
 text = "SEND TRADE OFFER"
 
+[connection signal="item_selected" from="MarginContainer2/Panel/MarginContainer/VBoxContainer/Label" to="." method="_on_player_selected"]
 [connection signal="pressed" from="Button" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="Button2" to="." method="_on_trade_button_pressed"]
