@@ -1,9 +1,10 @@
-[gd_scene load_steps=13 format=3 uid="uid://dvogx2n2lhbbd"]
+[gd_scene load_steps=14 format=3 uid="uid://dvogx2n2lhbbd"]
 
 [ext_resource type="Script" uid="uid://ilj03npbn4o7" path="res://scenes/board/level/buy_card.gd" id="1_mel4x"]
 [ext_resource type="Texture2D" uid="uid://cde4ryndxi5f5" path="res://assets/images/money.png" id="2_e05aa"]
 [ext_resource type="AudioStream" uid="uid://c60qn6h7pxg1d" path="res://assets/Music/cash-register-fake-88639.mp3" id="2_sdkg4"]
 [ext_resource type="AudioStream" uid="uid://dt6b1ddxbfx08" path="res://assets/Music/clock-70484.mp3" id="3_a35wi"]
+[ext_resource type="PackedScene" uid="uid://dgksxgii5cvm1" path="res://scenes/board/level/auction_card.tscn" id="5_mbdbo"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j2360"]
 bg_color = Color(0.868997, 0.50837, 0.128994, 1)
@@ -177,7 +178,12 @@ bus = &"Sfx"
 stream = ExtResource("3_a35wi")
 bus = &"Sfx"
 
+[node name="AuctionCard" parent="." instance=ExtResource("5_mbdbo")]
+visible = false
+
 [connection signal="pressed" from="HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/Buttons/BuyButton" to="." method="on_buyButtonPressed"]
 [connection signal="pressed" from="HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/Buttons/AuctionButton" to="." method="on_auctionButtonPressed"]
 [connection signal="pressed" from="HBoxContainer/VBoxContainer/ViewBoardButton" to="." method="_on_viewBoardButtonPressed"]
 [connection signal="timeout" from="Timer" to="." method="on_timer_timeout"]
+
+[editable path="AuctionCard"]
