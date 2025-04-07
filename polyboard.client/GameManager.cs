@@ -585,81 +585,41 @@ public partial class GameManager : Node3D
 		}
 	}
 	
-	private void ShowEndGameScreen(string resultMessage)
+private void ShowEndGameScreen(string resultMessage)
+{
+	// Upewnij się, że ekran końcowy jest inicjalizowany
+	if (gameEndScreen == null)
 	{
-		// Upewnij się, że ekran końcowy jest inicjalizowany
-		if (gameEndScreen == null)
-		{
-			InitGameEndComponents();
-		}
-		
-		// Wyczyść istniejące wyniki
-		if (gameResultsContainer != null)
-		{
-			foreach (Node child in gameResultsContainer.GetChildren())
-			{
-				child.QueueFree();
-			}
-		}
-		
-		// Dodaj etykietę z komunikatem o wyniku
-		var resultLabel = new Label();
-		resultLabel.Text = resultMessage;
-		resultLabel.HorizontalAlignment = HorizontalAlignment.Center;
-		resultLabel.AddThemeConstantOverride("font_size", 24);
-		gameResultsContainer?.AddChild(resultLabel);
-		
-		// Dodaj separator
-		var separator = new HSeparator();
-		separator.CustomMinimumSize = new Vector2(300, 10);
-		separator.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
-		gameResultsContainer?.AddChild(separator);
-		
-		// Dodaj nagłówek tabeli wyników
-		var headerLabel = new Label();
-		headerLabel.Text = "WYNIKI KOŃCOWE:";
-		headerLabel.HorizontalAlignment = HorizontalAlignment.Center;
-		headerLabel.AddThemeConstantOverride("font_size", 18);
-		gameResultsContainer?.AddChild(headerLabel);
-		
-		// Sortuj graczy wg ilości ECTS (malejąco)
-		var sortedPlayers = new List<(Figurehead player, int index)>();
-		for (int i = 0; i < players.Count; i++)
-		{
-			sortedPlayers.Add((players[i], i));
-		}
-		sortedPlayers.Sort((a, b) => b.player.ECTS.CompareTo(a.player.ECTS));
-		
-		// Dodaj wyniki poszczególnych graczy
-		foreach (var (player, index) in sortedPlayers)
-		{
-			var playerResultContainer = new HBoxContainer();
-			playerResultContainer.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
-			playerResultContainer.Alignment = BoxContainer.AlignmentMode.Center;
-			
-			var nameLabel = new Label();
-			nameLabel.Text = player.Name;
-			nameLabel.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
-			
-			var statusLabel = new Label();
-			statusLabel.Text = playerBankruptcyStatus[index] ? "BANKRUT" : player.ECTS.ToString() + " ECTS";
-			statusLabel.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
-			
-			if (playerBankruptcyStatus[index])
-			{
-				nameLabel.AddThemeColorOverride("font_color", new Color(1, 0, 0));
-				statusLabel.AddThemeColorOverride("font_color", new Color(1, 0, 0));
-			}
-			
-			playerResultContainer.AddChild(nameLabel);
-			playerResultContainer.AddChild(statusLabel);
-			
-			gameResultsContainer?.AddChild(playerResultContainer);
-		}
-		
-		// Wyświetl ekran końcowy
-		gameEndScreen.Visible = true;
+		InitGameEndComponents();
 	}
+	
+	// Wyświetl ekran końcowy
+	gameEndScreen.Visible = true;
+	
+	// Przygotuj tablicę wyników graczy
+	Godot.Collections.Array playerResults = new Godot.Collections.Array();
+	
+	// Sortuj graczy wg ilości ECTS (malejąco)
+	var sortedPlayers = new List<(Figurehead player, int index)>();
+	for (int i = 0; i < players.Count; i++)
+	{
+		sortedPlayers.Add((players[i], i));
+	}
+	sortedPlayers.Sort((a, b) => b.player.ECTS.CompareTo(a.player.ECTS));
+	
+	// Dodaj dane każdego gracza do tablicy wyników
+	foreach (var (player, index) in sortedPlayers)
+	{
+		var playerResult = new Godot.Collections.Dictionary();
+		playerResult.Add("name", player.Name);
+		playerResult.Add("ects", player.ECTS);
+		playerResult.Add("bankrupt", playerBankruptcyStatus[index]);
+		playerResults.Add(playerResult);
+	}
+	
+	// Wywołaj metodę set_results z ekranu końcowego
+	gameEndScreen.Call("set_results", resultMessage, playerResults);
+}
 	
 	// Metoda do obsługi przycisku powrotu do menu
 	private void OnReturnToMenuPressed()
