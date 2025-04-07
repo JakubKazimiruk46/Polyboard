@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public partial class GameManager : Node3D
 {
@@ -19,6 +20,10 @@ public partial class GameManager : Node3D
 	[Export] public NodePath playerInitializerPath;
 	[Export] public NodePath notificationServicePath;
 	[Export] public float turnTimeLimit = 60.0f; // czas tury w sekundach
+	[Export] public int maxRounds = 30; // Maksymalna liczba rund, po której gra się kończy (ustaw 0 dla braku limitu)
+	[Export] public NodePath gameEndScreenPath; // Ścieżka do ekranu końcowego
+	[Export] public NodePath returnToMenuButtonPath; // Przycisk powrotu do menu
+	[Export] public NodePath gameResultsContainerPath; // Kontener na wyniki końcowe
 
 	private Board board;
 	private Camera3D masterCamera;
@@ -41,14 +46,20 @@ public partial class GameManager : Node3D
 	private AudioStreamPlayer3D nextTurnSoundPlayer;
 	private AudioStreamPlayer3D bankruptSoundPlayer;
 	private AudioStreamPlayer3D reviveSoundPlayer;
+	private AudioStreamPlayer3D walkingSoundPlayer;
 	private List<Label> playerNameLabels = new List<Label>();
 	private List<Label> playerECTSLabels = new List<Label>();
 	private List<bool> playerBankruptcyStatus = new List<bool>();
 	private Timer turnTimer;
 	private Label turnTimerLabel;
 	private NotificationService notificationService;
+	private int currentRound = 1;
+	private PackedScene gameEndScreenScene;
+	private CanvasLayer gameEndScreen;
+	private Button returnToMenuButton;
+	private VBoxContainer gameResultsContainer;
+	private bool isGameOver = false;
 	public bool regularRoll = true;
-	private AudioStreamPlayer3D walkingSoundPlayer;
 
 	private enum GameState
 	{
@@ -72,6 +83,7 @@ public partial class GameManager : Node3D
 		InitPlayersUI();
 		InitSoundPlayers();
 		InitTurnTimer();
+		InitGameEndComponents();
 		SetAllPlayersOnStart();
 		StartTurnTimer();
 	}
@@ -131,8 +143,8 @@ public partial class GameManager : Node3D
 		bankruptSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/BankruptSound");
 		reviveSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/ReviveSound");
 		walkingSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/WalkingSound");
-		if (doubleSoundPlayer == null || doubleSoundPlayer == null || doubleSoundPlayer == null || bankruptSoundPlayer == null ||
-			reviveSoundPlayer == null)
+		if (doubleSoundPlayer == null || gainECTSSoundPlayer == null || nextTurnSoundPlayer == null || bankruptSoundPlayer == null ||
+			reviveSoundPlayer == null || walkingSoundPlayer == null)
 		{
 			GD.PrintErr("Błąd: Nie znaleziono jednego z odtwarzaczy dźwięku. Sprawdź ścieżki.");
 		}
@@ -173,46 +185,45 @@ public partial class GameManager : Node3D
 		}
 	}
 
-private void InitPlayers()
-{
-	GD.Print($"Szukanie PlayerInitializer pod ścieżką: {playerInitializerPath}");
-	Node playerInitializer = GetNodeOrNull(playerInitializerPath); 
-	if (playerInitializer == null)
+	private void InitPlayers()
 	{
-		notificationService.ShowNotification("Błąd: Nie znaleziono PlayerInitializer w scenie!", NotificationService.NotificationType.Error);
-		return;
-	}
-
-	playerInitializer.Call("initialize_players");
-
-	Node playersContainer = GetNodeOrNull(playersContainerPath);
-	if (playersContainer == null)
-	{
-		notificationService.ShowNotification("Błąd: Nie znaleziono węzła Players (3D).", NotificationService.NotificationType.Error);
-		return;
-	}
-
-	foreach (Node child in playersContainer.GetChildren())
-	{
-		GD.Print($"Sprawdzam węzeł: {child.Name}");
-		if (child is Figurehead fh)
+		GD.Print($"Szukanie PlayerInitializer pod ścieżką: {playerInitializerPath}");
+		Node playerInitializer = GetNodeOrNull(playerInitializerPath); 
+		if (playerInitializer == null)
 		{
-			players.Add(fh);
-			playerBankruptcyStatus.Add(false);
+			notificationService.ShowNotification("Błąd: Nie znaleziono PlayerInitializer w scenie!", NotificationService.NotificationType.Error);
+			return;
+		}
+
+		playerInitializer.Call("initialize_players");
+
+		Node playersContainer = GetNodeOrNull(playersContainerPath);
+		if (playersContainer == null)
+		{
+			notificationService.ShowNotification("Błąd: Nie znaleziono węzła Players (3D).", NotificationService.NotificationType.Error);
+			return;
+		}
+
+		foreach (Node child in playersContainer.GetChildren())
+		{
+			GD.Print($"Sprawdzam węzeł: {child.Name}");
+			if (child is Figurehead fh)
+			{
+				players.Add(fh);
+				playerBankruptcyStatus.Add(false);
+			}
+		}
+
+
+		if (players.Count == 0)
+		{
+			notificationService.ShowNotification("Błąd: Nie znaleziono żadnych pionków.", NotificationService.NotificationType.Error);
+		}
+		else
+		{
+			GD.Print($"Znaleziono {players.Count} graczy.");
 		}
 	}
-
-
-	if (players.Count == 0)
-	{
-		notificationService.ShowNotification("Błąd: Nie znaleziono żadnych pionków.", NotificationService.NotificationType.Error);
-	}
-	else
-	{
-		GD.Print($"Znaleziono {players.Count} graczy.");
-	}
-}
-
 
 	private void InitDice()
 	{
@@ -332,6 +343,81 @@ private void InitPlayers()
 		}
 	}
 
+	// Metoda inicjalizująca komponenty ekranu końca gry
+	private void InitGameEndComponents()
+	{
+		// Ładowanie sceny ekranu końcowego
+		gameEndScreenScene = ResourceLoader.Load<PackedScene>("res://scenes/end_game/end_game_screen.tscn");
+		
+		// Jeśli scena nie istnieje, tworzymy specjalny CanvasLayer jako tymczasowe rozwiązanie
+		if (gameEndScreenScene == null)
+		{
+			GD.Print("Ekran końcowy nie został znaleziony. Tworzenie tymczasowego ekranu.");
+			gameEndScreen = new CanvasLayer();
+			gameEndScreen.Name = "EndGameScreen";
+			gameEndScreen.Layer = 10; // Wysoki numer warstwy, żeby był nad wszystkim
+			gameEndScreen.Visible = false;
+			
+			// Panel zajmujący cały ekran
+			var panel = new Panel();
+			panel.AnchorRight = 1;
+			panel.AnchorBottom = 1;
+			
+			gameEndScreen.AddChild(panel);
+			
+			// Kontener dla elementów UI
+			var container = new VBoxContainer();
+			container.AnchorRight = 1;
+			container.AnchorBottom = 1;
+			container.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+			container.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
+			container.Alignment = BoxContainer.AlignmentMode.Center;
+			panel.AddChild(container);
+			
+			// Etykieta końca gry
+			var endGameLabel = new Label();
+			endGameLabel.Text = "KONIEC GRY";
+			endGameLabel.HorizontalAlignment = HorizontalAlignment.Center;
+			endGameLabel.AddThemeConstantOverride("font_size", 42);
+			container.AddChild(endGameLabel);
+			
+			// Kontener na wyniki
+			gameResultsContainer = new VBoxContainer();
+			gameResultsContainer.Name = "ResultsContainer";
+			gameResultsContainer.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+			gameResultsContainer.CustomMinimumSize = new Vector2(400, 300);
+			container.AddChild(gameResultsContainer);
+			
+			// Przycisk powrotu do menu
+			returnToMenuButton = new Button();
+			returnToMenuButton.Name = "ReturnToMenuButton";
+			returnToMenuButton.Text = "POWRÓT DO MENU";
+			returnToMenuButton.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
+			returnToMenuButton.CustomMinimumSize = new Vector2(200, 50);
+			returnToMenuButton.Connect("pressed", new Callable(this, nameof(OnReturnToMenuPressed)));
+			container.AddChild(returnToMenuButton);
+			
+			AddChild(gameEndScreen);
+		}
+		else
+		{
+			// Używanie istniejącej sceny
+			gameEndScreen = gameEndScreenScene.Instantiate<CanvasLayer>();
+			gameEndScreen.Visible = false;
+			AddChild(gameEndScreen);
+			
+			returnToMenuButton = gameEndScreen.GetNodeOrNull<Button>(returnToMenuButtonPath);
+			if (returnToMenuButton != null)
+			{
+				returnToMenuButton.Connect("pressed", new Callable(this, nameof(OnReturnToMenuPressed)));
+			}
+			
+			gameResultsContainer = gameEndScreen.GetNodeOrNull<VBoxContainer>(gameResultsContainerPath);
+		}
+		
+		GD.Print("Komponenty ekranu końcowego zostały zainicjalizowane.");
+	}
+
 	public void UpdateECTSUI(int playerIndex)
 	{
 		if (playerIndex < 0 || playerIndex >= playerECTSLabels.Count)
@@ -389,6 +475,8 @@ private void InitPlayers()
 
 	private void CheckForGameOver()
 	{
+		if (isGameOver) return;
+		
 		int activePlayers = 0;
 		int lastActivePlayerIndex = -1;
 		for (int i = 0; i < playerBankruptcyStatus.Count; i++)
@@ -402,18 +490,181 @@ private void InitPlayers()
 
 		if (activePlayers == 1)
 		{
-			notificationService.ShowNotification($"Gra zakończona! Gracz {players[lastActivePlayerIndex].Name} wygrywa!", NotificationService.NotificationType.Normal, 10f);
-			GD.Print($"Gra zakończona! Gracz {players[lastActivePlayerIndex].Name} wygrywa!");
-			rollButton.Disabled = true;
-			endTurnButton.Disabled = true;
+			EndGameWithWinner(lastActivePlayerIndex);
 		}
 		else if (activePlayers == 0)
 		{
-			notificationService.ShowNotification("Gra zakończona! Wszyscy gracze zbankrutowali!", NotificationService.NotificationType.Normal, 10f);
-			GD.Print("Gra zakończona! Wszyscy gracze zbankrutowali!");
-			rollButton.Disabled = true;
-			endTurnButton.Disabled = true;
+			EndGameWithNoWinner();
 		}
+	}
+
+	private void EndGameWithWinner(int winnerIndex)
+	{
+		if (isGameOver) return;
+		isGameOver = true;
+		
+		DisableGameControls();
+		
+		notificationService.ShowNotification(
+			$"Gra zakończona! Gracz {players[winnerIndex].Name} wygrywa!", 
+			NotificationService.NotificationType.Normal, 
+			5f
+		);
+		
+		GD.Print($"Gra zakończona! Gracz {players[winnerIndex].Name} wygrywa!");
+		ShowEndGameScreen($"Gracz {players[winnerIndex].Name} wygrywa!");
+	}
+	
+	private void EndGameWithNoWinner()
+	{
+		if (isGameOver) return;
+		isGameOver = true;
+		
+		DisableGameControls();
+		
+		notificationService.ShowNotification(
+			"Gra zakończona! Wszyscy gracze zbankrutowali!", 
+			NotificationService.NotificationType.Normal, 
+			5f
+		);
+		
+		GD.Print("Gra zakończona! Wszyscy gracze zbankrutowali!");
+		ShowEndGameScreen("Wszyscy gracze zbankrutowali! Remis!");
+	}
+	
+	private void EndGameByRoundLimit()
+	{
+		if (isGameOver) return;
+		isGameOver = true;
+		
+		DisableGameControls();
+		
+		// Znajdujemy gracza z największą ilością ECTS
+		int winnerIndex = FindRichestPlayer();
+		
+		notificationService.ShowNotification(
+			$"Osiągnięto limit {maxRounds} rund! Gracz {players[winnerIndex].Name} wygrywa z największą ilością ECTS!", 
+			NotificationService.NotificationType.Normal, 
+			5f
+		);
+		
+		GD.Print($"Osiągnięto limit {maxRounds} rund! Gracz {players[winnerIndex].Name} wygrywa!");
+		ShowEndGameScreen($"Limit rund osiągnięty! Gracz {players[winnerIndex].Name} wygrywa!");
+	}
+	
+	private int FindRichestPlayer()
+	{
+		int richestPlayerIndex = -1;
+		int maxECTS = -1;
+		
+		for (int i = 0; i < players.Count; i++)
+		{
+			if (!playerBankruptcyStatus[i] && players[i].ECTS > maxECTS)
+			{
+				maxECTS = players[i].ECTS;
+				richestPlayerIndex = i;
+			}
+		}
+		
+		return richestPlayerIndex;
+	}
+	
+	private void DisableGameControls()
+	{
+		rollButton.Disabled = true;
+		endTurnButton.Disabled = true;
+		StopTurnTimer();
+		
+		// Wyłączamy interakcje z planszą
+		if (board != null)
+		{
+			foreach (Field field in board.GetFields())
+			{
+				field.isMouseEventEnabled = false;
+			}
+		}
+	}
+	
+	private void ShowEndGameScreen(string resultMessage)
+	{
+		// Upewnij się, że ekran końcowy jest inicjalizowany
+		if (gameEndScreen == null)
+		{
+			InitGameEndComponents();
+		}
+		
+		// Wyczyść istniejące wyniki
+		if (gameResultsContainer != null)
+		{
+			foreach (Node child in gameResultsContainer.GetChildren())
+			{
+				child.QueueFree();
+			}
+		}
+		
+		// Dodaj etykietę z komunikatem o wyniku
+		var resultLabel = new Label();
+		resultLabel.Text = resultMessage;
+		resultLabel.HorizontalAlignment = HorizontalAlignment.Center;
+		resultLabel.AddThemeConstantOverride("font_size", 24);
+		gameResultsContainer?.AddChild(resultLabel);
+		
+		// Dodaj separator
+		var separator = new HSeparator();
+		separator.CustomMinimumSize = new Vector2(300, 10);
+		separator.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
+		gameResultsContainer?.AddChild(separator);
+		
+		// Dodaj nagłówek tabeli wyników
+		var headerLabel = new Label();
+		headerLabel.Text = "WYNIKI KOŃCOWE:";
+		headerLabel.HorizontalAlignment = HorizontalAlignment.Center;
+		headerLabel.AddThemeConstantOverride("font_size", 18);
+		gameResultsContainer?.AddChild(headerLabel);
+		
+		// Sortuj graczy wg ilości ECTS (malejąco)
+		var sortedPlayers = new List<(Figurehead player, int index)>();
+		for (int i = 0; i < players.Count; i++)
+		{
+			sortedPlayers.Add((players[i], i));
+		}
+		sortedPlayers.Sort((a, b) => b.player.ECTS.CompareTo(a.player.ECTS));
+		
+		// Dodaj wyniki poszczególnych graczy
+		foreach (var (player, index) in sortedPlayers)
+		{
+			var playerResultContainer = new HBoxContainer();
+			playerResultContainer.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+			playerResultContainer.Alignment = BoxContainer.AlignmentMode.Center;
+			
+			var nameLabel = new Label();
+			nameLabel.Text = player.Name;
+			nameLabel.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+			
+			var statusLabel = new Label();
+			statusLabel.Text = playerBankruptcyStatus[index] ? "BANKRUT" : player.ECTS.ToString() + " ECTS";
+			statusLabel.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+			
+			if (playerBankruptcyStatus[index])
+			{
+				nameLabel.AddThemeColorOverride("font_color", new Color(1, 0, 0));
+				statusLabel.AddThemeColorOverride("font_color", new Color(1, 0, 0));
+			}
+			
+			playerResultContainer.AddChild(nameLabel);
+			playerResultContainer.AddChild(statusLabel);
+			
+			gameResultsContainer?.AddChild(playerResultContainer);
+		}
+		
+		// Wyświetl ekran końcowy
+		gameEndScreen.Visible = true;
+	}
+	
+	// Metoda do obsługi przycisku powrotu do menu
+	private void OnReturnToMenuPressed()
+	{
+		GetTree().ChangeSceneToFile("res://scenes/main_menu/main_menu.tscn");
 	}
 
 	private void SetAllPlayersOnStart()
@@ -479,6 +730,22 @@ private void InitPlayers()
 	{
 		GD.Print($"Skipping bankrupt player: {players[currentPlayerIndex].Name}");
 		EndTurn();
+	}
+
+	// Metoda do aktualizacji licznika rund
+	private void UpdateRoundCounter()
+	{
+		// Pełna runda kończy się, gdy wszyscy gracze wykonali swój ruch
+		if (currentPlayerIndex == 0)
+		{
+			currentRound++;
+			GD.Print($"Runda {currentRound}");
+			
+			if (maxRounds > 0 && currentRound > maxRounds)
+			{
+				EndGameByRoundLimit();
+			}
+		}
 	}
 
 	private void StartDiceRollForCurrentPlayer()
@@ -551,252 +818,261 @@ private void InitPlayers()
 			}
 		}
 	}
+	
 	private void PlaySound(AudioStreamPlayer3D player)
+	{
+		if (player != null)
 		{
-			if (player != null)
-			{
-				player.Play();
-				GD.Print("Odtwarzanie dźwięku.");
-			}
-			else
-			{
-				GD.PrintErr("Błąd: AudioStreamPlayer3D nie jest zainicjalizowany.");
-			}
-		}
-
-private async void MoveCurrentPlayerPawnSequentially(int steps)
-{
-	if (currentPlayerIndex < 0 || currentPlayerIndex >= players.Count)
-	{
-		notificationService.ShowNotification("Błąd: Indeks aktualnego gracza poza zakresem.");
-		return;
-	}
-
-	currentState = GameState.MovingPawn;
-	Figurehead currentPlayer = players[currentPlayerIndex];
-	endTurnButton.Visible = false;
-	isMovementInProgress = true;
-	
-	// Play walking sound before starting movement
-	PlaySound(walkingSoundPlayer);
-	
-	await currentPlayer.MovePawnSequentially(steps, board);
-	
-	// Stop walking sound after movement is complete
-	StopSound(walkingSoundPlayer);
-	
-	isMovementInProgress = false;
-	
-	// Poczekaj na zakończenie wszystkich animacji i efektów
-	await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
-	// Check for bankruptcy after movement (ECTS might have changed during movement)
-	CheckForBankruptcy(currentPlayerIndex);
-	// If the player is now bankrupt, end their turn
-	if (IsCurrentPlayerBankrupt())
-	{
-		die1Result = null;
-		die2Result = null;
-		currentState = GameState.WaitingForInput;
-		EndTurn();
-		return;
-	}
-	StartTurnTimer();
-
-	if (die1Result.HasValue && die2Result.HasValue)
-	{
-		if (die1Result.Value != die2Result.Value)
-		{
-			currentState = GameState.WaitingForInput;
-			endTurnButton.Visible = true;
+			player.Play();
+			GD.Print("Odtwarzanie dźwięku.");
 		}
 		else
 		{
-			PrepareForNextRoll();
+			GD.PrintErr("Błąd: AudioStreamPlayer3D nie jest zainicjalizowany.");
 		}
 	}
-	UpdateECTSUI(currentPlayerIndex);
-}
-private void StopSound(AudioStreamPlayer3D player)
-{
-	if (player != null && player.Playing)
+
+	private async void MoveCurrentPlayerPawnSequentially(int steps)
 	{
-		player.Stop();
-		GD.Print("Zatrzymano dźwięk.");
-	}
-}
-
-		private void PrepareForNextRoll()
+		if (currentPlayerIndex < 0 || currentPlayerIndex >= players.Count)
 		{
-			if (isMovementInProgress) return;
+			notificationService.ShowNotification("Błąd: Indeks aktualnego gracza poza zakresem.");
+			return;
+		}
 
-			StopTurnTimer(); // zatrzymujemy timer
-			StartTurnTimer(); // resetujemy timer dla tego samego gracza
-
+		currentState = GameState.MovingPawn;
+		Figurehead currentPlayer = players[currentPlayerIndex];
+		endTurnButton.Visible = false;
+		isMovementInProgress = true;
+		
+		// Play walking sound before starting movement
+		PlaySound(walkingSoundPlayer);
+		
+		await currentPlayer.MovePawnSequentially(steps, board);
+		
+		// Stop walking sound after movement is complete
+		StopSound(walkingSoundPlayer);
+		
+		isMovementInProgress = false;
+		
+		// Poczekaj na zakończenie wszystkich animacji i efektów
+		await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
+		// Check for bankruptcy after movement (ECTS might have changed during movement)
+		CheckForBankruptcy(currentPlayerIndex);
+		// If the player is now bankrupt, end their turn
+		if (IsCurrentPlayerBankrupt())
+		{
 			die1Result = null;
 			die2Result = null;
-			totalSteps = 0;
-			SetBoardInteractions(true);
 			currentState = GameState.WaitingForInput;
-			rollButton.Visible = true;
-			endTurnButton.Visible = false;
-			string currentPlayerName = GetCurrentPlayerName();
-			notificationService.ShowNotification($"Gracz {currentPlayerName}, rzuć ponownie!", NotificationService.NotificationType.Normal, 2f);
-			GD.Print($"Gracz {currentPlayerName} może wykonać kolejny rzut.");
+			EndTurn();
+			return;
 		}
+		StartTurnTimer();
 
-		private void EndTurn()
+		if (die1Result.HasValue && die2Result.HasValue)
 		{
-			if (isMovementInProgress) return;
-
-			StopTurnTimer(); // zatrzymujemy timer przed zmianą gracza
-
-			die1Result = null;
-			die2Result = null;
-			totalSteps = 0;
-			// Find next active (non-bankrupt) player
-			FindNextActivePlayer();
-			SetBoardInteractions(true);
-			currentState = GameState.WaitingForInput;
-			rollButton.Visible = true;
-			endTurnButton.Visible = false;
-			string nextPlayerName = GetCurrentPlayerName();
-			PlaySound(nextTurnSoundPlayer);
-			notificationService.ShowNotification($"Tura gracza: {nextPlayerName}", NotificationService.NotificationType.Normal, 3f);
-			GD.Print($"Zakończono turę gracza. Teraz tura gracza: {nextPlayerName}");
-
-			// Uruchamiamy timer dla nowego gracza
-			StartTurnTimer();
-		}
-
-		/// Find the next non-bankrupt player
-		private void FindNextActivePlayer()
-		{
-			int originalIndex = currentPlayerIndex;
-			int nextPlayerIndex;
-			do
+			if (die1Result.Value != die2Result.Value)
 			{
-				nextPlayerIndex = (currentPlayerIndex + 1) % players.Count;
-				currentPlayerIndex = nextPlayerIndex;
-				// If we've checked all players and returned to the original index, break to avoid infinite loop
-				if (nextPlayerIndex == originalIndex)
-				{
-					break;
-				}
-			} while (playerBankruptcyStatus[currentPlayerIndex]);
-			// If everyone is bankrupt, currentPlayerIndex will remain unchanged
-		}
-
-		private void SwitchToMasterCamera()
-		{
-			SetActiveCamera(masterCamera);
-		}
-
-		private void SwitchToDiceCamera()
-		{
-			SetActiveCamera(diceCamera);
-		}
-
-		private void SetActiveCamera(Camera3D cameraToActivate)
-		{
-			if (masterCamera != null) masterCamera.Current = false;
-			if (diceCamera != null) diceCamera.Current = false;
-			if (cameraToActivate != null)
-			{
-				cameraToActivate.Current = true;
-				GD.Print($"Przełączono na kamerę: {cameraToActivate.Name}");
+				currentState = GameState.WaitingForInput;
+				endTurnButton.Visible = true;
 			}
 			else
 			{
-				notificationService.ShowNotification("Błąd: Próba aktywacji nieistniejącej kamery.", NotificationService.NotificationType.Error);
+				PrepareForNextRoll();
 			}
 		}
-
-		private void HideNotification()
+		UpdateECTSUI(currentPlayerIndex);
+	}
+	
+	private void StopSound(AudioStreamPlayer3D player)
+	{
+		if (player != null && player.Playing)
 		{
-			if (notificationLabel == null || notificationPanel == null) return;
-			notificationPanel.Visible = false;
-			notificationLabel.Visible = false;
+			player.Stop();
+			GD.Print("Zatrzymano dźwięk.");
+		}
+	}
+
+	private void PrepareForNextRoll()
+	{
+		if (isMovementInProgress) return;
+
+		StopTurnTimer(); // zatrzymujemy timer
+		StartTurnTimer(); // resetujemy timer dla tego samego gracza
+
+		die1Result = null;
+		die2Result = null;
+		totalSteps = 0;
+		SetBoardInteractions(true);
+		currentState = GameState.WaitingForInput;
+		rollButton.Visible = true;
+		endTurnButton.Visible = false;
+		string currentPlayerName = GetCurrentPlayerName();
+		notificationService.ShowNotification($"Gracz {currentPlayerName}, rzuć ponownie!", NotificationService.NotificationType.Normal, 2f);
+		GD.Print($"Gracz {currentPlayerName} może wykonać kolejny rzut.");
+	}
+
+	private void EndTurn()
+	{
+		if (isMovementInProgress || isGameOver) return;
+
+		StopTurnTimer(); // zatrzymujemy timer przed zmianą gracza
+
+		die1Result = null;
+		die2Result = null;
+		totalSteps = 0;
+		// Find next active (non-bankrupt) player
+		FindNextActivePlayer();
+		
+		// Sprawdź, czy rozpoczyna się nowa runda
+		if (currentPlayerIndex == 0)
+		{
+			UpdateRoundCounter();
 		}
 		
-		private void SetBoardInteractions(bool isInteractive)
-		{
-			if (board == null) return;
-			foreach (Field field in board.GetFields())
-			{
-				field.isMouseEventEnabled = isInteractive;
-			}
-		}
+		SetBoardInteractions(true);
+		currentState = GameState.WaitingForInput;
+		rollButton.Visible = true;
+		endTurnButton.Visible = false;
+		string nextPlayerName = GetCurrentPlayerName();
+		PlaySound(nextTurnSoundPlayer);
+		notificationService.ShowNotification($"Tura gracza: {nextPlayerName}", NotificationService.NotificationType.Normal, 3f);
+		GD.Print($"Zakończono turę gracza. Teraz tura gracza: {nextPlayerName}");
 
-		public void UpdateECTS(int playerIndex)
+		// Uruchamiamy timer dla nowego gracza
+		StartTurnTimer();
+	}
+
+	/// Find the next non-bankrupt player
+	private void FindNextActivePlayer()
+	{
+		int originalIndex = currentPlayerIndex;
+		int nextPlayerIndex;
+		do
 		{
+			nextPlayerIndex = (currentPlayerIndex + 1) % players.Count;
+			currentPlayerIndex = nextPlayerIndex;
+			// If we've checked all players and returned to the original index, break to avoid infinite loop
+			if (nextPlayerIndex == originalIndex)
+			{
+				break;
+			}
+		} while (playerBankruptcyStatus[currentPlayerIndex]);
+		// If everyone is bankrupt, currentPlayerIndex will remain unchanged
+	}
+
+	private void SwitchToMasterCamera()
+	{
+		SetActiveCamera(masterCamera);
+	}
+
+	private void SwitchToDiceCamera()
+	{
+		SetActiveCamera(diceCamera);
+	}
+
+	private void SetActiveCamera(Camera3D cameraToActivate)
+	{
+		if (masterCamera != null) masterCamera.Current = false;
+		if (diceCamera != null) diceCamera.Current = false;
+		if (cameraToActivate != null)
+		{
+			cameraToActivate.Current = true;
+			GD.Print($"Przełączono na kamerę: {cameraToActivate.Name}");
+		}
+		else
+		{
+			notificationService.ShowNotification("Błąd: Próba aktywacji nieistniejącej kamery.", NotificationService.NotificationType.Error);
+		}
+	}
+
+	private void HideNotification()
+	{
+		if (notificationLabel == null || notificationPanel == null) return;
+		notificationPanel.Visible = false;
+		notificationLabel.Visible = false;
+	}
+	
+	private void SetBoardInteractions(bool isInteractive)
+	{
+		if (board == null) return;
+		foreach (Field field in board.GetFields())
+		{
+			field.isMouseEventEnabled = isInteractive;
+		}
+	}
+
+	public void UpdateECTS(int playerIndex)
+	{
+		UpdateECTSUI(playerIndex);
+	}
+
+	private string GetCurrentPlayerName()
+	{
+		if (currentPlayerIndex < 0 || currentPlayerIndex >= players.Count)
+		{
+			notificationService.ShowNotification("Błąd: Indeks aktualnego gracza poza zakresem podczas pobierania nazwy.", NotificationService.NotificationType.Error);
+			return "Nieznany";
+		}
+		return players[currentPlayerIndex].Name;
+	}
+
+	// Metody do obsługi kart
+	public int GetCurrentPlayerIndex()
+	{
+		return currentPlayerIndex;
+	}
+
+	public void AddEctsToPlayer(int playerIndex, int amount)
+	{
+		if (playerIndex >= 0 && playerIndex < players.Count)
+		{
+			players[playerIndex].AddECTS(amount);
+			PlaySound(gainECTSSoundPlayer);
 			UpdateECTSUI(playerIndex);
-		}
-
-		private string GetCurrentPlayerName()
-		{
-			if (currentPlayerIndex < 0 || currentPlayerIndex >= players.Count)
+			// If player was bankruptcy but got back to positive ECTS, remove bankruptcy status
+			if (amount > 0 && playerBankruptcyStatus[playerIndex] && players[playerIndex].ECTS > 0)
 			{
-				notificationService.ShowNotification("Błąd: Indeks aktualnego gracza poza zakresem podczas pobierania nazwy.", NotificationService.NotificationType.Error);
-				return "Nieznany";
-			}
-			return players[currentPlayerIndex].Name;
-		}
-
-		// Metody do obsługi kart
-		public int GetCurrentPlayerIndex()
-		{
-			return currentPlayerIndex;
-		}
-
-		public void AddEctsToPlayer(int playerIndex, int amount)
-		{
-			if (playerIndex >= 0 && playerIndex < players.Count)
-			{
-				players[playerIndex].AddECTS(amount);
-				PlaySound(gainECTSSoundPlayer);
-				UpdateECTSUI(playerIndex);
-				// If player was bankruptcy but got back to positive ECTS, remove bankruptcy status
-				if (amount > 0 && playerBankruptcyStatus[playerIndex] && players[playerIndex].ECTS > 0)
-				{
-					RevivePlayer(playerIndex);
-				}
-			}
-		}
-
-		/// Method to revive a player if they gain ECTS after bankruptcy
-		private void RevivePlayer(int playerIndex)
-		{
-			if (playerIndex < 0 || playerIndex >= players.Count)
-			{
-				return;
-			}
-
-			// Only revive if the player has positive ECTS
-			if (players[playerIndex].ECTS > 0)
-			{
-				playerBankruptcyStatus[playerIndex] = false;
-				// Update UI to remove bankrupt status
-				if (playerIndex < playerNameLabels.Count)
-				{
-					playerNameLabels[playerIndex].Text = players[playerIndex].Name;
-					// Reset text color
-					playerNameLabels[playerIndex].RemoveThemeColorOverride("font_color");
-				}
-
-				PlaySound(reviveSoundPlayer);
-				players[playerIndex].Visible = true;
-				notificationService.ShowNotification($"Gracz {players[playerIndex].Name} wraca do gry!", NotificationService.NotificationType.Normal, 5f);
-				GD.Print($"Gracz {players[playerIndex].Name} wraca do gry!");
-			}
-		}
-
-		public void SubtractEctsFromPlayer(int playerIndex, int amount)
-		{
-			if (playerIndex >= 0 && playerIndex < players.Count)
-			{
-				GD.Print("...");
-				players[playerIndex].SpendECTS(amount);
-				UpdateECTSUI(playerIndex);
+				RevivePlayer(playerIndex);
 			}
 		}
 	}
+
+	/// Method to revive a player if they gain ECTS after bankruptcy
+	private void RevivePlayer(int playerIndex)
+	{
+		if (playerIndex < 0 || playerIndex >= players.Count)
+		{
+			return;
+		}
+
+		// Only revive if the player has positive ECTS
+		if (players[playerIndex].ECTS > 0)
+		{
+			playerBankruptcyStatus[playerIndex] = false;
+			// Update UI to remove bankrupt status
+			if (playerIndex < playerNameLabels.Count)
+			{
+				playerNameLabels[playerIndex].Text = players[playerIndex].Name;
+				// Reset text color
+				playerNameLabels[playerIndex].RemoveThemeColorOverride("font_color");
+			}
+
+			PlaySound(reviveSoundPlayer);
+			players[playerIndex].Visible = true;
+			notificationService.ShowNotification($"Gracz {players[playerIndex].Name} wraca do gry!", NotificationService.NotificationType.Normal, 5f);
+			GD.Print($"Gracz {players[playerIndex].Name} wraca do gry!");
+		}
+	}
+
+	public void SubtractEctsFromPlayer(int playerIndex, int amount)
+	{
+		if (playerIndex >= 0 && playerIndex < players.Count)
+		{
+			GD.Print("...");
+			players[playerIndex].SpendECTS(amount);
+			UpdateECTSUI(playerIndex);
+		}
+	}
+}

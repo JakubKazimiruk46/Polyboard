@@ -1,0 +1,45 @@
+[gd_scene load_steps=2 format=3 uid="uid://b01tg8x22qrhx"]
+
+[ext_resource type="Script" uid="uid://cm7imrr6o8ufw" path="res://scenes/end_game/end_game_screen.gd" id="1_e3kmv"]
+
+[node name="EndGameScreen" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_e3kmv")
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="EndGameLabel" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 42
+text = "KONIEC GRY"
+horizontal_alignment = 1
+
+[node name="ResultsContainer" type="VBoxContainer" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(400, 300)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Spacer" type="Control" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="ReturnToMenuButton" type="Button" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(250, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 20
+text = "POWRÓT DO MENU"
