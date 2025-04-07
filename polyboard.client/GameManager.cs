@@ -48,6 +48,7 @@ public partial class GameManager : Node3D
 	private Label turnTimerLabel;
 	private NotificationService notificationService;
 	public bool regularRoll = true;
+	private AudioStreamPlayer3D walkingSoundPlayer;
 
 	private enum GameState
 	{
@@ -129,6 +130,7 @@ public partial class GameManager : Node3D
 		nextTurnSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/NextTurnSound");
 		bankruptSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/BankruptSound");
 		reviveSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/ReviveSound");
+		walkingSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/WalkingSound");
 		if (doubleSoundPlayer == null || doubleSoundPlayer == null || doubleSoundPlayer == null || bankruptSoundPlayer == null ||
 			reviveSoundPlayer == null)
 		{
@@ -562,49 +564,66 @@ private void InitPlayers()
 			}
 		}
 
-		private async void MoveCurrentPlayerPawnSequentially(int steps)
+private async void MoveCurrentPlayerPawnSequentially(int steps)
+{
+	if (currentPlayerIndex < 0 || currentPlayerIndex >= players.Count)
+	{
+		notificationService.ShowNotification("Błąd: Indeks aktualnego gracza poza zakresem.");
+		return;
+	}
+
+	currentState = GameState.MovingPawn;
+	Figurehead currentPlayer = players[currentPlayerIndex];
+	endTurnButton.Visible = false;
+	isMovementInProgress = true;
+	
+	// Play walking sound before starting movement
+	PlaySound(walkingSoundPlayer);
+	
+	await currentPlayer.MovePawnSequentially(steps, board);
+	
+	// Stop walking sound after movement is complete
+	StopSound(walkingSoundPlayer);
+	
+	isMovementInProgress = false;
+	
+	// Poczekaj na zakończenie wszystkich animacji i efektów
+	await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
+	// Check for bankruptcy after movement (ECTS might have changed during movement)
+	CheckForBankruptcy(currentPlayerIndex);
+	// If the player is now bankrupt, end their turn
+	if (IsCurrentPlayerBankrupt())
+	{
+		die1Result = null;
+		die2Result = null;
+		currentState = GameState.WaitingForInput;
+		EndTurn();
+		return;
+	}
+	StartTurnTimer();
+
+	if (die1Result.HasValue && die2Result.HasValue)
+	{
+		if (die1Result.Value != die2Result.Value)
 		{
-			if (currentPlayerIndex < 0 || currentPlayerIndex >= players.Count)
-			{
-				notificationService.ShowNotification("Błąd: Indeks aktualnego gracza poza zakresem.");
-				return;
-			}
-
-			currentState = GameState.MovingPawn;
-			Figurehead currentPlayer = players[currentPlayerIndex];
-			endTurnButton.Visible = false;
-			isMovementInProgress = true;
-			await currentPlayer.MovePawnSequentially(steps, board);
-			isMovementInProgress = false;
-			// Poczekaj na zakończenie wszystkich animacji i efektów
-			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
-			// Check for bankruptcy after movement (ECTS might have changed during movement)
-			CheckForBankruptcy(currentPlayerIndex);
-			// If the player is now bankrupt, end their turn
-			if (IsCurrentPlayerBankrupt())
-			{
-				die1Result = null;
-				die2Result = null;
-				currentState = GameState.WaitingForInput;
-				EndTurn();
-				return;
-			}
-			StartTurnTimer();
-
-			if (die1Result.HasValue && die2Result.HasValue)
-			{
-				if (die1Result.Value != die2Result.Value)
-				{
-					currentState = GameState.WaitingForInput;
-					endTurnButton.Visible = true;
-				}
-				else
-				{
-					PrepareForNextRoll();
-				}
-			}
-			UpdateECTSUI(currentPlayerIndex);
+			currentState = GameState.WaitingForInput;
+			endTurnButton.Visible = true;
 		}
+		else
+		{
+			PrepareForNextRoll();
+		}
+	}
+	UpdateECTSUI(currentPlayerIndex);
+}
+private void StopSound(AudioStreamPlayer3D player)
+{
+	if (player != null && player.Playing)
+	{
+		player.Stop();
+		GD.Print("Zatrzymano dźwięk.");
+	}
+}
 
 		private void PrepareForNextRoll()
 		{
