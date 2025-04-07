@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using Polyboard.Enums;
 
 public partial class GameManager : Node3D
 {
@@ -47,8 +48,21 @@ public partial class GameManager : Node3D
 	private Timer turnTimer;
 	private Label turnTimerLabel;
 	private NotificationService notificationService;
-	public bool regularRoll = true;
-
+	
+	public bool IsSpecialRollHappening = false;
+	public bool IsLastRegularRollDouble = false;
+	
+	[Signal]
+	public delegate void DicesStoppedRollingEventHandler();
+	[Signal]
+	public delegate void SpecialRollEndedEventHandler();
+	
+	private int lastDiceTotal;
+	public int GetLastDiceTotal()
+	{
+		return lastDiceTotal;
+	}
+	
 	private enum GameState
 	{
 		WaitingForInput,
@@ -57,10 +71,11 @@ public partial class GameManager : Node3D
 		EndTurn
 	}
 
+	private DiceRollMode diceRollMode = DiceRollMode.ForMovement;
 	private GameState currentState = GameState.WaitingForInput;
 
 	public override void _Ready()
-	{	
+	{			
 		InitCameras();
 		InitNotifications();
 		InitBoard();
@@ -479,14 +494,17 @@ private void InitPlayers()
 		EndTurn();
 	}
 
-	private void StartDiceRollForCurrentPlayer()
+	public void StartDiceRollForCurrentPlayer(DiceRollMode mode = DiceRollMode.ForMovement)
 	{
 		if (dieNode1 == null || dieNode2 == null)
 		{
 			notificationService.ShowNotification("Nie można rzucić kostkami: kostki nie są zainicjalizowane.");
 			return;
 		}
-
+		
+		die1Result = null;
+		die2Result = null;
+		
 		StopTurnTimer();
 
 		currentState = GameState.RollingDice;
@@ -494,6 +512,9 @@ private void InitPlayers()
 		SwitchToDiceCamera();
 		rollButton.Visible = false;
 		endTurnButton.Visible = false;
+		
+		diceRollMode = mode;
+		
 		string currentPlayerName = GetCurrentPlayerName();
 		notificationService.ShowNotification($"Gracz {currentPlayerName} rzuca kostkami...", NotificationService.NotificationType.Normal, 2f);
 		GD.Print($"Rzut kostkami dla gracza: {currentPlayerName}");
@@ -505,50 +526,78 @@ private void InitPlayers()
 	{
 		GD.Print($"Wynik pierwszej kostki: {value}");
 		die1Result = value;
-		CheckDiceResults();
+		
+		if (BothDicesFinished())
+			HandleBothDicesFinished();
 	}
 
 	private void OnDie2RollFinished(int value)
 	{
 		GD.Print($"Wynik drugiej kostki: {value}");
 		die2Result = value;
-		CheckDiceResults();
+		
+		if (BothDicesFinished())
+			HandleBothDicesFinished();
 	}
-
-	private void CheckDiceResults()
-	{
+	
+	private bool BothDicesFinished(){
 		if (!die1Result.HasValue || !die2Result.HasValue)
 		{
-			return;
+			return false;
 		}
-
-		int rollSum = die1Result.Value + die2Result.Value;
-		totalSteps = rollSum;
-		notificationService.ShowNotification($"Łączna suma oczek: {totalSteps}", NotificationService.NotificationType.Normal, 5f);
-		GD.Print($"Łączna suma oczek: {totalSteps}");
-		SwitchToMasterCamera();
-		if (regularRoll)
+		
+		return true;
+	}
+	
+	private void HandleBothDicesFinished()
+	{
+		GD.Print($"Oba rzuty zakończone. Wynik sumaryczny: {lastDiceTotal}");
+		switch (diceRollMode)
 		{
-			MoveCurrentPlayerPawnSequentially(totalSteps);
-			if (die1Result.Value == die2Result.Value)
-			{
-				GD.Print("Dublet! Kolejny rzut po ruchu.");
-				PlaySound(doubleSoundPlayer);
-				notificationService.ShowNotification("Dublet! Powtórz rzut po ruchu.", NotificationService.NotificationType.Normal, 5f);
-			}
-			else if (!regularRoll)
-			{
-				regularRoll = true;
-				board.publicFee = totalSteps;
-				board.publicFacilityDone = true;
-			}
-			else
-			{
-				GD.Print("Nie wyrzucono dubletu. Przygotowanie do zakończenia tury.");
-				notificationService.ShowNotification("Nie wyrzucono dubletu. Możesz zakończyć turę.", NotificationService.NotificationType.Normal, 2f);
-			}
+			case DiceRollMode.ForMovement:
+				HandleRegularRoll(CheckDiceResults());
+				break;
+
+			case DiceRollMode.JustForDisplay:
+				lastDiceTotal = CheckDiceResults();
+				EmitSignal(SignalName.DicesStoppedRolling);
+				EmitSignal(SignalName.SpecialRollEnded);
+				ShowDiceResultsOnly(lastDiceTotal);
+				break;
 		}
 	}
+	
+	private void ShowDiceResultsOnly(int total)
+	{
+		GD.Print($"Wyrzucono {die1Result}+{die2Result} = {total} (tylko podgląd)");
+		SwitchToMasterCamera();
+		SetBoardInteractions(true);
+		
+		AdjustGameStateAfterRoll();
+	}
+	
+	private int CheckDiceResults()
+	{
+		int rollSum = die1Result.Value + die2Result.Value;
+		
+		return rollSum;
+	}
+	
+	private void HandleRegularRoll(int totalSteps){
+		SwitchToMasterCamera();
+		MoveCurrentPlayerPawnSequentially(totalSteps);
+		if (die1Result.Value == die2Result.Value)
+		{
+			GD.Print("Dublet! Kolejny rzut po ruchu.");
+			IsLastRegularRollDouble = true;
+			PlaySound(doubleSoundPlayer);
+		}
+		else
+		{
+			GD.Print("Nie wyrzucono dubletu. Przygotowanie do zakończenia tury.");
+		}
+	}
+	
 	private void PlaySound(AudioStreamPlayer3D player)
 		{
 			if (player != null)
@@ -563,7 +612,7 @@ private void InitPlayers()
 		}
 
 		private async void MoveCurrentPlayerPawnSequentially(int steps)
-		{
+		{	
 			if (currentPlayerIndex < 0 || currentPlayerIndex >= players.Count)
 			{
 				notificationService.ShowNotification("Błąd: Indeks aktualnego gracza poza zakresem.");
@@ -574,7 +623,7 @@ private void InitPlayers()
 			Figurehead currentPlayer = players[currentPlayerIndex];
 			endTurnButton.Visible = false;
 			isMovementInProgress = true;
-			await currentPlayer.MovePawnSequentially(steps, board);
+			await currentPlayer.MovePawnSequentially(steps, board); //zamien 12 na steps
 			isMovementInProgress = false;
 			// Poczekaj na zakończenie wszystkich animacji i efektów
 			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
@@ -590,22 +639,29 @@ private void InitPlayers()
 				return;
 			}
 			StartTurnTimer();
-
-			if (die1Result.HasValue && die2Result.HasValue)
+			
+			AdjustGameStateAfterRoll();
+		}
+		
+		private async void AdjustGameStateAfterRoll(){
+			if (IsSpecialRollHappening){
+				await ToSignal(this, SignalName.SpecialRollEnded);
+				IsSpecialRollHappening = false;
+			}
+			
+			if (IsLastRegularRollDouble){
+				PrepareForNextRoll();
+				IsLastRegularRollDouble = false;
+			}
+			else
 			{
-				if (die1Result.Value != die2Result.Value)
-				{
-					currentState = GameState.WaitingForInput;
-					endTurnButton.Visible = true;
-				}
-				else
-				{
-					PrepareForNextRoll();
-				}
+				currentState = GameState.WaitingForInput;
+				endTurnButton.Visible = true;
 			}
 			UpdateECTSUI(currentPlayerIndex);
-		}
 
+		}
+		
 		private void PrepareForNextRoll()
 		{
 			if (isMovementInProgress) return;
