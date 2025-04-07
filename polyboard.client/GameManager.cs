@@ -48,6 +48,11 @@ public partial class GameManager : Node3D
 	private Label turnTimerLabel;
 	private NotificationService notificationService;
 	public bool regularRoll = true;
+	//public dla wymian
+	public List<Figurehead> Players
+	{
+		get { return players; }
+	}
 
 	private enum GameState
 	{

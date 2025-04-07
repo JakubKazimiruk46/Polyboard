@@ -302,7 +302,6 @@ private void InitializePopupMenu()
 	
 	theme.SetStylebox("panel", "PopupMenu", panelStyle);
 	theme.SetStylebox("hover", "PopupMenu", hoverStyle);
-	
 	theme.SetColor("font_color", "PopupMenu", new Color(1, 1, 1)); 
 	theme.SetColor("font_hover_color", "PopupMenu", new Color("#62ff45")); 
 	
@@ -396,8 +395,7 @@ private void TrySellProperty(Field field, Figurehead player)
 	// GD.Print($"Field owned: {field.owned}, Owner name: {field.Owner?.Name}");
 	// GD.Print($"Owner class name: {ownerClassName}");
 	// GD.Print($"Current player name: {player.Name}, Index: {currentPlayerIndex}");
-	
-	// Check if the player's owned fields array shows ownership
+
 	bool playerOwnsAccordingToArray = player.ownedFields[field.FieldId];
 	// GD.Print($"Player owns according to ownedFields array: {playerOwnsAccordingToArray}");
 	
@@ -408,13 +406,10 @@ private void TrySellProperty(Field field, Figurehead player)
 		
 		// GD.Print($"Selling field: {field.Name} for {sellValue} ECTS");
 		
-		// Return the property to the bank
 		field.RemoveOwner(player, field);
 		
-		// Show notification
 		ShowPopupNotification($"Sold {field.Name} for {sellValue} ECTS", 3.0f);
 		
-		// Update UI
 		gameManager.UpdateECTSUI(currentPlayerIndex);
 	}
 	else
@@ -579,11 +574,25 @@ private void TryExchangeProperty(Field field, Figurehead player)
 {
 	if (field.owned && field.Owner == player)
 	{
-		var tradeScene = GetNode<CanvasLayer>("/root/Level/Trade");
+		// Get the trade scene
+		var tradeScene = GetNode<Node>("/root/Level/Trade");
 		if (tradeScene != null)
 		{
-
-			tradeScene.Visible = true;
+			// Create an array of player names and IDs that can be converted to Variant
+			Godot.Collections.Array playerData = new Godot.Collections.Array();
+			for (int i = 0; i < gameManager.Players.Count; i++)
+			{
+				var p = gameManager.Players[i];
+				var playerInfo = new Godot.Collections.Dictionary
+				{
+					{ "name", p.Name },
+					{ "id", i }
+				};
+				playerData.Add(playerInfo);
+			}
+			
+			// Call the setup_trade method with convert-friendly parameters
+			tradeScene.Call("setup_trade", player.Name, playerData, field.FieldId);
 			
 			ShowPopupNotification("Opening property exchange interface...", 2.0f);
 		}
@@ -598,7 +607,6 @@ private void TryExchangeProperty(Field field, Figurehead player)
 		ShowPopupNotification("You don't own this property!", 2.0f);
 	}
 }
-
 private void ShowPopupNotification(string message, float duration = 3.0f)
 {
 	var notifications = GetNode<Node>("/root/Notifications");
