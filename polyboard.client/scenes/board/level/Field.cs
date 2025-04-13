@@ -186,12 +186,12 @@ public partial class Field : Node3D
 			// Możesz dostosować to według swojej logiki planszy
 			if (FieldId >= 1 && FieldId <= 9)
 			{
-				positions.Add(new Vector3(bRCG.X + 2.5f, 0.5f, bRCG.Z - 1.5f));
-				positions.Add(new Vector3(bRCG.X + 2.5f, 0.5f, bRCG.Z - 0.5f));
-				positions.Add(new Vector3(bRCG.X + 1.5f, 0.5f, bRCG.Z - 1.5f));
-				positions.Add(new Vector3(bRCG.X + 1.5f, 0.5f, bRCG.Z - 0.5f));
-				positions.Add(new Vector3(bRCG.X + 0.5f, 0.5f, bRCG.Z - 1.5f));
-				positions.Add(new Vector3(bRCG.X + 0.5f, 0.5f, bRCG.Z - 0.5f));
+				positions.Add(new Vector3(bRCG.X + 2.5f, 0.1f, bRCG.Z - 1.5f));
+				positions.Add(new Vector3(bRCG.X + 2.5f, 0.1f, bRCG.Z - 0.5f));
+				positions.Add(new Vector3(bRCG.X + 1.5f, 0.1f, bRCG.Z - 1.5f));
+				positions.Add(new Vector3(bRCG.X + 1.5f, 0.1f, bRCG.Z - 0.5f));
+				positions.Add(new Vector3(bRCG.X + 0.5f, 0.1f, bRCG.Z - 1.5f));
+				positions.Add(new Vector3(bRCG.X + 0.5f, 0.1f, bRCG.Z - 0.5f));
 				buildPositions.Add(new Vector3(bRCG.X+3.6f, 0.28f, bRCG.Z-0.3f));
 				buildPositions.Add(new Vector3(bRCG.X+3.6f, 0.28f, bRCG.Z-0.8f));
 				buildPositions.Add(new Vector3(bRCG.X+3.6f, 0.28f, bRCG.Z-1.3f));
@@ -201,12 +201,12 @@ public partial class Field : Node3D
 			}
 			else if (FieldId >= 11 && FieldId <= 19)
 			{
-				positions.Add(new Vector3(bRCG.X + 1.5f, 0.5f, bRCG.Z + 2.5f));
-				positions.Add(new Vector3(bRCG.X + 0.5f, 0.5f, bRCG.Z + 2.5f));
-				positions.Add(new Vector3(bRCG.X + 1.5f, 0.5f, bRCG.Z + 1.5f));
-				positions.Add(new Vector3(bRCG.X + 0.5f, 0.5f, bRCG.Z + 1.5f));
-				positions.Add(new Vector3(bRCG.X + 1.5f, 0.5f, bRCG.Z + 0.5f));
-				positions.Add(new Vector3(bRCG.X + 0.5f, 0.5f, bRCG.Z + 0.5f));
+				positions.Add(new Vector3(bRCG.X + 1.5f, 0.1f, bRCG.Z + 2.5f));
+				positions.Add(new Vector3(bRCG.X + 0.5f, 0.1f, bRCG.Z + 2.5f));
+				positions.Add(new Vector3(bRCG.X + 1.5f, 0.1f, bRCG.Z + 1.5f));
+				positions.Add(new Vector3(bRCG.X + 0.5f, 0.1f, bRCG.Z + 1.5f));
+				positions.Add(new Vector3(bRCG.X + 1.5f, 0.1f, bRCG.Z + 0.5f));
+				positions.Add(new Vector3(bRCG.X + 0.5f, 0.1f, bRCG.Z + 0.5f));
 				buildPositions.Add(new Vector3(bRCG.X+0.3f, 0.28f, bRCG.Z+3.55f));
 				buildPositions.Add(new Vector3(bRCG.X+0.8f, 0.28f, bRCG.Z+3.55f));
 				buildPositions.Add(new Vector3(bRCG.X+1.3f, 0.28f, bRCG.Z+3.55f));
@@ -216,12 +216,12 @@ public partial class Field : Node3D
 			}
 			else if (FieldId >= 21 && FieldId <= 30)
 			{
-				positions.Add(new Vector3(bRCG.X - 2.5f, 0.5f, bRCG.Z + 1.5f));
-				positions.Add(new Vector3(bRCG.X - 2.5f, 0.5f, bRCG.Z + 0.5f));
-				positions.Add(new Vector3(bRCG.X - 1.5f, 0.5f, bRCG.Z + 1.5f));
-				positions.Add(new Vector3(bRCG.X - 1.5f, 0.5f, bRCG.Z + 0.5f));
-				positions.Add(new Vector3(bRCG.X - 0.5f, 0.5f, bRCG.Z + 1.5f));
-				positions.Add(new Vector3(bRCG.X - 0.5f, 0.5f, bRCG.Z + 0.5f));
+				positions.Add(new Vector3(bRCG.X - 2.5f, 0.1f, bRCG.Z + 1.5f));
+				positions.Add(new Vector3(bRCG.X - 2.5f, 0.1f, bRCG.Z + 0.5f));
+				positions.Add(new Vector3(bRCG.X - 1.5f, 0.1f, bRCG.Z + 1.5f));
+				positions.Add(new Vector3(bRCG.X - 1.5f, 0.1f, bRCG.Z + 0.5f));
+				positions.Add(new Vector3(bRCG.X - 0.5f, 0.1f, bRCG.Z + 1.5f));
+				positions.Add(new Vector3(bRCG.X - 0.5f, 0.1f, bRCG.Z + 0.5f));
 				buildPositions.Add(new Vector3(bRCG.X-3.55f, 0.28f, bRCG.Z+0.3f));
 				buildPositions.Add(new Vector3(bRCG.X-3.55f, 0.28f, bRCG.Z+0.8f));
 				buildPositions.Add(new Vector3(bRCG.X-3.55f, 0.28f, bRCG.Z+1.3f));
@@ -231,12 +231,12 @@ public partial class Field : Node3D
 			}
 			else if (FieldId >= 31 && FieldId <= 40)
 			{
-				positions.Add(new Vector3(bRCG.X - 1.5f, 0.5f, bRCG.Z - 2.5f));
-				positions.Add(new Vector3(bRCG.X - 0.5f, 0.5f, bRCG.Z - 2.5f));
-				positions.Add(new Vector3(bRCG.X - 1.5f, 0.5f, bRCG.Z - 1.5f));
-				positions.Add(new Vector3(bRCG.X - 0.5f, 0.5f, bRCG.Z - 1.5f));
-				positions.Add(new Vector3(bRCG.X - 1.5f, 0.5f, bRCG.Z - 0.5f));
-				positions.Add(new Vector3(bRCG.X - 0.5f, 0.5f, bRCG.Z - 0.5f));
+				positions.Add(new Vector3(bRCG.X - 1.5f, 0.1f, bRCG.Z - 2.5f));
+				positions.Add(new Vector3(bRCG.X - 0.5f, 0.1f, bRCG.Z - 2.5f));
+				positions.Add(new Vector3(bRCG.X - 1.5f, 0.1f, bRCG.Z - 1.5f));
+				positions.Add(new Vector3(bRCG.X - 0.5f, 0.1f, bRCG.Z - 1.5f));
+				positions.Add(new Vector3(bRCG.X - 1.5f, 0.1f, bRCG.Z - 0.5f));
+				positions.Add(new Vector3(bRCG.X - 0.5f, 0.1f, bRCG.Z - 0.5f));
 				buildPositions.Add(new Vector3(bRCG.X-0.3f, 0.28f, bRCG.Z-3.6f));
 				buildPositions.Add(new Vector3(bRCG.X-0.8f, 0.28f, bRCG.Z-3.6f));
 				buildPositions.Add(new Vector3(bRCG.X-1.3f, 0.28f, bRCG.Z-3.6f));

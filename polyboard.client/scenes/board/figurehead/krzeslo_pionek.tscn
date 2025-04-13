@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://caod4fhoyyvvk"]
+
+[ext_resource type="PackedScene" uid="uid://bybbhfoqkym84" path="res://figureheads/krzeslo-pionek.glb" id="1_ppuee"]
+[ext_resource type="Script" uid="uid://jjck14f1cwuj" path="res://scenes/board/figurehead/Figurehead.cs" id="2_y3ud8"]
+
+[node name="krzeslo-pionek" instance=ExtResource("1_ppuee")]
+transform = Transform3D(-0.5, 0, -4.37114e-08, 0, 0.5, 0, 4.37114e-08, 0, -0.5, 0, 0, 0)
+script = ExtResource("2_y3ud8")
+pawnInstancePath = NodePath(".")

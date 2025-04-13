@@ -133,7 +133,7 @@ public partial class Figurehead : CharacterBody3D
 				if (CurrentPositionIndex == 0 || CurrentPositionIndex == 10 || CurrentPositionIndex == 20 || CurrentPositionIndex == 30)
 			{
 			Vector3 currentRotation = RotationDegrees;
-			Vector3 newRotation = currentRotation + new Vector3(0, 90, 0);
+			Vector3 newRotation = currentRotation + new Vector3(0, -90, 0);
 
 			
 			tween.TweenProperty(this, "rotation_degrees", newRotation, 0.5f)

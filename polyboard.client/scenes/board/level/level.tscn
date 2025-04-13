@@ -628,3 +628,4 @@ GameManagerPath = NodePath("../GameManager")
 [editable path="NotificationLayer"]
 [editable path="UI"]
 [editable path="BuyCard"]
+[editable path="BuyCard/AuctionCard"]
