@@ -9,7 +9,7 @@ extends RigidBody3D
 @onready var ownerNickame = $"../CanvasLayer/OwnerNickname"
 
 var start_pos
-var roll_strength = 25
+var roll_strength = 0
 
 var is_rolling = false
 
@@ -30,9 +30,9 @@ func _roll():
 	ownerNickame.visible = false
 	randomCard.visible=false
 	# Randomowa rotacja
-	transform.basis = Basis(Vector3.RIGHT, randf_range(0, 2 * PI)) * transform.basis
-	transform.basis = Basis(Vector3.UP, randf_range(0, 2 * PI)) * transform.basis
-	transform.basis = Basis(Vector3.FORWARD, randf_range(0, 2 * PI)) * transform.basis
+	transform.basis = Basis(Vector3.RIGHT, randf_range(0, 0 * PI)) * transform.basis
+	transform.basis = Basis(Vector3.UP, randf_range(0, 0 * PI)) * transform.basis
+	transform.basis = Basis(Vector3.FORWARD, randf_range(0, 0 * PI)) * transform.basis
 
 	var throw_vector = Vector3(randf_range(-1, 1), 0, randf_range(-1, 1)).normalized()
 	angular_velocity = throw_vector * roll_strength / 2

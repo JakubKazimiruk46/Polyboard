@@ -678,18 +678,49 @@ private void ShowPopupError(string message, float duration = 4.0f)
 	private void InitializeCardEffects()
 	{
 		// Community cards effects
+		cardEffects.Add(("community", 2), (100, null));
+		cardEffects.Add(("community", 3), (100, null));
 		cardEffects.Add(("community", 4), (-150, null));
 		cardEffects.Add(("community", 5), (-50, null));
-		cardEffects.Add(("community", 6), (-100, null));
-		cardEffects.Add(("community", 7), (50, null));
-		cardEffects.Add(("community", 8), (150, null));
-		cardEffects.Add(("community", 9), (-100, null));
-		cardEffects.Add(("community", 10), (200, null));
-		cardEffects.Add(("community", 11), (200, null));
-		cardEffects.Add(("community", 12), (200, null));
+		cardEffects.Add(("community", 6), (100, null));
+		cardEffects.Add(("community", 7), (50, async () => 
+		{
+			var currentPlayer = gameManager.getCurrentPlayer();
+			await currentPlayer.MoveToField(5, this);
+		}));
+		cardEffects.Add(("community", 8), (150, async () => 
+		{
+			var currentPlayer = gameManager.getCurrentPlayer();
+			await currentPlayer.MoveToField(28, this);
+		}));
+		cardEffects.Add(("community", 9), (-100, async () => 
+		{
+			var currentPlayer = gameManager.getCurrentPlayer();
+			await currentPlayer.MoveToField(15, this);
+		}));
+		cardEffects.Add(("community", 10), (200, async () => 
+		{
+			var currentPlayer = gameManager.getCurrentPlayer();
+			await currentPlayer.MoveToField(39, this);
+		}));
+		cardEffects.Add(("community", 11), (200, async () => 
+		{
+			var currentPlayer = gameManager.getCurrentPlayer();
+			await currentPlayer.MoveToField(29, this);
+		}));
+		cardEffects.Add(("community", 12), (200, async () => 
+		{
+			var currentPlayer = gameManager.getCurrentPlayer();
+			await currentPlayer.MoveToField(0, this);
+		}));
 		cardEffects.Add(("community", 13), (-100, null));
+		cardEffects.Add(("community", 14), (100, null));
 		cardEffects.Add(("community", 15), (200, null));
-		cardEffects.Add(("community", 16), (-50, null));
+		cardEffects.Add(("community", 16), (-50, async () => 
+		{
+			var currentPlayer = gameManager.getCurrentPlayer();
+			await currentPlayer.MoveToField(27, this);
+		}));
 
 		// Chance cards effects
 		cardEffects.Add(("chance", 2), (100, null));
