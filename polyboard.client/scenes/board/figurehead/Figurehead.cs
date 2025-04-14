@@ -16,6 +16,7 @@ public partial class Figurehead : CharacterBody3D
 	public Color playerColor;
 	private AudioStreamPlayer3D walkSoundPlayer;
 	private AnimationPlayer animationPlayer;
+	private NotificationService notificationService;
 	public List<bool> ownedFields=new List<bool>(40);
 	
 	private bool hasAnimation=false;
@@ -29,22 +30,23 @@ public partial class Figurehead : CharacterBody3D
 	{
 		ownedFields = new List<bool>(new bool[40]);
 		walkSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>(walkSoundPlayerPath);
+		notificationService = GetNodeOrNull<NotificationService>("/root/NotificationService");
 		if (walkSoundPlayer == null)
 		{
-			ShowError("Błąd: Nie znaleziono AudioStreamPlayer3D. Sprawdź walkSoundPlayerPath.");
+			notificationService.ShowNotification("Błąd: Nie znaleziono AudioStreamPlayer3D. Sprawdź walkSoundPlayerPath.", NotificationService.NotificationType.Error);
 			GD.PrintErr("Błąd: Nie znaleziono AudioStreamPlayer3D. Sprawdź walkSoundPlayerPath.");
 		}
 		var pawnInstance = GetNodeOrNull<Node>(pawnInstancePath);
 		if (pawnInstance == null)
 		{
-			ShowError($"Błąd: Nie znaleziono instancji pionka pod ścieżką {pawnInstancePath}.");
+			notificationService.ShowNotification($"Błąd: Nie znaleziono instancji pionka pod ścieżką {pawnInstancePath}.", NotificationService.NotificationType.Error);
 			GD.PrintErr($"Błąd: Nie znaleziono instancji pionka pod ścieżką {pawnInstancePath}.");
 			return;
 		}
-		 animationPlayer = pawnInstance.GetNodeOrNull<AnimationPlayer>("AnimationPlayer");
+		animationPlayer = pawnInstance.GetNodeOrNull<AnimationPlayer>("AnimationPlayer");
 		if (animationPlayer != null)
 		{
-			ShowNotification("Znaleziono AnimationPlayer w instancji pionka.");
+			notificationService.ShowNotification("Znaleziono AnimationPlayer w instancji pionka.", NotificationService.NotificationType.Error);
 			GD.Print("Znaleziono AnimationPlayer w instancji pionka.");
 		}
 		else
@@ -79,7 +81,7 @@ public partial class Figurehead : CharacterBody3D
 		{
 			// Obliczanie nowej pozycji z uwzględnieniem kierunku i zawijania planszy
 			int newPosition = initialPosition + (i * direction);
-			
+
 			// Obsługa przekroczenia granic planszy
 			if (newPosition >= TOTAL_FIELDS)
 			{
@@ -89,7 +91,7 @@ public partial class Figurehead : CharacterBody3D
 				{
 					AddECTS(200);
 					GD.Print($"Gracz {Name} przeszedł przez pole startowe i otrzymał 200 ECTS.");
-					ShowNotification($"Gracz {Name} przeszedł przez pole startowe i otrzymał 200 ECTS.");
+					notificationService.ShowNotification($"Gracz {Name} przeszedł przez pole startowe i otrzymał 200 ECTS.");
 					ShowECTSUpdate();
 				}
 			}
@@ -105,7 +107,8 @@ public partial class Figurehead : CharacterBody3D
 			if (nextField == null || nextField.positions.Count == 0)
 			{
 				GD.PrintErr($"Błąd: Nie znaleziono pola docelowego lub brak pozycji na polu {CurrentPositionIndex}.");
-				ShowError($"Błąd: Nie znaleziono pola docelowego lub brak pozycji na polu {CurrentPositionIndex}.");
+				notificationService.ShowNotification($"Błąd: Nie znaleziono pola docelowego lub brak pozycji na polu {CurrentPositionIndex}.",
+					NotificationService.NotificationType.Error);
 				StopWalkSound();
 				return;
 			}
@@ -115,7 +118,8 @@ public partial class Figurehead : CharacterBody3D
 			if (freeIndex == -1)
 			{
 				GD.PrintErr($"Błąd: Brak wolnych pozycji na polu {CurrentPositionIndex}.");
-				ShowError($"Błąd: Brak wolnych pozycji na polu {CurrentPositionIndex}.");
+				notificationService.ShowNotification($"Błąd: Brak wolnych pozycji na polu {CurrentPositionIndex}.",
+					NotificationService.NotificationType.Error);
 				StopWalkSound();
 				return;
 			}
@@ -127,18 +131,18 @@ public partial class Figurehead : CharacterBody3D
 			// Animacja ruchu
 			Tween tween = CreateTween();
 			tween.TweenProperty(this, "global_position", nextPosition, 0.5f)
-				 .SetTrans(Tween.TransitionType.Linear)
-				 .SetEase(Tween.EaseType.InOut);
-				
-				if (CurrentPositionIndex == 0 || CurrentPositionIndex == 10 || CurrentPositionIndex == 20 || CurrentPositionIndex == 30)
-			{
-			Vector3 currentRotation = RotationDegrees;
-			Vector3 newRotation = currentRotation + new Vector3(0, -90, 0);
+				.SetTrans(Tween.TransitionType.Linear)
+				.SetEase(Tween.EaseType.InOut);
 
-			
-			tween.TweenProperty(this, "rotation_degrees", newRotation, 0.5f)
-				 .SetTrans(Tween.TransitionType.Linear)
-				 .SetEase(Tween.EaseType.InOut);
+			if (CurrentPositionIndex == 0 || CurrentPositionIndex == 10 || CurrentPositionIndex == 20 || CurrentPositionIndex == 30)
+			{
+				var currentRotation = RotationDegrees;
+				var newRotation = currentRotation + new Vector3(0, -90, 0);
+
+
+				tween.TweenProperty(this, "rotation_degrees", newRotation, 0.5f)
+					.SetTrans(Tween.TransitionType.Linear)
+					.SetEase(Tween.EaseType.InOut);
 			}
 			await ToSignal(tween, "finished");
 		}
@@ -219,7 +223,7 @@ public partial class Figurehead : CharacterBody3D
 		{
 			AddECTS(field.ECTSReward);
 			GD.Print($"Gracz {Name} otrzymał {field.ECTSReward} ECTS za lądowanie na polu {field.Name}.");
-			ShowNotification($"Gracz {Name} otrzymał {field.ECTSReward} ECTS za lądowanie na polu {field.Name}.");
+			notificationService.ShowNotification($"Gracz {Name} otrzymał {field.ECTSReward} ECTS za lądowanie na polu {field.Name}.");
 			ShowECTSUpdate();
 		}
 	}
@@ -228,7 +232,7 @@ public partial class Figurehead : CharacterBody3D
 	{
 		ECTS += amount;
 		GD.Print($"Gracz {Name} otrzymał {amount} ECTS. Łączna ilość: {ECTS}");
-		ShowNotification($"Gracz {Name} otrzymał {amount} ECTS. Łączna ilość: {ECTS}");
+		notificationService.ShowNotification($"Gracz {Name} otrzymał {amount} ECTS. Łączna ilość: {ECTS}");
 		UpdateECTSUI();
 	}
 
@@ -238,12 +242,12 @@ public partial class Figurehead : CharacterBody3D
 		{
 			ECTS -= amount;
 			GD.Print($"Gracz {Name} wydał {amount} ECTS. Pozostało: {ECTS}");
-			ShowNotification($"Gracz {Name} otrzymał {amount} ECTS. Łączna ilość: {ECTS}");
+			notificationService.ShowNotification($"Gracz {Name} otrzymał {amount} ECTS. Łączna ilość: {ECTS}");
 			UpdateECTSUI();
 			return true;
 		}
 		GD.Print($"Gracz {Name} nie ma wystarczającej ilości ECTS.");
-		ShowNotification($"Gracz {Name} otrzymał {amount} ECTS. Łączna ilość: {ECTS}");
+		notificationService.ShowNotification($"Gracz {Name} otrzymał {amount} ECTS. Łączna ilość: {ECTS}");
 		return false;
 	}
 
@@ -260,34 +264,6 @@ public partial class Figurehead : CharacterBody3D
 	public int GetCurrentPositionIndex()
 	{
 		return CurrentPositionIndex;
-	}
-
-	//TODO DRY! if exactly the same function is needed in multiple classes it should be a separate service injected to them
-	public void ShowNotification(string message, float duration = 3f)
-	{
-		var notifications = GetNode<Node>("/root/Notifications");
-		if (notifications != null)
-		{
-			notifications.Call("show_notification", message, duration);
-		}
-		else
-		{
-			GD.PrintErr("NotificationLayer singleton not found. Make sure it's added as an Autoload.");
-		}
-	}
-
-	public void ShowError(string message, float duration = 4f)
-	{
-		var notifications = GetNode<Node>("/root/Notifications");
-		if (notifications != null)
-		{
-			notifications.Call("show_error", message, duration);
-		}
-		else
-		{
-			GD.PrintErr("NotificationLayer singleton not found. Make sure it's added as an Autoload.");
-			GD.PrintErr(message);
-		}
 	}
 
 }

@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Polyboard.Enums;
 
@@ -36,6 +37,7 @@ public partial class Field : Node3D
 	public DepartmentName Department = DepartmentName.None;
 	public List<int> rentCost = new List<int>(6);
 	private GameManager gameManager;
+	private NotificationService notificationService;
 	
 	public void PayRent(Figurehead player, Field field)
 	{
@@ -150,15 +152,21 @@ public partial class Field : Node3D
 		gameManager = GetNode<GameManager>("/root/Level/GameManager");
 		viewDetailsDialog = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect/ViewDetailsDialog");
 		constructionSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/ConstructionSound");
+		notificationService = GetNodeOrNull<NotificationService>("/root/NotificationService");
 		if (viewDetailsDialog == null)
 		{
 			GD.PrintErr("Błąd: Nie znaleziono Sprite2D do wyświetlania dialogu wyswietlenia detali.");
 		}
 		SetPositions();
-		_area.Connect("mouse_entered", new Callable(this, nameof(OnMouseEntered)));
-		_area.Connect("mouse_exited", new Callable(this, nameof(OnMouseExited)));
-		_area.Connect("input_event", new Callable(this, nameof(OnInputEvent)));
-
+		
+		int[] fieldsWithoutDetails = [0, 2, 4, 7, 10, 17, 20, 22, 30, 33, 36, 38];
+		if (!fieldsWithoutDetails.Contains(FieldId))
+		{
+			_area.Connect("mouse_entered", new Callable(this, nameof(OnMouseEntered)));
+			_area.Connect("mouse_exited", new Callable(this, nameof(OnMouseExited)));
+			_area.Connect("input_event", new Callable(this, nameof(OnInputEvent)));
+		}
+		
 		// Ustawienie ECTSReward dla CornerField0
 		if (FieldId == 0)
 		{
@@ -254,32 +262,36 @@ public partial class Field : Node3D
 	protected void OnInputEvent(Node camera, InputEvent @event, Vector3 position, Vector3 normal, int shape_idx)
 	{
 		if (!isMouseEventEnabled) return;
-		if (@event is InputEventMouseButton mouseButton)
+		switch (@event)
 		{
-			if (mouseButton.Pressed && mouseButton.ButtonIndex == MouseButton.Left)
+			case InputEventMouseButton mouseButton:
 			{
-				var parent = GetParent() as Board;
-				parent?.ShowFieldTexture(FieldId);
+				if (mouseButton.Pressed && mouseButton.ButtonIndex == MouseButton.Left)
+				{
+					var parent = GetParent() as Board;
+					parent?.ShowFieldTexture(FieldId);
+				}
+				break;
 			}
-		}
-		else if (@event is InputEventMouseMotion)
-		{
-			ShowDetailsDialog();
-			_border.Visible = true;
-		}
-		else if (@event is InputEventMouseButton)
-		{
-			_border.Visible = false;
+			case InputEventMouseMotion:
+				ShowDetailsDialog();
+				_border.Visible = true;
+				break;
+			default:
+			{
+				if (@event is InputEventMouseButton)
+				{
+					_border.Visible = false;
+				}
+				break;
+			}
 		}
 	}
 	public void RemoveAllHouses()
 	{
-	foreach (var house in builtHouses)
+	foreach (var house in builtHouses.OfType<Node3D>())
 	{
-		if (house != null)
-		{
-			house.QueueFree(); // Usuwanie obiektu z gry
-		}
+		house.QueueFree(); // Usuwanie obiektu z gry
 	}
 	builtHouses.Clear(); // Wyczyszczenie listy
 	for (int i = 0; i < buildOccupied.Count; i++)
@@ -304,7 +316,8 @@ public partial class Field : Node3D
 		GD.Print("Hotel już jest zbudowany. Nie można budować więcej domków.");
 		return;
 	}
-	 int freeIndex = buildOccupied.FindIndex(occupied => !occupied);
+	
+	var freeIndex = buildOccupied.FindIndex(occupied => !occupied);
 	if (freeIndex == -1 || freeIndex == 4)
 	{
 		BuildHotel(FieldId);
@@ -369,15 +382,12 @@ public partial class Field : Node3D
 		timer.Start();
 		await ToSignal(timer, "timeout");
 		
-		
-		
-		
 		buildCamera.QueueFree();
 		return;
 	}
 	else
 	{
-		ShowError("Nie udało się stworzyć sceny domku.");
+		notificationService.ShowNotification("Nie udało się stworzyć sceny domku.", NotificationService.NotificationType.Error);
 		GD.PrintErr("Nie udało się stworzyć sceny domku.");
 		return;
 	}
@@ -388,22 +398,21 @@ public partial class Field : Node3D
 		RemoveAllHouses();
 		HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
 	if (invalidFieldIds.Contains(FieldId))
-	{
-	return;
-	}
+		return;
+	
 		var hotelScene=GD.Load<PackedScene>("res://scenes/board/buildings/hotel.tscn");
 		var puffScene = GD.Load<PackedScene>("res://scenes/board/buildings/puff.tscn");
 		
 	if (hotelScene == null)
 	{
-		ShowError("Nie udało się załadować sceny hotelu.");
+		notificationService.ShowNotification("Nie udało się załadować sceny hotelu.", NotificationService.NotificationType.Error);
 		GD.PrintErr("Nie udało się załadować sceny hotelu.");
 		return;
 	}
 	
 	if (puffScene == null)
 	{
-		ShowError("Nie udało się załadować sceny efektu");
+		notificationService.ShowNotification("Nie udało się załadować sceny efektu", NotificationService.NotificationType.Error);
 		GD.PrintErr("Nie udało się załadować sceny efektu");
 		return;
 	}
@@ -454,16 +463,13 @@ public partial class Field : Node3D
 		timer.Start();
 		await ToSignal(timer, "timeout");
 		
-		
-		
-		
 		buildCamera.QueueFree();
 		return;
 
 	}
 	else
 	{
-		ShowError("Nie udało się stworzyć sceny hotelu.");
+		notificationService.ShowNotification("Nie udało się stworzyć sceny hotelu.", NotificationService.NotificationType.Error);
 		GD.PrintErr("Nie udało się stworzyć sceny hotelu.");
 	}
 	}
@@ -499,7 +505,7 @@ private void PlayConstructionSound()
 		}
 		else
 		{
-			ShowError("Błąd: AudioStreamPlayer3D nie jest zainicjalizowany.");
+			notificationService.ShowNotification("Błąd: AudioStreamPlayer3D nie jest zainicjalizowany.", NotificationService.NotificationType.Error);
 			GD.PrintErr("Błąd: AudioStreamPlayer3D nie jest zainicjalizowany.");
 		}
 	}
@@ -536,32 +542,5 @@ private void PlayHotelConstructionSound()
 	{
 		// Any additional logic that you want to execute every frame
 	}
-
-	//TODO merge in one function. also is it needed? Single responsibility principle! - field should not be responsible for UI notification
-	public void ShowNotification(string message, float duration = 3f)
-	{
-		var notifications = GetNode<Node>("/root/Notifications");
-		if (notifications != null)
-		{
-			notifications.Call("show_notification", message, duration);
-		}
-		else
-		{
-			GD.PrintErr("NotificationLayer singleton not found. Make sure it's added as an Autoload.");
-		}
-	}
-
-	public void ShowError(string message, float duration = 4f)
-	{
-		var notifications = GetNode<Node>("/root/Notifications");
-		if (notifications != null)
-		{
-			notifications.Call("show_error", message, duration);
-		}
-		else
-		{
-			GD.PrintErr("NotificationLayer singleton not found. Make sure it's added as an Autoload.");
-			GD.PrintErr(message);
-		}
-	}
+	
 }
