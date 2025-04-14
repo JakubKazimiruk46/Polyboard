@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://caml7se6mxf4i"]
+[gd_scene load_steps=11 format=3 uid="uid://caml7se6mxf4i"]
 
 [ext_resource type="PackedScene" uid="uid://by1k0ckydbvmy" path="res://scenes/account/match_history.tscn" id="1_hcews"]
 [ext_resource type="Script" uid="uid://dbjvskae5l1qs" path="res://scenes/account/tab_container.gd" id="1_x3biu"]
 [ext_resource type="PackedScene" uid="uid://bioeyv8t6aq7g" path="res://scenes/account/achievement_filter.tscn" id="2_5diw0"]
 [ext_resource type="Script" uid="uid://dnavceoop62eg" path="res://scenes/account/achievements.gd" id="2_wts8v"]
+[ext_resource type="Script" uid="uid://dji2b6k7yrqy4" path="res://scenes/account/achievement_manager.gd" id="5_5c4ou"]
 
 [sub_resource type="SystemFont" id="SystemFont_7t8lt"]
 font_names = PackedStringArray("Serif")
@@ -256,4 +257,13 @@ size_flags_horizontal = 4
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="HTTPRequest" type="HTTPRequest" parent="TabContainer/Achievements/MarginContainer"]
+[node name="AchievementManager" type="Node" parent="TabContainer/Achievements"]
+script = ExtResource("5_5c4ou")
+
+[node name="SaveProgressButton" type="Button" parent="TabContainer/Achievements"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 27.0
+offset_right = 221.0
+offset_bottom = 91.0
+text = "Save Progress"

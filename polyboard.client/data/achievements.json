@@ -1,0 +1,67 @@
+[
+  {
+	"name": "Dziekan wydziału inwestycji",
+	"requirement": "Zbuduj hotele na wszystkich polach jednego koloru",
+	"number_to_reach": 3
+  },
+  {
+	"name": "Pierwszy krok",
+	"requirement": "Wygraj grę",
+	"number_to_reach": 1
+  },
+  {
+	"name": "Prześladowany przez los",
+	"requirement": "Traf do dziekanatu trzy razy w jednej grze",
+	"number_to_reach": 3
+  },
+  {
+	"name": "Magnat inwestycyjny",
+	"requirement": "Kup wszystkie pola z trzech kolorów w jednej grze",
+	"number_to_reach": 9
+  },
+  {
+	"name": "Dubletowy szczęściarz",
+	"requirement": "Wyrzuć dublet trzy razy z rzędu co najmniej raz",
+	"number_to_reach": 3
+  },
+  {
+	"name": "Budowniczy imperium",
+	"requirement": "Zbuduj co najmniej 20 budynków w jednej grze",
+	"number_to_reach": 20
+  },
+  {
+	"name": "Podatnik Roku",
+	"requirement": "Zapłać co najmniej 2000 punktów ECTS w podatkach w jednej grze",
+	"number_to_reach": 2000
+  },
+  {
+	"name": "Akademicki inwestor",
+	"requirement": "Kup wszystkie akademiki i miejsca społeczne w jednej grze",
+	"number_to_reach": 6
+  },
+  {
+	"name": "Finansowy mistrz",
+	"requirement": "Wygraj grę, unikając płacenia kar i podatków",
+	"number_to_reach": 1
+  },
+  {
+	"name": "Bezlitosny",
+	"requirement": "Zrujnuj finansowo przeciwnika w pierwszych 5 turach",
+	"number_to_reach": 1
+  },
+  {
+	"name": "Ekspert ds. dywersyfikacji",
+	"requirement": "Zdobądź co najmniej jedną nieruchomość każdego koloru",
+	"number_to_reach": 8
+  },
+  {
+	"name": "Strategiczny profesor",
+	"requirement": "Zdobądź nieruchomości o łącznej wartości co najmniej 3000 punktów ECTS w jednej grze",
+	"number_to_reach": 3000
+  },
+  {
+	"name": "Milioner",
+	"requirement": "Zgromadź łącznie 100.000 punktów ECTS",
+	"number_to_reach": 100000
+  }
+]
