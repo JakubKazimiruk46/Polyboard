@@ -19,6 +19,8 @@ var second_player_ects: int = 0
 @onready var player2_money_edit = $MarginContainer2/Panel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/LineEdit
 @onready var trade_button = $Button2
 @onready var back_button = $Button
+@onready var hover_sound = $HoverSound
+@onready var click_sound = $ClickSound
 
 func _ready() -> void:
 	# Hide UI on start
@@ -28,12 +30,103 @@ func _ready() -> void:
 	player1_money_edit.text = "0"
 	player2_money_edit.text = "0"
 	
-	# Connect text change signals
+	# Connect signals
 	player1_money_edit.connect("text_changed", Callable(self, "_on_money1_text_changed"))
 	player2_money_edit.connect("text_changed", Callable(self, "_on_money2_text_changed"))
+	back_button.connect("mouse_entered", Callable(self, "_on_button_hover"))
+	trade_button.connect("mouse_entered", Callable(self, "_on_button_hover"))
 	
 	# Get reference to game manager
 	game_manager = get_node_or_null("/root/Level/GameManager")
+	
+	# Apply styling to match the main menu
+	apply_ui_styling()
+
+func apply_ui_styling():
+	# Create fonts and styles that match the main menu
+	var impact_font = SystemFont.new()
+	impact_font.font_names = PackedStringArray(["Impact"])
+	impact_font.subpixel_positioning = 0
+	
+	var hover_style = StyleBoxFlat.new()
+	hover_style.bg_color = Color(0.294118, 1, 0.2, 0.611765)
+	hover_style.border_width_left = 2
+	hover_style.border_width_top = 2
+	hover_style.border_width_right = 2
+	hover_style.border_width_bottom = 2
+	hover_style.border_color = Color(0.294118, 1, 0.2, 1)
+	
+	var normal_style = StyleBoxFlat.new()
+	normal_style.bg_color = Color(0.6, 0.6, 0.6, 0)
+	normal_style.border_width_left = 2
+	normal_style.border_width_top = 2
+	normal_style.border_width_right = 2
+	normal_style.border_width_bottom = 2
+	normal_style.border_color = Color(0.294118, 1, 0.2, 1)
+	
+	# Apply to back button
+	back_button.add_theme_font_override("font", impact_font)
+	back_button.add_theme_font_size_override("font_size", 20)
+	back_button.add_theme_stylebox_override("hover", hover_style)
+	back_button.add_theme_stylebox_override("normal", normal_style)
+	back_button.modulate = Color(0.293333, 1, 0.2, 1)
+	
+	# Apply to trade button
+	trade_button.add_theme_font_override("font", impact_font)
+	trade_button.add_theme_font_size_override("font_size", 20)
+	trade_button.add_theme_stylebox_override("hover", hover_style)
+	trade_button.add_theme_stylebox_override("normal", normal_style)
+	trade_button.modulate = Color(0.293333, 1, 0.2, 1)
+	
+	# Apply to panel
+	var panel = $MarginContainer2/Panel
+	var panel_style = StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.1, 0.1, 0.1, 0.95)
+	panel_style.border_width_left = 3
+	panel_style.border_width_top = 3
+	panel_style.border_width_right = 3
+	panel_style.border_width_bottom = 3
+	panel_style.border_color = Color(0.294118, 1, 0.2, 1)
+	panel_style.corner_radius_top_left = 8
+	panel_style.corner_radius_top_right = 8
+	panel_style.corner_radius_bottom_left = 8
+	panel_style.corner_radius_bottom_right = 8
+	panel.add_theme_stylebox_override("panel", panel_style)
+	
+	# Apply to option buttons and labels
+	player1_fields_option.add_theme_font_override("font", impact_font)
+	player2_fields_option.add_theme_font_override("font", impact_font)
+	player1_label.add_theme_font_override("font", impact_font)
+	
+	# Style the input fields
+	var line_edit_style = StyleBoxFlat.new()
+	line_edit_style.bg_color = Color(0.2, 0.2, 0.2, 0.8)
+	line_edit_style.border_width_left = 1
+	line_edit_style.border_width_top = 1
+	line_edit_style.border_width_right = 1
+	line_edit_style.border_width_bottom = 1
+	line_edit_style.border_color = Color(0.294118, 1, 0.2, 0.8)
+	player1_money_edit.add_theme_stylebox_override("normal", line_edit_style)
+	player2_money_edit.add_theme_stylebox_override("normal", line_edit_style)
+	
+	# Style the labels
+	var field_label1 = $MarginContainer2/Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/Label
+	var money_label1 = $MarginContainer2/Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/Label
+	var field_label2 = $MarginContainer2/Panel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/Label
+	var money_label2 = $MarginContainer2/Panel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/Label
+	
+	field_label1.add_theme_font_override("font", impact_font)
+	field_label1.modulate = Color(0.293333, 1, 0.2, 1)
+	money_label1.add_theme_font_override("font", impact_font)
+	money_label1.modulate = Color(0.293333, 1, 0.2, 1)
+	field_label2.add_theme_font_override("font", impact_font)
+	field_label2.modulate = Color(0.293333, 1, 0.2, 1)
+	money_label2.add_theme_font_override("font", impact_font)
+	money_label2.modulate = Color(0.293333, 1, 0.2, 1)
+
+func _on_button_hover():
+	if hover_sound:
+		hover_sound.play()
 
 func _on_money1_text_changed(new_text: String) -> void:
 	# Ensure input is a valid number
@@ -54,7 +147,7 @@ func _on_money1_text_changed(new_text: String) -> void:
 		player1_money_edit.text = "0"
 		current_player_ects = 0
 		return
-		
+	
 	# Check if player has enough ECTS - using a safer method
 	if game_manager and player1_id >= 0:
 		# Try to get player ECTS directly from the game manager
@@ -115,7 +208,7 @@ func setup_trade(current_player_name, player_data, field_id):
 			player1_id = i
 			break
 	
-	# Update UI with player name - check if the label exists first
+	# Update UI with player name
 	if is_instance_valid(player1_label) and player1_label:
 		player1_label.text = player1_name
 	
@@ -123,7 +216,7 @@ func setup_trade(current_player_name, player_data, field_id):
 	player2_name = ""
 	player2_id = -1
 	
-	# Get the container without assuming it exists
+	# Get the container
 	var container = $MarginContainer2/Panel/MarginContainer/VBoxContainer
 	if not container:
 		print_debug("Container not found!")
@@ -141,6 +234,11 @@ func setup_trade(current_player_name, player_data, field_id):
 	option_button.size_flags_horizontal = 3  # EXPAND_FILL
 	option_button.connect("item_selected", Callable(self, "_on_player_selected"))
 	
+	# Style the dropdown
+	var impact_font = SystemFont.new()
+	impact_font.font_names = PackedStringArray(["Impact"])
+	option_button.add_theme_font_override("font", impact_font)
+	
 	# Add it to the container at index 0
 	container.add_child(option_button)
 	if container.get_child_count() > 1:
@@ -154,7 +252,7 @@ func setup_trade(current_player_name, player_data, field_id):
 		if player.name != player1_name:
 			option_button.add_item(player.name, player.id)
 	
-	# Reset money fields - check if they exist first
+	# Reset money fields
 	if is_instance_valid(player1_money_edit) and player1_money_edit:
 		player1_money_edit.text = "0"
 	if is_instance_valid(player2_money_edit) and player2_money_edit:
@@ -163,7 +261,7 @@ func setup_trade(current_player_name, player_data, field_id):
 	current_player_ects = 0
 	second_player_ects = 0
 	
-	# Reset field options - check if they exist first
+	# Reset field options
 	if is_instance_valid(player1_fields_option) and player1_fields_option:
 		player1_fields_option.clear()
 	if is_instance_valid(player2_fields_option) and player2_fields_option:
@@ -215,6 +313,9 @@ func _on_player_selected(index):
 
 func populate_player1_fields():
 	# Clear existing options
+	if not player1_fields_option or not is_instance_valid(player1_fields_option):
+		return
+		
 	player1_fields_option.clear()
 	
 	# Add "None" option
@@ -243,6 +344,9 @@ func populate_player1_fields():
 
 func populate_player2_fields():
 	# Clear existing options
+	if not player2_fields_option or not is_instance_valid(player2_fields_option):
+		return
+		
 	player2_fields_option.clear()
 	
 	# Add "None" option
@@ -263,9 +367,14 @@ func populate_player2_fields():
 			player2_fields_option.add_item(field_info["name"], field_info["id"])
 
 func _on_back_button_pressed():
+	if click_sound:
+		click_sound.play()
 	self.visible = false
 
 func _on_trade_button_pressed():
+	if click_sound:
+		click_sound.play()
+		
 	if player2_id < 0:
 		show_error("Wybierz gracza do wymiany!", 3.0)
 		return
