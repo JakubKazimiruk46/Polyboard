@@ -263,14 +263,14 @@ script = ExtResource("8_cd8t5")
 transform = Transform3D(1, 0, 0, 0, 1.19249e-08, 1, 0, -1, 1.19249e-08, 0, 14, 0)
 
 [node name="Die1" parent="." instance=ExtResource("5_p3toi")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.86167, 0)
+transform = Transform3D(1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 0, 2.04084, 0)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer3D" parent="Die1"]
 stream = ExtResource("11_i73ew")
 bus = &"Sfx"
 
 [node name="Die2" parent="." instance=ExtResource("5_p3toi")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.86167, 0)
+transform = Transform3D(1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 4.65653, 1.9473, 0)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer3D" parent="Die2"]
 stream = ExtResource("11_i73ew")
