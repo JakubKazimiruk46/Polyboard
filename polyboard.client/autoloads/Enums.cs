@@ -7,4 +7,17 @@ namespace Polyboard.Enums{
 		ForMovement,
 		JustForDisplay
 	}
+	
+	public enum DepartmentName
+	{
+		None,
+		Lesnictwa,
+		Zarzadzania,
+		Architektury,
+		Budownictwa,
+		InzynieriiSrodowiska,
+		Mechaniczny,
+		Elektryczny,
+		Informatyczny
+	}
 }

@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Polyboard.Enums;
 
 public partial class Field : Node3D
 {
@@ -32,6 +33,7 @@ public partial class Field : Node3D
 	public int houseCost;
 	public int hotelCost;
 	public int fieldCost;
+	public DepartmentName Department = DepartmentName.None;
 	public List<int> rentCost = new List<int>(6);
 	private GameManager gameManager;
 	
@@ -51,6 +53,8 @@ public partial class Field : Node3D
 		gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
 		gameManager.UpdateECTSUI(OwnerId);
 	}
+	
+	
 	
 	public void BuyField(Figurehead player, Field field)
 	{
