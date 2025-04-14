@@ -87,6 +87,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 60;
+						field.Department = DepartmentName.Lesnictwa;
 						field.rentCost = new List<int> {2, 10, 30, 90, 160, 250};
 						break;
 					case 3:
@@ -94,6 +95,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 60;
+						field.Department = DepartmentName.Lesnictwa;
 						field.rentCost = new List<int> {2, 20, 60, 180, 320, 450};
 						break;
 					case 5:
@@ -106,6 +108,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 100;
+						field.Department = DepartmentName.Zarzadzania;
 						field.rentCost = new List<int> {6, 30, 90, 270, 400, 550};
 						break;
 					case 8:
@@ -113,6 +116,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 100;
+						field.Department = DepartmentName.Zarzadzania;
 						field.rentCost = new List<int> {6, 30, 90, 270, 400, 550};
 						break;
 					case 9:
@@ -120,6 +124,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 120;
+						field.Department = DepartmentName.Zarzadzania;
 						field.rentCost = new List<int> {8, 40, 100, 300, 450, 600};
 						break;
 					case 11:
@@ -127,6 +132,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 140;
+						field.Department = DepartmentName.Architektury;
 						field.rentCost = new List<int> {10, 50, 150, 450, 625, 750};
 						break;
 					case 12:
@@ -138,6 +144,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 140;
+						field.Department = DepartmentName.Architektury;
 						field.rentCost = new List<int> {10, 50, 150, 450, 625, 750};
 						break;
 					case 14:
@@ -145,6 +152,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 160;
+						field.Department = DepartmentName.Architektury;
 						field.rentCost = new List<int> {10, 50, 150, 450, 625, 750};
 						break;
 					case 15:
@@ -157,6 +165,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 180;
+						field.Department = DepartmentName.Budownictwa;
 						field.rentCost = new List<int> {14, 70, 200, 550, 750, 950};
 						break;
 					case 18:
@@ -164,6 +173,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 180;
+						field.Department = DepartmentName.Budownictwa;
 						field.rentCost = new List<int> {14, 70, 200, 550, 750, 950};
 						break;
 					case 19:
@@ -171,6 +181,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 200;
+						field.Department = DepartmentName.Budownictwa;
 						field.rentCost = new List<int> {16, 80, 220, 600, 800, 1000};
 						break;
 					case 21:
@@ -178,6 +189,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 220;
+						field.Department = DepartmentName.InzynieriiSrodowiska;
 						field.rentCost = new List<int> {18, 90, 250, 700, 875, 1050};
 						break;
 					case 23:
@@ -185,6 +197,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 220;
+						field.Department = DepartmentName.InzynieriiSrodowiska;
 						field.rentCost = new List<int> {18, 90, 250, 700, 875, 1050};
 						break;
 					case 24:
@@ -192,6 +205,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 240;
+						field.Department = DepartmentName.InzynieriiSrodowiska;
 						field.rentCost = new List<int> {20, 100, 300, 750, 925, 1110};
 						break;
 					case 25:
@@ -204,6 +218,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 260;
+						field.Department = DepartmentName.Mechaniczny;
 						field.rentCost = new List<int> {22, 110, 330, 800, 975, 1150};
 						break;
 					case 27:
@@ -211,6 +226,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 260;
+						field.Department = DepartmentName.Mechaniczny;
 						field.rentCost = new List<int> {22, 110, 330, 800, 975, 1150};
 						break;
 					case 28:
@@ -222,6 +238,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 280;
+						field.Department = DepartmentName.Mechaniczny;
 						field.rentCost = new List<int> {24, 120, 360, 850, 1025, 1200};
 						break;
 					case 31:
@@ -229,6 +246,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 300;
+						field.Department = DepartmentName.Elektryczny;
 						field.rentCost = new List<int> {26, 130, 390, 900, 1100, 1275};
 						break;
 					case 32:
@@ -236,6 +254,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 300;
+						field.Department = DepartmentName.Elektryczny;
 						field.rentCost = new List<int> {26, 130, 390, 900, 1100, 1275};
 						break;
 					case 34:
@@ -243,6 +262,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 320;
+						field.Department = DepartmentName.Elektryczny;
 						field.rentCost = new List<int> {28, 150, 450, 1000, 1200, 1400};
 						break;
 					case 35:
@@ -255,6 +275,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 350;
+						field.Department = DepartmentName.Informatyczny;
 						field.rentCost = new List<int> {35, 175, 500, 1100, 1300, 1500};
 						break;
 					case 39:
@@ -262,6 +283,7 @@ public partial class Board : StaticBody3D
 						field.houseCost = 150;
 						field.hotelCost = 150;
 						field.fieldCost = 400;
+						field.Department = DepartmentName.Informatyczny;
 						field.rentCost = new List<int> {50, 200, 600, 1400, 1700, 2000};
 						break;
 				}
@@ -477,10 +499,42 @@ private void RemoveLastHouse(Field field)
 	}
 }
 
+private List<Field> GetAllFieldsByDepartmentName(DepartmentName departmentName){
+	List<Field> fields = new List<Field>();
+	
+	foreach (Node child in GetChildren())
+		{
+			if (child is Field field && field.Department == departmentName)
+			{
+				fields.Add(field);
+			}
+		}
+	return fields;
+}
+
+private bool DoesPlayerOwnFields(List<Field> fields, Figurehead player){
+	foreach (Field field in fields){
+		if (!field.owned || field.Owner != player)
+			return false;
+	}
+	
+	return true;
+}
+
+
 private void TryBuildHouse(Field field, Figurehead player)
 {
+	GD.Print("Inside funtcion TryBuildHouse");
+	
 	if (field.owned && field.Owner == player)
-	{
+	{	
+		DepartmentName departmentName = field.Department;
+		
+		if (!DoesPlayerOwnFields(GetAllFieldsByDepartmentName(departmentName), player)){
+			ShowPopupNotification("You need to own all the fields in department to build!", 2.0f);
+			return;
+		}
+		
 		HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
 		if (invalidFieldIds.Contains(field.FieldId))
 		{

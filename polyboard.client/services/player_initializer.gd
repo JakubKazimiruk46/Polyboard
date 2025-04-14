@@ -3,6 +3,8 @@ extends Node
 @export var player_container_path: NodePath
 var players_container: Node = null
 
+var players_label_colors = [Color(0.95, 0.26, 0.55), Color(0.0, 0.75, 0.78), Color(0.93, 0.49, 0.13), Color(0.0, 0.75, 0.45)]
+
 func _ready():
 	players_container = get_node_or_null(player_container_path)
 	if players_container == null:
@@ -16,7 +18,6 @@ func initialize_players():
 	print("Rozpoczynam inicjalizację graczy... Liczba graczy w GameData:", player_count)
 
 	for i in range(player_count):
-		print("Tworzę gracza", i)
 		print(player_container_path)
 		var player = create_player(i)
 		if player:
@@ -43,7 +44,7 @@ func create_player(player_id):
 	var max_height = find_highest_point(player_instance)
 	print("Najwyższy punkt pionka: ", max_height)
 	var parent_scale = player_instance.scale
-	var label = create_player_label(player_name, max_height, parent_scale, player_instance)
+	var label = create_player_label(player_name, max_height, parent_scale, player_instance, player_id)
 	player_instance.add_child(label)
 	
 	return player_instance
@@ -60,7 +61,7 @@ func find_highest_point(node: Node) -> float:
 		
 	return max_y
 
-func create_player_label(name: String, height: float,parent_scale:Vector3,parent_node:Node3D) -> Label3D:
+func create_player_label(name: String, height: float,parent_scale:Vector3,parent_node:Node3D, color_id:int) -> Label3D:
 	var label = Label3D.new()
 	label.text = name
 	var model_up = parent_node.global_transform.basis.y
@@ -78,6 +79,6 @@ func create_player_label(name: String, height: float,parent_scale:Vector3,parent
 	
 	label.scale = Vector3(0.1 / parent_scale.x, 0.1 / parent_scale.y, 0.1 / parent_scale.z)
 	label.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
-	label.modulate = Color(1, 1, 1)
+	label.modulate = players_label_colors[color_id]
 	label.font_size = 600
 	return label
