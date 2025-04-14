@@ -694,6 +694,11 @@ private void ShowPopupError(string message, float duration = 4.0f)
 		// Chance cards effects
 		cardEffects.Add(("chance", 2), (100, null));
 		cardEffects.Add(("chance", 3), (150, null));
+		cardEffects.Add(("chance", 4), (0, async () => 
+		{
+			var currentPlayer = gameManager.getCurrentPlayer();
+			await currentPlayer.MoveToField(0, this);
+		}));
 		cardEffects.Add(("chance", 5), (0, async () => 
 		{
 			var currentPlayer = gameManager.getCurrentPlayer();
@@ -705,12 +710,42 @@ private void ShowPopupError(string message, float duration = 4.0f)
 			var currentPlayer = gameManager.getCurrentPlayer();
 			await currentPlayer.MoveToField(0, this);
 		}));
+		cardEffects.Add(("chance", 8), (0, async () => 
+		{
+			var currentPlayer = gameManager.getCurrentPlayer();
+			await currentPlayer.MoveToField(0, this);
+		}));
+		cardEffects.Add(("chance", 9), (0, async () => 
+		{
+			var currentPlayer = gameManager.getCurrentPlayer();
+			await currentPlayer.MoveToField(0, this);
+		}));
+		cardEffects.Add(("chance", 10), (0, async () => 
+		{
+			var currentPlayer = gameManager.getCurrentPlayer();
+			await currentPlayer.MoveToField(0, this);
+		}));
 		cardEffects.Add(("chance", 11), (-150, null));
 		cardEffects.Add(("chance", 12), (-150, null));
 		cardEffects.Add(("chance", 13), (-50, async () => 
 		{
 			var currentPlayer = gameManager.getCurrentPlayer();
 			await currentPlayer.MoveByFields(-2, this);
+		}));
+		cardEffects.Add(("chance", 14), (0, async () => 
+		{
+			var currentPlayer = gameManager.getCurrentPlayer();
+			await currentPlayer.MoveToField(0, this);
+		}));
+		cardEffects.Add(("chance", 15), (0, async () => 
+		{
+			var currentPlayer = gameManager.getCurrentPlayer();
+			await currentPlayer.MoveToField(0, this);
+		}));
+		cardEffects.Add(("chance", 16), (0, async () => 
+		{
+			var currentPlayer = gameManager.getCurrentPlayer();
+			await currentPlayer.MoveToField(0, this);
 		}));
 	}
 

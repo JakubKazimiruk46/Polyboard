@@ -479,5 +479,5 @@ color = Color(1, 1, 1, 0.00392157)
 [connection signal="pressed" from="HBoxContainer/view_buttons" to="." method="on_view_buttons_pressed"]
 [connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer/card_button" to="." method="on_cards_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2/trade_button" to="." method="on_trade_button_pressed"]
-[connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer6/remove_owner_button" to="." method="on_remove_owner_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer5/special_card_button" to="." method="_on_special_card_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer6/remove_owner_button" to="." method="on_remove_owner_button_pressed"]
