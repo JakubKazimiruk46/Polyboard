@@ -1156,4 +1156,217 @@ private void ShowEndGameScreen(string resultMessage)
 				UpdateECTSUI(playerIndex);
 			}
 		}
+
+	public void process_trade(int player1Id, int player2Id, int field1Id, int field2Id, int player1Ects, int player2Ects)
+	{
+		GD.Print($"Processing trade: P1({player1Id}) gives field {field1Id} and {player1Ects} ECTS to P2({player2Id}) for field {field2Id} and {player2Ects} ECTS");
+		
+		// Validate player IDs
+		if (player1Id < 0 || player1Id >= players.Count || player2Id < 0 || player2Id >= players.Count)
+		{
+			notificationService.ShowNotification("Błąd wymiany: Nieprawidłowi gracze", NotificationService.NotificationType.Error);
+			return;
+		}
+
+		Figurehead player1 = players[player1Id];
+		Figurehead player2 = players[player2Id];
+
+		// Check if either player is bankrupt
+		if (playerBankruptcyStatus[player1Id] || playerBankruptcyStatus[player2Id])
+		{
+			notificationService.ShowNotification("Nie można handlować z bankrutem", NotificationService.NotificationType.Error);
+			return;
+		}
+
+		// Check ECTS balances
+		if (player1.ECTS < player1Ects)
+		{
+			notificationService.ShowNotification($"{player1.Name} nie ma wystarczającej ilości ECTS", NotificationService.NotificationType.Error);
+			return;
+		}
+
+		if (player2.ECTS < player2Ects)
+		{
+			notificationService.ShowNotification($"{player2.Name} nie ma wystarczającej ilości ECTS", NotificationService.NotificationType.Error);
+			return;
+		}
+
+		// Track exchange items for notifications
+		string player1GainedItems = "";
+		string player1LostItems = "";
+		string player2GainedItems = "";
+		string player2LostItems = "";
+		
+		// Process field exchange if applicable
+		if (field1Id >= 0)
+		{
+			Field field1 = board.GetFieldById(field1Id);
+			if (field1 != null && field1.owned && field1.Owner == player1)
+			{
+				// Transfer field1 from player1 to player2
+				ProcessPropertyTransfer(field1, player1, player2);
+				player1LostItems += field1.Name;
+				player2GainedItems += field1.Name;
+				GD.Print($"Pole {field1.Name} przekazane od {player1.Name} do {player2.Name}");
+			}
+		}
+
+		if (field2Id >= 0)
+		{
+			Field field2 = board.GetFieldById(field2Id);
+			if (field2 != null && field2.owned && field2.Owner == player2)
+			{
+				// Transfer field2 from player2 to player1
+				ProcessPropertyTransfer(field2, player2, player1);
+				player2LostItems += field2.Name;
+				player1GainedItems += field2.Name;
+				GD.Print($"Pole {field2.Name} przekazane od {player2.Name} do {player1.Name}");
+			}
+		}
+
+		// Process ECTS exchange if applicable
+		if (player1Ects > 0)
+		{
+			player1.SpendECTS(player1Ects);
+			player2.AddECTS(player1Ects);
+			
+			if (player1LostItems.Length > 0) player1LostItems += " i ";
+			player1LostItems += $"{player1Ects} ECTS";
+			
+			if (player2GainedItems.Length > 0) player2GainedItems += " i ";
+			player2GainedItems += $"{player1Ects} ECTS";
+			
+			GD.Print($"{player1Ects} ECTS przekazane od {player1.Name} do {player2.Name}");
+			UpdateECTSUI(player1Id);
+			UpdateECTSUI(player2Id);
+		}
+
+		if (player2Ects > 0)
+		{
+			player2.SpendECTS(player2Ects);
+			player1.AddECTS(player2Ects);
+			
+			if (player2LostItems.Length > 0) player2LostItems += " i ";
+			player2LostItems += $"{player2Ects} ECTS";
+			
+			if (player1GainedItems.Length > 0) player1GainedItems += " i ";
+			player1GainedItems += $"{player2Ects} ECTS";
+			
+			GD.Print($"{player2Ects} ECTS przekazane od {player2.Name} do {player1.Name}");
+			UpdateECTSUI(player1Id);
+			UpdateECTSUI(player2Id);
+		}
+
+		if (!string.IsNullOrEmpty(player1GainedItems) || !string.IsNullOrEmpty(player1LostItems))
+		{
+			// Show trade notifications using existing methods
+player1.ShowNotification($"Wymiana z {player2.Name}: Otrzymano {player1GainedItems}, oddano {player1LostItems}", 4f);
+player2.ShowNotification($"Wymiana z {player1.Name}: Otrzymano {player2GainedItems}, oddano {player2LostItems}", 4f);
+			
+			// Play success sound
+			if (gainECTSSoundPlayer != null)
+			{
+				gainECTSSoundPlayer.Play();
+			}
+			
+			notificationService.ShowNotification("Wymiana zakończona pomyślnie", NotificationService.NotificationType.Normal, 3f);
+		}
+		else
+		{
+			notificationService.ShowNotification("Nie wymieniono żadnych przedmiotów", NotificationService.NotificationType.Normal);
+		}
+	}
+
+	private void ProcessPropertyTransfer(Field field, Figurehead fromPlayer, Figurehead toPlayer)
+	{
+		if (field == null || fromPlayer == null || toPlayer == null) return;
+		
+		int fromPlayerId = players.IndexOf(fromPlayer);
+		int toPlayerId = players.IndexOf(toPlayer);
+		
+		if (fromPlayerId < 0 || toPlayerId < 0) return;
+		
+		// Remove buildings if present and refund half the cost to the seller
+		int buildingRefund = 0;
+		
+		if (field.builtHouses.Count > 0 || field.isHotel)
+		{
+			// Count houses
+			int houseCount = 0;
+			foreach (bool occupied in field.buildOccupied)
+			{
+				if (occupied) houseCount++;
+			}
+			
+			if (field.isHotel)
+			{
+				buildingRefund = field.hotelCost / 2;
+			}
+			else
+			{
+				buildingRefund = (houseCount * field.houseCost) / 2;
+			}
+			
+			// Give refund to original owner
+			if (buildingRefund > 0)
+			{
+				fromPlayer.AddECTS(buildingRefund);
+				UpdateECTSUI(fromPlayerId);
+			}
+			
+			// Remove all buildings
+			field.RemoveAllHouses();
+			field.isHotel = false;
+		}
+		
+		fromPlayer.ownedFields[field.FieldId] = false;
+		toPlayer.ownedFields[field.FieldId] = true;
+		
+		// Update field ownership
+		field.Owner = toPlayer;
+		field.OwnerId = toPlayerId;
+		field.owned = true;
+		
+		// Update owner border color
+		var ownerBorder = field.GetNodeOrNull<Sprite3D>("OwnerBorder");
+		if (ownerBorder != null)
+		{
+			ownerBorder.Modulate = toPlayer.playerColor;
+			ownerBorder.Visible = true;
+		}
+		
+		// Report building refund if applicable
+		if (buildingRefund > 0)
+		{
+			notificationService.ShowNotification(
+				$"Budynki na polu {field.Name} zostały usunięte. Gracz {fromPlayer.Name} otrzymał zwrot {buildingRefund} ECTS.", 
+				NotificationService.NotificationType.Normal, 
+				3f
+			);
+		}
+	}
+
+	// Get player index from Figurehead reference
+	public int GetPlayerIndex(Figurehead player)
+	{
+		if (player == null)
+			return -1;
+			
+		return players.IndexOf(player);
+	}
+	public Figurehead GetPlayerById(int playerId)
+	{
+		if (playerId >= 0 && playerId < players.Count)
+			return players[playerId];
+		return null;
+	}
+
+	// Add to GameManager.cs
+	public int GetPlayerECTS(int playerIndex)
+	{
+		if (playerIndex >= 0 && playerIndex < players.Count)
+			return players[playerIndex].ECTS;
+		return 0;
+	}
+	
 	}

@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 
 public partial class Figurehead : CharacterBody3D
 {
@@ -288,6 +289,93 @@ public partial class Figurehead : CharacterBody3D
 			GD.PrintErr("NotificationLayer singleton not found. Make sure it's added as an Autoload.");
 			GD.PrintErr(message);
 		}
+	}
+
+		public bool OwnsField(int fieldId)
+	{
+		if (fieldId < 0 || fieldId >= ownedFields.Count)
+			return false;
+			
+		return ownedFields[fieldId];
+	}
+
+	public void AcquireField(int fieldId)
+	{
+		if (fieldId < 0)
+			return;
+			
+		while (fieldId >= ownedFields.Count)
+		{
+			ownedFields.Add(false);
+		}
+		
+		ownedFields[fieldId] = true;
+		GD.Print($"Gracz {Name} nabył własność pola {fieldId}");
+	}
+
+	public void LoseField(int fieldId)
+	{
+		if (fieldId < 0 || !ownedFields.Any() || fieldId >= ownedFields.Count)
+			return;
+			
+		ownedFields[fieldId] = false;
+		GD.Print($"Gracz {Name} utracił własność pola {fieldId}");
+	}
+
+	public List<int> GetOwnedFieldIds()
+	{
+		List<int> result = new List<int>();
+		
+		for (int i = 0; i < ownedFields.Count; i++)
+		{
+			if (ownedFields[i])
+			{
+				result.Add(i);
+			}
+		}
+		
+		return result;
+	}
+	public bool CheckIfOwnsField(int fieldId)
+	{
+		if (fieldId < 0 || fieldId >= ownedFields.Count)
+			return false;
+			
+		return ownedFields[fieldId];
+	}
+
+	public int GetOwnedFieldsCount()
+	{
+		return ownedFields.Count(field => field);
+	}
+
+	public bool CanAfford(int amount)
+	{
+		return ECTS >= amount;
+	}
+	
+	public void ShowTradeNotification(string partnerName, string gainedItem, string lostItem)
+	{
+		string message;
+		
+		if (!string.IsNullOrEmpty(gainedItem) && !string.IsNullOrEmpty(lostItem))
+		{
+			message = $"Wymiana z graczem {partnerName}: Otrzymano {gainedItem}, oddano {lostItem}";
+		}
+		else if (!string.IsNullOrEmpty(gainedItem))
+		{
+			message = $"Wymiana z graczem {partnerName}: Otrzymano {gainedItem}";
+		}
+		else if (!string.IsNullOrEmpty(lostItem))
+		{
+			message = $"Wymiana z graczem {partnerName}: Oddano {lostItem}";
+		}
+		else
+		{
+			message = $"Zakończono wymianę z graczem {partnerName}";
+		}
+		
+		ShowNotification(message, 4f);
 	}
 
 }

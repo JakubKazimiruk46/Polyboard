@@ -625,14 +625,16 @@ private async void TryBuildHotel(Field field, Figurehead player)
 
 private void TryExchangeProperty(Field field, Figurehead player)
 {
+
 	if (field.owned && field.Owner == player)
 	{
-		// Get the trade scene
-		var tradeScene = GetNode<Node>("/root/Level/Trade");
-		if (tradeScene != null)
+		// Get the trade UI
+		var tradeUI = GetNode<CanvasLayer>("/root/Level/Trade");
+		if (tradeUI != null)
 		{
-			// Create an array of player names and IDs that can be converted to Variant
+
 			Godot.Collections.Array playerData = new Godot.Collections.Array();
+			
 			for (int i = 0; i < gameManager.Players.Count; i++)
 			{
 				var p = gameManager.Players[i];
@@ -644,20 +646,18 @@ private void TryExchangeProperty(Field field, Figurehead player)
 				playerData.Add(playerInfo);
 			}
 			
-			// Call the setup_trade method with convert-friendly parameters
-			tradeScene.Call("setup_trade", player.Name, playerData, field.FieldId);
+			tradeUI.Call("setup_trade", player.Name, playerData, field.FieldId);
 			
-			ShowPopupNotification("Opening property exchange interface...", 2.0f);
+			ShowPopupNotification("Otwieranie interfejsu wymiany...", 2.0f);
 		}
 		else
 		{
-			GD.PrintErr("Trade scene not found!");
-			ShowPopupNotification("Trade interface unavailable!", 2.0f);
+			ShowPopupError("Nie znaleziono interfejsu wymiany!", 2.0f);
 		}
 	}
 	else
 	{
-		ShowPopupNotification("You don't own this property!", 2.0f);
+		ShowPopupNotification("Nie jesteś właścicielem tego pola!", 2.0f);
 	}
 }
 private void ShowPopupNotification(string message, float duration = 3.0f)
@@ -1169,5 +1169,22 @@ public async void ShowFieldTexture(int fieldId)
 	public List<Field> GetFields()
 	{
 		return fields;
+	}
+	public Godot.Collections.Array GetFieldsOwnedByPlayerName(string playerName)
+	{
+		Godot.Collections.Array result = new Godot.Collections.Array();
+		
+		foreach (Field field in fields)
+		{
+			if (field.owned && field.Owner != null && field.Owner.Name == playerName)
+			{
+				var fieldInfo = new Godot.Collections.Dictionary();
+				fieldInfo.Add("id", field.FieldId);
+				fieldInfo.Add("name", field.Name);
+				result.Add(fieldInfo);
+			}
+		}
+		
+		return result;
 	}
 }
