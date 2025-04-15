@@ -1,0 +1,101 @@
+[gd_scene load_steps=9 format=3 uid="uid://3ut527t5kdb1"]
+
+[ext_resource type="Texture2D" uid="uid://btgj5q12ygdwy" path="res://assets/images/game_background/politechnika.jpg" id="1_ids1r"]
+[ext_resource type="Script" uid="uid://bpogapbf67tvl" path="res://scenes/local_lobby/background_select.gd" id="1_l2x1e"]
+[ext_resource type="Texture2D" uid="uid://dqpygkxhnapki" path="res://assets/images/game_background/dachmiasto.jpg" id="2_l2x1e"]
+[ext_resource type="Texture2D" uid="uid://c34oberlt1c3j" path="res://assets/images/game_background/las.jpg" id="3_r7bq5"]
+[ext_resource type="Texture2D" uid="uid://cf2h1ti7o58l2" path="res://assets/images/game_background/noc.jpg" id="4_gvsky"]
+[ext_resource type="Texture2D" uid="uid://dwbmptpk3tcax" path="res://assets/images/game_background/centrummiasta.jpg" id="5_7kyuw"]
+[ext_resource type="Texture2D" uid="uid://dmo1dexap7u3h" path="res://assets/images/game_background/step.jpg" id="6_78j72"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_wlikr"]
+load_path = "res://.godot/imported/background.jpg-d656ee7c3b4e3ad9f24b9850cd3d67b3.ctex"
+
+[node name="BackgroundSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_l2x1e")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("CompressedTexture2D_wlikr")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.999
+anchor_bottom = 0.997
+offset_left = 1.0
+offset_right = 1.15186
+offset_bottom = -0.0560303
+
+[node name="MarginContainer1" type="HBoxContainer" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+
+[node name="HBoxContainer1" type="HBoxContainer" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="TextureButton" type="TextureButton" parent="VBoxContainer/HBoxContainer1"]
+custom_minimum_size = Vector2(300, 200)
+layout_mode = 2
+texture_normal = ExtResource("1_ids1r")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="TextureButton2" type="TextureButton" parent="VBoxContainer/HBoxContainer1"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+texture_normal = ExtResource("2_l2x1e")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="TextureButton3" type="TextureButton" parent="VBoxContainer/HBoxContainer1"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+texture_normal = ExtResource("3_r7bq5")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="MarginContainer2" type="HBoxContainer" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="TextureButton" type="TextureButton" parent="VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+texture_normal = ExtResource("4_gvsky")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="TextureButton2" type="TextureButton" parent="VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+texture_normal = ExtResource("5_7kyuw")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="TextureButton3" type="TextureButton" parent="VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+texture_normal = ExtResource("6_78j72")
+ignore_texture_size = true
+stretch_mode = 0

@@ -3,6 +3,7 @@ extends Node
 # Lista graczy: [{ "name": "Player1", "skin": 0 }, ...]
 var players: Array = []
 var current_player_editing_skin_id: int = 0
+var background_path: String= ""
 
 const MIN_PLAYERS = 2
 const MAX_PLAYERS = 4
@@ -14,6 +15,13 @@ func reset_data():
 	players.clear()
 	for i in range(MIN_PLAYERS):
 		players.append({ "name": "Player" + str(i + 1), "skin": 0 })  # Domyślnie gracze mają skin o ID 0
+
+func set_background(path: String):
+	background_path = path
+	print("Ustawiono tło:", background_path)
+
+func get_background() -> String:
+	return background_path
 
 func add_player():
 	if players.size() < MAX_PLAYERS:

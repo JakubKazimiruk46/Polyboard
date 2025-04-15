@@ -53,6 +53,7 @@ public partial class Lobby : Control
 
 	public override void _Ready()
 	{
+		
 		_lobbyPersonScene = (PackedScene)GD.Load("res://scenes/lobby/lobby_person.tscn");
 
 		var userListContainer = GetNode<VBoxContainer>("MarginContainer/VBoxContainer/UserList");

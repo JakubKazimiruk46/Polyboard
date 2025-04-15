@@ -5,6 +5,7 @@ extends Control
 @onready var remove_player_button = $MarginContainer/MainVContainer/PlayerCountButtonsConatiner/RemovePlayerButton
 @onready var start_button = $MarginContainer/MainVContainer/GeneralButtonsContainer/StartButton
 @onready var back_button = $MarginContainer/MainVContainer/HBoxContainer2/BackButton
+@onready var background_button=$MarginContainer/MainVContainer/GeneralButtonsContainer/BackgroundButton
 
 const PLAYER_SCENE = preload("res://scenes/local_lobby/local_lobby_player.tscn")
 
@@ -13,7 +14,7 @@ var min_players = GameData.MIN_PLAYERS
 
 func _ready():
 	await get_tree().process_frame  
-
+	
 	if not add_player_button or not remove_player_button:
 		push_error("Nie znaleziono przycisków AddPlayerButton lub RemovePlayerButton!")
 		return
@@ -22,6 +23,7 @@ func _ready():
 	remove_player_button.pressed.connect(_on_remove_player_pressed)
 	start_button.pressed.connect(_on_start_button_pressed)
 	back_button.pressed.connect(_on_back_button_pressed)
+	background_button.pressed.connect(_on_background_button_pressed)
 	
 	for i in range(GameData.get_player_count()):
 		_add_player_from_game_data(GameData.players[i]["name"], GameData.players[i]["skin"], i)
@@ -50,6 +52,15 @@ func _on_start_button_pressed():
 	else:
 		print("Błąd: Scena levelu nie istnieje pod ścieżką: " + level_path)
 		
+		
+func _on_background_button_pressed():
+	var background_select_path="res://scenes/local_lobby/background_select.tscn"
+	if ResourceLoader.exists(background_select_path):
+		get_tree().change_scene_to_file(background_select_path)
+	else:
+		print("Błąd: Scena levelu nie istnieje pod ścieżką: " + background_select_path)
+	
+	
 func _on_back_button_pressed():
 	GameData.reset_data()
 	

@@ -3,10 +3,17 @@ extends Node3D
 @onready var menu = $Menu
 @onready var players_node = $GameManager/Players
 @onready var game_manager = $GameManager
+@onready var enviroment= $WorldEnvironment.environment
 
 func _ready():
 	# Pobierz wybraną ścieżkę modelu z FigureheadLoader
+	
 	var selected_pawn_path = FigureheadLoader.selected_pawn
+	var background_path=GameData.get_background()
+	print("Ścieżka:" ,background_path)
+	var background_texture=load(background_path) as Texture2D
+	
+	enviroment.sky.sky_material.set_panorama(background_texture)
 	
 	if selected_pawn_path == "":
 		print("Error: No pawn selected!")
