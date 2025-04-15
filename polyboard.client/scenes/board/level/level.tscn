@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://emvyo0uo8qs7" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" uid="uid://bgtflv4fbokq6" path="res://scenes/board/level/level.gd" id="1_djwtq"]
-[ext_resource type="Texture2D" uid="uid://u6156pm3sx3h" path="res://assets/images/pb_background.jpg" id="1_ymkqo"]
 [ext_resource type="PackedScene" uid="uid://cqpmepp30bdrg" path="res://scenes/board/level/MAPA_OBIEKT.glb" id="4_6krdw"]
 [ext_resource type="PackedScene" uid="uid://dhj5sru57cpw4" path="res://kostka/die.tscn" id="5_p3toi"]
 [ext_resource type="AudioStream" uid="uid://bvd8lde5mcmy0" path="res://assets/Music/construction_sound.mp3" id="6_h2q08"]
@@ -23,6 +22,7 @@
 [ext_resource type="Script" uid="uid://bwotmb86sxcxt" path="res://GameManager.cs" id="13_yovhc"]
 [ext_resource type="AudioStream" uid="uid://bfpnbjuny3d1i" path="res://assets/Music/applause.mp3" id="14_wc3jh"]
 [ext_resource type="PackedScene" uid="uid://dvogx2n2lhbbd" path="res://scenes/board/level/buy_card.tscn" id="16_8p6lx"]
+[ext_resource type="Texture2D" uid="uid://cf2h1ti7o58l2" path="res://assets/images/game_background/noc.jpg" id="16_we53p"]
 [ext_resource type="Script" uid="uid://ip1fswlgagt8" path="res://scenes/board/level/players.gd" id="17_6omuv"]
 [ext_resource type="PackedScene" uid="uid://h1ww7awlbuhf" path="res://scenes/board/level/trade.tscn" id="17_bq0mx"]
 [ext_resource type="Script" uid="uid://bl415ydbyrgk0" path="res://test/Tests.cs" id="23_dakaj"]
@@ -36,7 +36,7 @@ size = Vector3(28.5, 0.2, 28.5)
 size = Vector3(0.113281, 102.644, 19.4651)
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_6ppou"]
-panorama = ExtResource("1_ymkqo")
+panorama = ExtResource("16_we53p")
 
 [sub_resource type="Sky" id="Sky_6qm8h"]
 sky_material = SubResource("PanoramaSkyMaterial_6ppou")
