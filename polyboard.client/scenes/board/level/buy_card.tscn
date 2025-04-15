@@ -183,6 +183,7 @@ visible = false
 
 [connection signal="pressed" from="HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/Buttons/BuyButton" to="." method="on_buyButtonPressed"]
 [connection signal="pressed" from="HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/Buttons/AuctionButton" to="." method="on_auctionButtonPressed"]
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/Buttons/AuctionButton" to="AuctionCard" method="on_auction_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/VBoxContainer/ViewBoardButton" to="." method="_on_viewBoardButtonPressed"]
 [connection signal="timeout" from="Timer" to="." method="on_timer_timeout"]
 

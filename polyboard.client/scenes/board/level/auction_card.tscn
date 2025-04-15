@@ -147,10 +147,9 @@ text = "Aktualna kwota:"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Label2" type="Label" parent="VBoxContainer/HBoxContainer"]
+[node name="Cost" type="Label" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
-text = "100 ECTS"
 vertical_alignment = 1
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
@@ -167,11 +166,23 @@ text = "Następna kwota:"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer2"]
+[node name="NextCost" type="Label" parent="VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
-text = "150 ETCS"
 vertical_alignment = 1
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Lider licytacji:"
+
+[node name="lidername" type="Label" parent="VBoxContainer/HBoxContainer3"]
+layout_mode = 2
 
 [node name="AuctionTimeLeft" type="Label" parent="VBoxContainer"]
 layout_mode = 2
@@ -182,9 +193,9 @@ vertical_alignment = 1
 [node name="players" type="HBoxContainer" parent="."]
 anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 0.75
+anchor_top = 0.85
 anchor_right = 0.5
-anchor_bottom = 0.85
+anchor_bottom = 0.95
 offset_left = -54.0
 offset_top = -24.0
 offset_right = 54.0
@@ -192,7 +203,7 @@ grow_horizontal = 2
 grow_vertical = 0
 alignment = 1
 
-[node name="MarginContainer3" type="MarginContainer" parent="players"]
+[node name="player1" type="MarginContainer" parent="players"]
 custom_minimum_size = Vector2(200, 100)
 layout_mode = 2
 theme_override_constants/margin_left = 12
@@ -200,11 +211,11 @@ theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 12
 
-[node name="Panel" type="Panel" parent="players/MarginContainer3"]
+[node name="Panel" type="Panel" parent="players/player1"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_xwpm3")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="players/MarginContainer3/Panel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="players/player1/Panel"]
 layout_mode = 2
 offset_left = -5.0
 offset_top = 2.0
@@ -212,7 +223,7 @@ offset_right = 169.0
 offset_bottom = 80.0
 alignment = 1
 
-[node name="Label" type="Label" parent="players/MarginContainer3/Panel/VBoxContainer"]
+[node name="player1_nickname" type="Label" parent="players/player1/Panel/VBoxContainer"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_vertical = 2
@@ -221,28 +232,28 @@ text = "JACEK"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Buttons" type="HBoxContainer" parent="players/MarginContainer3/Panel/VBoxContainer"]
+[node name="Buttons" type="HBoxContainer" parent="players/player1/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 6
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="BuyButton" type="Button" parent="players/MarginContainer3/Panel/VBoxContainer/Buttons"]
+[node name="BuyButton" type="Button" parent="players/player1/Panel/VBoxContainer/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 theme = SubResource("Theme_vfdh1")
 text = "LICYTUJ"
 
-[node name="AuctionButton" type="Button" parent="players/MarginContainer3/Panel/VBoxContainer/Buttons"]
+[node name="AuctionButton" type="Button" parent="players/player1/Panel/VBoxContainer/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 6
 theme = SubResource("Theme_rqw81")
 text = "PASS
 "
 
-[node name="MarginContainer4" type="MarginContainer" parent="players"]
+[node name="player2" type="MarginContainer" parent="players"]
 custom_minimum_size = Vector2(200, 100)
 layout_mode = 2
 theme_override_constants/margin_left = 12
@@ -250,11 +261,11 @@ theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 12
 
-[node name="Panel" type="Panel" parent="players/MarginContainer4"]
+[node name="Panel" type="Panel" parent="players/player2"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_qaclj")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="players/MarginContainer4/Panel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="players/player2/Panel"]
 layout_mode = 2
 offset_left = -5.0
 offset_top = 2.0
@@ -262,7 +273,7 @@ offset_right = 168.0
 offset_bottom = 82.0
 alignment = 1
 
-[node name="Label" type="Label" parent="players/MarginContainer4/Panel/VBoxContainer"]
+[node name="player2_nickname" type="Label" parent="players/player2/Panel/VBoxContainer"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_vertical = 2
@@ -271,28 +282,28 @@ text = "KUBA"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Buttons" type="HBoxContainer" parent="players/MarginContainer4/Panel/VBoxContainer"]
+[node name="Buttons" type="HBoxContainer" parent="players/player2/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 6
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="BuyButton" type="Button" parent="players/MarginContainer4/Panel/VBoxContainer/Buttons"]
+[node name="BuyButton" type="Button" parent="players/player2/Panel/VBoxContainer/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 theme = SubResource("Theme_vfdh1")
 text = "LICYTUJ"
 
-[node name="AuctionButton" type="Button" parent="players/MarginContainer4/Panel/VBoxContainer/Buttons"]
+[node name="AuctionButton" type="Button" parent="players/player2/Panel/VBoxContainer/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 6
 theme = SubResource("Theme_rqw81")
 text = "PASS
 "
 
-[node name="MarginContainer5" type="MarginContainer" parent="players"]
+[node name="player3" type="MarginContainer" parent="players"]
 custom_minimum_size = Vector2(200, 100)
 layout_mode = 2
 theme_override_constants/margin_left = 12
@@ -300,11 +311,11 @@ theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 12
 
-[node name="Panel" type="Panel" parent="players/MarginContainer5"]
+[node name="Panel" type="Panel" parent="players/player3"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_c0fgb")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="players/MarginContainer5/Panel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="players/player3/Panel"]
 layout_mode = 2
 offset_left = -5.0
 offset_top = 2.0
@@ -312,7 +323,7 @@ offset_right = 166.0
 offset_bottom = 80.0
 alignment = 1
 
-[node name="Label" type="Label" parent="players/MarginContainer5/Panel/VBoxContainer"]
+[node name="player3_nickname" type="Label" parent="players/player3/Panel/VBoxContainer"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_vertical = 2
@@ -321,28 +332,28 @@ text = "ŁUKASZ"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Buttons" type="HBoxContainer" parent="players/MarginContainer5/Panel/VBoxContainer"]
+[node name="Buttons" type="HBoxContainer" parent="players/player3/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 6
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="BuyButton" type="Button" parent="players/MarginContainer5/Panel/VBoxContainer/Buttons"]
+[node name="BuyButton" type="Button" parent="players/player3/Panel/VBoxContainer/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 theme = SubResource("Theme_vfdh1")
 text = "LICYTUJ"
 
-[node name="AuctionButton" type="Button" parent="players/MarginContainer5/Panel/VBoxContainer/Buttons"]
+[node name="AuctionButton" type="Button" parent="players/player3/Panel/VBoxContainer/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 6
 theme = SubResource("Theme_rqw81")
 text = "PASS
 "
 
-[node name="MarginContainer6" type="MarginContainer" parent="players"]
+[node name="player4" type="MarginContainer" parent="players"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme_override_constants/margin_left = 12
@@ -350,11 +361,11 @@ theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 12
 
-[node name="Panel" type="Panel" parent="players/MarginContainer6"]
+[node name="Panel" type="Panel" parent="players/player4"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_dc1gs")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="players/MarginContainer6/Panel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="players/player4/Panel"]
 layout_mode = 2
 offset_left = -5.0
 offset_top = 2.0
@@ -362,7 +373,7 @@ offset_right = 181.0
 offset_bottom = 80.0
 alignment = 1
 
-[node name="Label" type="Label" parent="players/MarginContainer6/Panel/VBoxContainer"]
+[node name="player4_nickname" type="Label" parent="players/player4/Panel/VBoxContainer"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_vertical = 2
@@ -371,21 +382,21 @@ text = "DAWID"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Buttons" type="HBoxContainer" parent="players/MarginContainer6/Panel/VBoxContainer"]
+[node name="Buttons" type="HBoxContainer" parent="players/player4/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 6
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="BuyButton" type="Button" parent="players/MarginContainer6/Panel/VBoxContainer/Buttons"]
+[node name="BuyButton" type="Button" parent="players/player4/Panel/VBoxContainer/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 theme = SubResource("Theme_vfdh1")
 text = "LICYTUJ"
 
-[node name="AuctionButton" type="Button" parent="players/MarginContainer6/Panel/VBoxContainer/Buttons"]
+[node name="AuctionButton" type="Button" parent="players/player4/Panel/VBoxContainer/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 6
 theme = SubResource("Theme_rqw81")
@@ -394,4 +405,12 @@ text = "PASS
 
 [node name="AuctionTime" type="Timer" parent="."]
 
+[connection signal="pressed" from="players/player1/Panel/VBoxContainer/Buttons/BuyButton" to="." method="on_player1_bid_button_pressed"]
+[connection signal="pressed" from="players/player1/Panel/VBoxContainer/Buttons/AuctionButton" to="." method="on_player1_pass_button_pressed"]
+[connection signal="pressed" from="players/player2/Panel/VBoxContainer/Buttons/BuyButton" to="." method="on_player2_bid_button_pressed"]
+[connection signal="pressed" from="players/player2/Panel/VBoxContainer/Buttons/AuctionButton" to="." method="on_player2_pass_button_pressed"]
+[connection signal="pressed" from="players/player3/Panel/VBoxContainer/Buttons/BuyButton" to="." method="on_player3_bid_button_pressed"]
+[connection signal="pressed" from="players/player3/Panel/VBoxContainer/Buttons/AuctionButton" to="." method="on_player3_pass_button_pressed"]
+[connection signal="pressed" from="players/player4/Panel/VBoxContainer/Buttons/BuyButton" to="." method="on_player4_bid_button_pressed"]
+[connection signal="pressed" from="players/player4/Panel/VBoxContainer/Buttons/AuctionButton" to="." method="on_player4_pass_button_pressed"]
 [connection signal="timeout" from="AuctionTime" to="." method="on_auction_time_timeout"]
