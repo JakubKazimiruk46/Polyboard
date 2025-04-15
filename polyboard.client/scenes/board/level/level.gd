@@ -12,7 +12,8 @@ func _ready():
 	var background_path=GameData.get_background()
 	print("Ścieżka:" ,background_path)
 	var background_texture=load(background_path) as Texture2D
-	
+	if background_texture ==null:
+		background_texture=load("res://assets/images/game_background/politechnika.jpg") as Texture2D
 	enviroment.sky.sky_material.set_panorama(background_texture)
 	
 	if selected_pawn_path == "":

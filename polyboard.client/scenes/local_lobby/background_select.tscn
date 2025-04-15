@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://3ut527t5kdb1"]
 
 [ext_resource type="Texture2D" uid="uid://btgj5q12ygdwy" path="res://assets/images/game_background/politechnika.jpg" id="1_ids1r"]
-[ext_resource type="Script" uid="uid://bpogapbf67tvl" path="res://scenes/local_lobby/background_select.gd" id="1_l2x1e"]
+[ext_resource type="Script" path="res://scenes/local_lobby/background_select.gd" id="1_l2x1e"]
 [ext_resource type="Texture2D" uid="uid://dqpygkxhnapki" path="res://assets/images/game_background/dachmiasto.jpg" id="2_l2x1e"]
 [ext_resource type="Texture2D" uid="uid://c34oberlt1c3j" path="res://assets/images/game_background/las.jpg" id="3_r7bq5"]
 [ext_resource type="Texture2D" uid="uid://cf2h1ti7o58l2" path="res://assets/images/game_background/noc.jpg" id="4_gvsky"]
