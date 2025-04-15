@@ -53,7 +53,7 @@ func on_build_button_pressed():
 		print(Field.FieldId)
 		print(current_position)
 		if Field and currentFigureHead == Field.Owner and Field.houseCost <= currentFigureHead.ECTS and Field.isHotel == false:
-			currentFigureHead.ECTS -= Field.houseCost
+			currentFigureHead.SpendECTS(Field.houseCost)
 			game_manager.UpdateECTSUI(id)
 			Field.BuildingHouse(current_position)
 		else:
