@@ -27,6 +27,7 @@ public partial class GameManager : Node3D
 	[Export] public NodePath gameResultsContainerPath; // Kontener na wyniki końcowe
 
 	private Label roundLabel;
+	private Label playerLabel;
 	private Board board;
 	private Camera3D masterCamera;
 	private Camera3D diceCamera;
@@ -110,6 +111,7 @@ public partial class GameManager : Node3D
 		InitGameEndComponents();
 		SetAllPlayersOnStart();
 		StartTurnTimer();
+		playerLabel.Text = GetCurrentPlayerName();
 	}
 
 	private void InitTurnTimer()
@@ -120,8 +122,9 @@ public partial class GameManager : Node3D
 		turnTimer.Connect("timeout", new Callable(this, nameof(OnTurnTimerTimeout)));
 		AddChild(turnTimer);
 
-		turnTimerLabel = GetNodeOrNull<Label>("/root/Level/UI/TurnTimerLabel");
+		turnTimerLabel = GetNodeOrNull<Label>("/root/Level/UI/TimeAndRounds/HBoxContainer/TurnTimerLabel");
 		roundLabel = GetNodeOrNull<Label>("/root/Level/UI/TimeAndRounds/HBoxContainer/MarginContainer2/VBoxContainer/RoundCount");
+		playerLabel = GetNodeOrNull<Label>("/root/Level/UI/TimeAndRounds/HBoxContainer/MarginContainer3/VBoxContainer/PlayerLabel");
 	}
 
 	private void OnTurnTimerTimeout()
@@ -146,7 +149,7 @@ public partial class GameManager : Node3D
 		// Aktualizacja wyświetlania czasu, jeśli timer jest aktywny
 		if (turnTimer != null && turnTimer.TimeLeft > 0 && turnTimerLabel != null)
 		{
-			turnTimerLabel.Text = $"Czas: {Math.Ceiling(turnTimer.TimeLeft)}s";
+			turnTimerLabel.Text = $"CZAS TURY: {Math.Ceiling(turnTimer.TimeLeft)}";
 		}
 	}
 
@@ -1034,10 +1037,12 @@ public partial class GameManager : Node3D
 		rollButton.Visible = true;
 		endTurnButton.Visible = false;
 		string nextPlayerName = GetCurrentPlayerName();
+		playerLabel.Text = nextPlayerName;
 		PlaySound(nextTurnSoundPlayer);
 		notificationService.ShowNotification($"Tura gracza: {nextPlayerName}", NotificationService.NotificationType.Normal, 3f);
 		GD.Print($"Zakończono turę gracza. Teraz tura gracza: {nextPlayerName}");
 		UpdateRoundCounter();
+		
 		// Uruchamiamy timer dla nowego gracza
 		StartTurnTimer();
 	}
