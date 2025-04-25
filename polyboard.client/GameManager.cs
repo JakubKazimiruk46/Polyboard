@@ -27,6 +27,7 @@ public partial class GameManager : Node3D
 	[Export] public NodePath returnToMenuButtonPath; // Przycisk powrotu do menu
 	[Export] public NodePath gameResultsContainerPath; // Kontener na wyniki końcowe
 
+	private Label roundLabel;
 	private Board board;
 	private Camera3D masterCamera;
 	private Camera3D diceCamera;
@@ -131,6 +132,7 @@ public partial class GameManager : Node3D
 		AddChild(turnTimer);
 
 		turnTimerLabel = GetNodeOrNull<Label>("/root/Level/UI/TurnTimerLabel");
+		roundLabel = GetNodeOrNull<Label>("/root/Level/UI/TimeAndRounds/HBoxContainer/MarginContainer2/VBoxContainer/RoundCount");
 	}
 
 	private void OnTurnTimerTimeout()
@@ -841,8 +843,9 @@ public partial class GameManager : Node3D
 		if (currentPlayerIndex == 0)
 		{
 			currentRound++;
+			
 			GD.Print($"Runda {currentRound}");
-
+			roundLabel.Text = $"{currentRound}";
 			if (maxRounds > 0 && currentRound > maxRounds)
 			{
 				EndGameByRoundLimit();
@@ -1061,7 +1064,7 @@ public partial class GameManager : Node3D
 		PlaySound(nextTurnSoundPlayer);
 		notificationService.ShowNotification($"Tura gracza: {nextPlayerName}", NotificationService.NotificationType.Normal, 3f);
 		GD.Print($"Zakończono turę gracza. Teraz tura gracza: {nextPlayerName}");
-
+		UpdateRoundCounter();
 		// Uruchamiamy timer dla nowego gracza
 		StartTurnTimer();
 	}
