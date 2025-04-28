@@ -504,12 +504,13 @@ public partial class Field : Node3D
 
 		Vector2 viewportSize = GetViewport().GetVisibleRect().Size;
 
-		float scaleFactorX = viewportSize.X / 2500f;
-		float scaleFactorY = viewportSize.Y / 1080f;
+		float scaleFactorX = viewportSize.X / 5500f;
+		float scaleFactorY = viewportSize.Y / 3080f;
 		float scaleFactor = Math.Min(scaleFactorX, scaleFactorY);
 		Vector2 scale = new Vector2(scaleFactor, scaleFactor);
 
 		viewDetailsDialog.Scale = scale;
+		viewDetailsDialog.Position = new Vector2(500, 200);
 		viewDetailsDialog.Visible = true;
 	}
 

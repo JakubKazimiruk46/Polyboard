@@ -1094,6 +1094,7 @@ public async void ShowFieldTexture(int fieldId)
 		if (fieldTexture != null)
 		{
 			textureDisplay.Texture = fieldTexture;
+			textureDisplay.Position = new Vector2(400, 0);
 			Vector2 viewportSize = GetViewport().GetVisibleRect().Size;
 			float scaleFactorX = viewportSize.X / 3000f;
 			float scaleFactorY = viewportSize.Y / 1250f;
@@ -1111,6 +1112,7 @@ public async void ShowFieldTexture(int fieldId)
 			}
 			ownerNickname.Visible = true;
 			ownerNicknameView.Visible = true;
+			ownerNicknameView.Position = new Vector2(890, 280);
 			textureDisplay.Scale = new Vector2(0, 0);
 			textureDisplay.Visible = true;
 
