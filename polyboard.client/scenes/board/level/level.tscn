@@ -28,6 +28,7 @@
 [ext_resource type="Script" uid="uid://bl415ydbyrgk0" path="res://test/Tests.cs" id="23_dakaj"]
 [ext_resource type="Script" uid="uid://f2um77lmy2ri" path="res://scenes/board/level/player.gd" id="23_pxos0"]
 [ext_resource type="Texture2D" uid="uid://crkwlpvqum0w3" path="res://assets/images/pozyczka.png" id="23_pxos0"]
+[ext_resource type="Script" path="res://scenes/board/level/player.gd" id="23_pxos0"]
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="27_we53p"]
 [ext_resource type="PackedScene" uid="uid://dhtrkxp2t6i8" path="res://scenes/board/move_history/move_history.tscn" id="29_pxos0"]
 [ext_resource type="Script" uid="uid://b2krrm0vgoxwh" path="res://services/player_initializer.gd" id="29_tpxi3"]
@@ -786,6 +787,18 @@ text = "Zamknij"
 [node name="BuyCard" parent="." instance=ExtResource("16_8p6lx")]
 visible = false
 
+[node name="GPUParticles2D" parent="BuyCard/HBoxContainer" index="2"]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
+
 [node name="Trade" parent="." instance=ExtResource("17_bq0mx")]
 visible = false
 
@@ -803,7 +816,6 @@ rollButtonPath = NodePath("../UI/RzućKostkami")
 endTurnButtonPath = NodePath("../UI/ZakończTure")
 ectsUIContainerPath = NodePath("../UI/Players")
 playersUIContainerPath = NodePath("../UI/Players")
-playersStatsContainerPath = NodePath("../UI/PlayerStatsPanelContainer")
 playerInitializerPath = NodePath("PlayerInitializer")
 
 [node name="Players" type="Node3D" parent="GameManager"]
