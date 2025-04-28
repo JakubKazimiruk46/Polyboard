@@ -1181,6 +1181,8 @@ public async void ShowFieldTexture(int fieldId)
 	{
 		return fields;
 	}
+
+	
 	public Godot.Collections.Array GetFieldsOwnedByPlayerName(string playerName)
 	{
 		Godot.Collections.Array result = new Godot.Collections.Array();

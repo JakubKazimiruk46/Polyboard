@@ -18,6 +18,7 @@ public partial class GameManager : Node3D
 	[Export] public NodePath endTurnButtonPath;
 	[Export] public NodePath ectsUIContainerPath;
 	[Export] public NodePath playersUIContainerPath;
+	[Export] public NodePath playersStatsContainerPath;
 	[Export] public NodePath playerInitializerPath;
 	[Export] public NodePath notificationServicePath;
 	[Export] public float turnTimeLimit = 60.0f; // czas tury w sekundach
@@ -70,7 +71,17 @@ public partial class GameManager : Node3D
 	{
 		get { return players; }
 	}
-
+	
+	public Godot.Collections.Array GetPlayers()
+	{
+		var array = new Godot.Collections.Array();
+		foreach (var player in players)
+		{
+			array.Add(player);
+		}
+		return array;
+	}
+	
 	public bool IsSpecialRollHappening = false;
 	public bool IsLastRegularRollDouble = false;
 
@@ -489,6 +500,15 @@ private void InitMoveHistory()
 				playerUINodeToHide.Visible = false;
 			}
 		}
+		
+		CanvasItem PlayerStatsPanel = GetNodeOrNull<CanvasItem>(playersStatsContainerPath);
+		if (playersStatsContainerPath == null)
+		{
+			notificationService.ShowNotification("Błąd: Nie znaleziono kontenera playerStatsContainer.", NotificationService.NotificationType.Error);
+			return;
+		}
+		
+		PlayerStatsPanel.Visible = false;
 	}
 
 	// Metoda inicjalizująca komponenty ekranu końca gry
