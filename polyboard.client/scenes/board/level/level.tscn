@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=39 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" uid="uid://emvyo0uo8qs7" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" uid="uid://bgtflv4fbokq6" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -26,7 +26,7 @@
 [ext_resource type="Script" uid="uid://ip1fswlgagt8" path="res://scenes/board/level/players.gd" id="17_6omuv"]
 [ext_resource type="PackedScene" uid="uid://h1ww7awlbuhf" path="res://scenes/board/level/trade.tscn" id="17_bq0mx"]
 [ext_resource type="Script" uid="uid://bl415ydbyrgk0" path="res://test/Tests.cs" id="23_dakaj"]
-[ext_resource type="Script" uid="uid://f2um77lmy2ri" path="res://scenes/board/level/player.gd" id="23_pxos0"]
+[ext_resource type="Script" path="res://scenes/board/level/player.gd" id="23_pxos0"]
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="27_we53p"]
 [ext_resource type="PackedScene" uid="uid://dhtrkxp2t6i8" path="res://scenes/board/move_history/move_history.tscn" id="29_pxos0"]
 [ext_resource type="Script" uid="uid://b2krrm0vgoxwh" path="res://services/player_initializer.gd" id="29_tpxi3"]
@@ -760,6 +760,18 @@ text = "Zamknij"
 [node name="BuyCard" parent="." instance=ExtResource("16_8p6lx")]
 visible = false
 
+[node name="GPUParticles2D" parent="BuyCard/HBoxContainer" index="2"]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
+
 [node name="Trade" parent="." instance=ExtResource("17_bq0mx")]
 visible = false
 
@@ -777,7 +789,6 @@ rollButtonPath = NodePath("../UI/RzućKostkami")
 endTurnButtonPath = NodePath("../UI/ZakończTure")
 ectsUIContainerPath = NodePath("../UI/Players")
 playersUIContainerPath = NodePath("../UI/Players")
-playersStatsContainerPath = NodePath("../UI/PlayerStatsPanelContainer")
 playerInitializerPath = NodePath("PlayerInitializer")
 
 [node name="Players" type="Node3D" parent="GameManager"]
