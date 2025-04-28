@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://be5o85k4nbeu5"]
+[gd_scene load_steps=21 format=3 uid="uid://be5o85k4nbeu5"]
 
 [ext_resource type="Script" uid="uid://phhlfshpbr6k" path="res://scenes/board/level/ui.gd" id="1_e26wc"]
 [ext_resource type="Texture2D" uid="uid://dhxn8lostrjd4" path="res://assets/images/cards.png" id="2_oospi"]
@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://dhyf7dobwsaob" path="res://assets/images/house.png" id="9_mvhbk"]
 [ext_resource type="Texture2D" uid="uid://canj32siuexxe" path="res://assets/images/get_money.png" id="11_8whly"]
 [ext_resource type="Texture2D" uid="uid://c2rcjvbudk1ip" path="res://assets/images/pay_money.png" id="12_ul3un"]
+[ext_resource type="Script" uid="uid://bt1q3fnp471gp" path="res://scenes/board/level/surrender_button.gd" id="13_ul3un"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5ptj7"]
 bg_color = Color(1, 0.258617, 0.62817, 1)
@@ -475,6 +476,14 @@ color = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(60, 80)
 layout_mode = 2
 color = Color(1, 1, 1, 0.00392157)
+
+[node name="SurrenderButton" type="Button" parent="."]
+offset_left = 3.0
+offset_top = 69.0
+offset_right = 168.0
+offset_bottom = 117.0
+text = "Poddaj się"
+script = ExtResource("13_ul3un")
 
 [connection signal="pressed" from="HBoxContainer/view_buttons" to="." method="on_view_buttons_pressed"]
 [connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer/card_button" to="." method="on_cards_button_pressed"]
