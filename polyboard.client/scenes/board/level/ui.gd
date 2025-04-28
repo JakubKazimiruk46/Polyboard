@@ -76,16 +76,16 @@ func apply_style_to_stats_panel():
 	var panel = $PlayerStatsPanelContainer/PlayerStatsPanel
 
 	var panel_style = StyleBoxFlat.new()
-	panel_style.bg_color = Color(0.15, 0.15, 0.18, 0.85)
+	panel_style.bg_color = Color(0.1, 0.1, 0.1, 0.85)
 	panel_style.corner_radius_top_left = 12
 	panel_style.corner_radius_top_right = 12
 	panel_style.corner_radius_bottom_left = 12
 	panel_style.corner_radius_bottom_right = 12
-	panel_style.border_width_top = 1
-	panel_style.border_width_bottom = 1
-	panel_style.border_width_left = 1
-	panel_style.border_width_right = 1
-	panel_style.border_color = Color(0.4, 0.8, 0.6, 0.5) 
+	panel_style.border_width_top = 4
+	panel_style.border_width_bottom = 4
+	panel_style.border_width_left = 4
+	panel_style.border_width_right = 4
+	panel_style.border_color = Color("#62ff45") 
 	
 	panel.add_theme_stylebox_override("panel", panel_style)
 
@@ -107,16 +107,17 @@ func apply_style_to_stats_panel():
 	button.add_theme_font_size_override("font_size", 16)
 
 	var button_style_normal = StyleBoxFlat.new()
-	button_style_normal.bg_color = Color(0.25, 0.85, 0.55)
+	button_style_normal.bg_color = Color("#62ff45")
 	button_style_normal.corner_radius_top_left = 10
 	button_style_normal.corner_radius_top_right = 10
 	button_style_normal.corner_radius_bottom_left = 10
 	button_style_normal.corner_radius_bottom_right = 10
-	button_style_normal.border_width_top = 1
-	button_style_normal.border_width_bottom = 1
-	button_style_normal.border_width_left = 1
-	button_style_normal.border_width_right = 1
+	button_style_normal.border_width_top = 4
+	button_style_normal.border_width_bottom = 4
+	button_style_normal.border_width_left = 4
+	button_style_normal.border_width_right = 4
 	button_style_normal.border_color = Color(1, 1, 1, 0.3)
+
 
 	var button_style_hover = button_style_normal.duplicate()
 	button_style_hover.bg_color = Color(0.3, 0.9, 0.6) 
