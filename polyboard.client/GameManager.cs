@@ -59,7 +59,7 @@ public partial class GameManager : Node3D
 	private CanvasLayer gameEndScreen;
 	private Button returnToMenuButton;
 	private VBoxContainer gameResultsContainer;
-
+	private Node achievementManager;
 	private bool isGameOver = false;
 
 	//public dla wymian
@@ -106,11 +106,20 @@ public partial class GameManager : Node3D
 		InitPlayersUI();
 		InitSoundPlayers();
 		InitTurnTimer();
+		InitAchievementManager();
 		InitGameEndComponents();
 		SetAllPlayersOnStart();
 		StartTurnTimer();
 	}
-
+	private void InitAchievementManager()
+	{
+		achievementManager = GetNodeOrNull<Node>("/root/Level/GameManager/AchievementManager");
+		if (achievementManager == null)
+		{
+			GD.Print("Nie znaleziono AchievementManagera.");
+		}
+		GD.Print("jest git");
+	}
 	private void InitTurnTimer()
 	{
 		turnTimer = new Timer();
@@ -577,7 +586,7 @@ public partial class GameManager : Node3D
 			NotificationService.NotificationType.Normal,
 			5f);
 		GD.Print($"Gracz {player.Name} zbankrutował! Koniec gry dla tego gracza.");
-
+		achievementManager.Call("track_bankruptcy", currentRound);
 		if (playerIndex == currentPlayerIndex)
 		{
 			EndTurn();
@@ -623,8 +632,9 @@ public partial class GameManager : Node3D
 			NotificationService.NotificationType.Normal,
 			5f
 		);
-
+		
 		GD.Print($"Gra zakończona! Gracz {players[winnerIndex].Name} wygrywa!");
+		achievementManager.Call("track_game_win",currentRound);
 		ShowEndGameScreen($"Gracz {players[winnerIndex].Name} wygrywa!");
 	}
 
@@ -920,6 +930,7 @@ public partial class GameManager : Node3D
 		if (die1Result.Value == die2Result.Value)
 		{
 			GD.Print("Dublet! Kolejny rzut po ruchu.");
+			achievementManager.Call("track_dice_roll", true);
 			IsLastRegularRollDouble = true;
 			PlaySound(doubleSoundPlayer);
 		}
