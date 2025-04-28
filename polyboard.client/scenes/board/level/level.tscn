@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=38 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" uid="uid://emvyo0uo8qs7" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" uid="uid://bgtflv4fbokq6" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -27,6 +27,7 @@
 [ext_resource type="PackedScene" uid="uid://h1ww7awlbuhf" path="res://scenes/board/level/trade.tscn" id="17_bq0mx"]
 [ext_resource type="Script" uid="uid://bl415ydbyrgk0" path="res://test/Tests.cs" id="23_dakaj"]
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="27_we53p"]
+[ext_resource type="PackedScene" uid="uid://dhtrkxp2t6i8" path="res://scenes/board/move_history/move_history.tscn" id="29_pxos0"]
 [ext_resource type="Script" uid="uid://b2krrm0vgoxwh" path="res://services/player_initializer.gd" id="29_tpxi3"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]
@@ -626,6 +627,8 @@ offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("23_dakaj")
 GameManagerPath = NodePath("../GameManager")
+
+[node name="MoveHistory" parent="." instance=ExtResource("29_pxos0")]
 
 [connection signal="pressed" from="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3/build_button" to="UI" method="on_build_button_pressed"]
 
