@@ -127,7 +127,7 @@ public override void _Ready()
 	playerLabel.Text = GetCurrentPlayerName();
 }
 
-// Dodaj tę nową metodę
+
 private void InitMoveHistory()
 {
 	moveHistory = GetNodeOrNull<MoveHistory>("/root/Level/MoveHistory");
@@ -138,6 +138,13 @@ private void InitMoveHistory()
 	else
 	{
 		GD.Print("System historii ruchów zainicjalizowany.");
+		
+		// Dodaj sygnał DicesStoppedRolling
+		if (!IsConnected(SignalName.DicesStoppedRolling, new Callable(moveHistory, nameof(MoveHistory.OnDicesStoppedRolling))))
+		{
+			Connect(SignalName.DicesStoppedRolling, new Callable(moveHistory, nameof(MoveHistory.OnDicesStoppedRolling)));
+			GD.Print("Sygnał DicesStoppedRolling połączony z MoveHistory.");
+		}
 	}
 }
 
@@ -822,19 +829,25 @@ private void DeclarePlayerBankrupt(int playerIndex)
 		GD.Print("Wszyscy gracze zostali ustawieni na polu startowym.");
 	}
 
-	private void OnRollButtonPressed()
+private void OnRollButtonPressed()
+{
+	if (currentState == GameState.WaitingForInput)
 	{
-		if (currentState == GameState.WaitingForInput)
+		if (IsCurrentPlayerBankrupt())
 		{
-			if (IsCurrentPlayerBankrupt())
-			{
-				SkipBankruptPlayer();
-				return;
-			}
-
-			StartDiceRollForCurrentPlayer();
+			SkipBankruptPlayer();
+			return;
 		}
+
+		// Dodaj wpis do historii przed wykonaniem rzutu
+		if (moveHistory != null)
+		{
+			moveHistory.AddActionEntry(GetCurrentPlayerName(), "przygotowuje się do rzutu kostkami");
+		}
+
+		StartDiceRollForCurrentPlayer();
 	}
+}
 
 	private void OnEndTurnButtonPressed()
 	{
@@ -934,23 +947,26 @@ private void DeclarePlayerBankrupt(int playerIndex)
 		return true;
 	}
 
-	private void HandleBothDicesFinished()
+private void HandleBothDicesFinished()
+{
+	lastDiceTotal = die1Result.Value + die2Result.Value;
+	GD.Print($"Oba rzuty zakończone. Wynik sumaryczny: {lastDiceTotal}");
+	
+	// Emituj sygnał przed innymi operacjami
+	EmitSignal(SignalName.DicesStoppedRolling);
+	
+	switch (diceRollMode)
 	{
-		GD.Print($"Oba rzuty zakończone. Wynik sumaryczny: {lastDiceTotal}");
-		switch (diceRollMode)
-		{
-			case DiceRollMode.ForMovement:
-				HandleRegularRoll(CheckDiceResults());
-				break;
+		case DiceRollMode.ForMovement:
+			HandleRegularRoll(lastDiceTotal);
+			break;
 
-			case DiceRollMode.JustForDisplay:
-				lastDiceTotal = CheckDiceResults();
-				EmitSignal(SignalName.DicesStoppedRolling);
-				EmitSignal(SignalName.SpecialRollEnded);
-				ShowDiceResultsOnly(lastDiceTotal);
-				break;
-		}
+		case DiceRollMode.JustForDisplay:
+			EmitSignal(SignalName.SpecialRollEnded);
+			ShowDiceResultsOnly(lastDiceTotal);
+			break;
 	}
+}
 
 	private void ShowDiceResultsOnly(int total)
 	{
@@ -1093,10 +1109,15 @@ private void EndTurn()
 	notificationService.ShowNotification($"Tura gracza: {nextPlayerName}", NotificationService.NotificationType.Normal, 3f);
 	GD.Print($"Zakończono turę gracza {previousPlayerName}. Teraz tura gracza: {nextPlayerName}");
 	
-	// Dodaj wpis do historii ruchów
+	// Dodaj wpis do historii ruchów - upewnij się, że moveHistory nie jest null
 	if (moveHistory != null)
 	{
 		moveHistory.AddActionEntry(previousPlayerName, "zakończył swoją turę");
+		GD.Print("Dodano wpis o zakończeniu tury do historii ruchów.");
+	}
+	else
+	{
+		GD.PrintErr("Komponent MoveHistory jest null - nie można dodać wpisu do historii.");
 	}
 	
 	UpdateRoundCounter();

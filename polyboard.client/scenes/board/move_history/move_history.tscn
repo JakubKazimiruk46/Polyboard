@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://dc8i2sk5d8mv8"]
+[gd_scene load_steps=2 format=3 uid="uid://dhtrkxp2t6i8"]
 
 [ext_resource type="Script" uid="uid://bth3wng160aw1" path="res://scenes/board/move_history/MoveHistory.cs" id="1_ujimw"]
 
@@ -14,8 +14,7 @@ offset_top = -300.0
 grow_horizontal = 0
 grow_vertical = 0
 script = ExtResource("1_ujimw")
-historyContainerPath = NodePath("Panel/MarginContainer/VBoxContainer/HistoryContainer")
-moveHistoryLabelPath = NodePath("Panel/MarginContainer/VBoxContainer/MoveHistoryLabel")
+maxHistoryEntries = 10
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 1
@@ -45,6 +44,13 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.384314, 1, 0.270588, 1)
 theme_override_font_sizes/font_size = 18
 text = "HISTORIA RUCHÓW"
+horizontal_alignment = 1
+
+[node name="TabInfoLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "(Naciśnij Tab, aby ukryć/pokazać)"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="Panel/MarginContainer/VBoxContainer"]
