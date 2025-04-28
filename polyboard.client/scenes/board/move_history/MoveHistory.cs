@@ -14,13 +14,15 @@ public partial class MoveHistory : Node
 	private GameManager gameManager;
 	private Control moveHistoryPanel;
 	private bool isHistoryVisible = true;
+	private ScrollContainer scrollContainer;
 	
 	public override void _Ready()
 	{
-		// Znajdź referencje do węzłów
-		historyContainer = GetNode<VBoxContainer>("Panel/MarginContainer/VBoxContainer/HistoryContainer");
+		// Znajdź referencje do węzłów - zaktualizowane ścieżki dla ScrollContainer
+		historyContainer = GetNode<VBoxContainer>("Panel/MarginContainer/VBoxContainer/ScrollContainer/HistoryContainer");
 		moveHistoryLabel = GetNode<Label>("Panel/MarginContainer/VBoxContainer/MoveHistoryLabel");
 		moveHistoryPanel = GetNode<Control>("Panel");
+		scrollContainer = GetNode<ScrollContainer>("Panel/MarginContainer/VBoxContainer/ScrollContainer");
 		gameManager = GetNode<GameManager>("/root/Level/GameManager");
 		
 		if (gameManager == null)
@@ -38,6 +40,12 @@ public partial class MoveHistory : Node
 		if (moveHistoryLabel == null)
 		{
 			GD.PrintErr("Błąd: Nie znaleziono etykiety historii ruchów.");
+			return;
+		}
+		
+		if (scrollContainer == null)
+		{
+			GD.PrintErr("Błąd: Nie znaleziono kontenera przewijania.");
 			return;
 		}
 		
@@ -112,6 +120,28 @@ public partial class MoveHistory : Node
 		moveHistoryLabel.AddThemeColorOverride("font_color", new Color("#62ff45")); // Kolor zielony
 		moveHistoryLabel.AddThemeFontSizeOverride("font_size", 18);
 		
+		// Skonfiguruj ScrollContainer
+		if (scrollContainer != null)
+		{
+			// Wyłącz scrollowanie poziome, włącz pionowe
+			scrollContainer.HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled;
+			scrollContainer.VerticalScrollMode = ScrollContainer.ScrollMode.Auto;
+			
+			// Ustaw właściwości rozmiaru
+			scrollContainer.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
+			
+			// Ustaw styl scrollbara
+			var scrollStyle = new StyleBoxFlat();
+			scrollStyle.BgColor = new Color(0.3f, 0.3f, 0.3f, 0.6f);
+			scrollStyle.CornerRadiusBottomRight = 4;
+			scrollStyle.CornerRadiusTopRight = 4;
+			scrollStyle.ContentMarginLeft = 2;
+			scrollStyle.ContentMarginRight = 2;
+			
+			// Zastosuj styl do scrollbara
+			scrollContainer.GetVScrollBar().AddThemeStyleboxOverride("grabber", scrollStyle);
+		}
+		
 		// Dodaj informację o klawiszu Tab
 		var tabInfoLabel = new Label();
 		tabInfoLabel.Text = "(Naciśnij Tab, aby ukryć/pokazać)";
@@ -123,8 +153,12 @@ public partial class MoveHistory : Node
 		var vboxContainer = GetNode<VBoxContainer>("Panel/MarginContainer/VBoxContainer");
 		if (vboxContainer != null)
 		{
-			vboxContainer.AddChild(tabInfoLabel);
-			vboxContainer.MoveChild(tabInfoLabel, 1); // Przenieś na pozycję po głównej etykiecie
+			// Sprawdź, czy etykieta już istnieje
+			if (vboxContainer.GetNodeOrNull("TabInfoLabel") == null)
+			{
+				vboxContainer.AddChild(tabInfoLabel);
+				vboxContainer.MoveChild(tabInfoLabel, 1); // Przenieś na pozycję po głównej etykiecie
+			}
 		}
 	}
 	
@@ -198,9 +232,26 @@ public partial class MoveHistory : Node
 			entryLabel.Text = entry;
 			entryLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
 			entryLabel.AddThemeFontSizeOverride("font_size", 16);
-			entryLabel.AutowrapMode = TextServer.AutowrapMode.WordSmart;
+			entryLabel.AutowrapMode = TextServer.AutowrapMode.WordSmart; // Włącz zawijanie tekstu
+			entryLabel.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill; // Pozwól etykiecie rozszerzać się w poziomie
 			
 			historyContainer.AddChild(entryLabel);
+		}
+		
+		// Scroll do najnowszego wpisu (góra)
+		if (scrollContainer != null && scrollContainer.GetVScrollBar() != null)
+		{
+			// Odłóż wykonanie na następną klatkę, aby dać czas na aktualizację layoutu
+			CallDeferred(nameof(ScrollToTop));
+		}
+	}
+	
+	private void ScrollToTop()
+	{
+		// Przewiń do górnej krawędzi
+		if (scrollContainer != null && scrollContainer.GetVScrollBar() != null)
+		{
+			scrollContainer.GetVScrollBar().Value = 0;
 		}
 	}
 }
