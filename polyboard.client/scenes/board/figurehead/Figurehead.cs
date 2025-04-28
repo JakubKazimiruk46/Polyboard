@@ -18,6 +18,18 @@ public partial class Figurehead : CharacterBody3D
 	public bool hasLoan=false;
 	public int Loan=0;
 
+	
+	public Godot.Collections.Array GetOwnedFields(){
+		var array = new Godot.Collections.Array();
+		
+		for(int i = 0; i < ownedFields.Count; i++)
+		{
+			if (ownedFields[i] == true)
+				array.Add(i);
+		}
+		return array;
+	}
+
 	private bool hasAnimation = false;
 	public int ECTS { get; private set; }
 
