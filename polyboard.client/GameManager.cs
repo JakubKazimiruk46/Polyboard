@@ -27,6 +27,8 @@ public partial class GameManager : Node3D
 	[Export] public NodePath returnToMenuButtonPath; // Przycisk powrotu do menu
 	[Export] public NodePath gameResultsContainerPath; // Kontener na wyniki końcowe
 
+	private Label roundLabel;
+	private Label playerLabel;
 	private Board board;
 	private Camera3D masterCamera;
 	private Camera3D diceCamera;
@@ -60,7 +62,8 @@ public partial class GameManager : Node3D
 	private CanvasLayer gameEndScreen;
 	private Button returnToMenuButton;
 	private VBoxContainer gameResultsContainer;
-
+	private Node achievementManager;
+	private MoveHistory moveHistory;
 	private bool isGameOver = false;
 
 	//public dla wymian
@@ -105,23 +108,56 @@ public partial class GameManager : Node3D
 	private DiceRollMode diceRollMode = DiceRollMode.ForMovement;
 	private GameState currentState = GameState.WaitingForInput;
 
-	public override void _Ready()
-	{
-		InitCameras();
-		InitNotifications();
-		InitBoard();
-		InitPlayers();
-		InitDice();
-		InitRollButton();
-		InitEndTurnButton();
-		InitPlayersUI();
-		InitSoundPlayers();
-		InitTurnTimer();
-		InitGameEndComponents();
-		SetAllPlayersOnStart();
-		StartTurnTimer();
-	}
+public override void _Ready()
+{
+	InitCameras();
+	InitNotifications();
+	InitBoard();
+	InitPlayers();
+	InitDice();
+	InitRollButton();
+	InitEndTurnButton();
+	InitPlayersUI();
+	InitSoundPlayers();
+	InitTurnTimer();
+	InitGameEndComponents();
+	InitMoveHistory(); 
+	SetAllPlayersOnStart();
+	InitAchievementManager();
+	StartTurnTimer();
+	playerLabel.Text = GetCurrentPlayerName();
+}
 
+
+private void InitMoveHistory()
+{
+	moveHistory = GetNodeOrNull<MoveHistory>("/root/Level/MoveHistory");
+	if (moveHistory == null)
+	{
+		GD.PrintErr("Błąd: Nie znaleziono komponentu MoveHistory.");
+	}
+	else
+	{
+		GD.Print("System historii ruchów zainicjalizowany.");
+		
+		// Dodaj sygnał DicesStoppedRolling
+		if (!IsConnected(SignalName.DicesStoppedRolling, new Callable(moveHistory, nameof(MoveHistory.OnDicesStoppedRolling))))
+		{
+			Connect(SignalName.DicesStoppedRolling, new Callable(moveHistory, nameof(MoveHistory.OnDicesStoppedRolling)));
+			GD.Print("Sygnał DicesStoppedRolling połączony z MoveHistory.");
+		}
+	}
+}
+
+	private void InitAchievementManager()
+	{
+		achievementManager = GetNodeOrNull<Node>("/root/Level/GameManager/AchievementManager");
+		if (achievementManager == null)
+		{
+			GD.Print("Nie znaleziono AchievementManagera.");
+		}
+		GD.Print("jest git");
+	}
 	private void InitTurnTimer()
 	{
 		turnTimer = new Timer();
@@ -130,7 +166,9 @@ public partial class GameManager : Node3D
 		turnTimer.Connect("timeout", new Callable(this, nameof(OnTurnTimerTimeout)));
 		AddChild(turnTimer);
 
-		turnTimerLabel = GetNodeOrNull<Label>("/root/Level/UI/TurnTimerLabel");
+		turnTimerLabel = GetNodeOrNull<Label>("/root/Level/UI/TimeAndRounds/HBoxContainer/TurnTimerLabel");
+		roundLabel = GetNodeOrNull<Label>("/root/Level/UI/TimeAndRounds/HBoxContainer/MarginContainer2/VBoxContainer/RoundCount");
+		playerLabel = GetNodeOrNull<Label>("/root/Level/UI/TimeAndRounds/HBoxContainer/MarginContainer3/VBoxContainer/PlayerLabel");
 	}
 
 	private void OnTurnTimerTimeout()
@@ -155,7 +193,7 @@ public partial class GameManager : Node3D
 		// Aktualizacja wyświetlania czasu, jeśli timer jest aktywny
 		if (turnTimer != null && turnTimer.TimeLeft > 0 && turnTimerLabel != null)
 		{
-			turnTimerLabel.Text = $"Czas: {Math.Ceiling(turnTimer.TimeLeft)}s";
+			turnTimerLabel.Text = $"CZAS TURY: {Math.Ceiling(turnTimer.TimeLeft)}";
 		}
 	}
 
@@ -575,36 +613,41 @@ public partial class GameManager : Node3D
 		}
 	}
 
-	private void DeclarePlayerBankrupt(int playerIndex)
+private void DeclarePlayerBankrupt(int playerIndex)
+{
+	if (playerIndex < 0 || playerIndex >= players.Count)
 	{
-		if (playerIndex < 0 || playerIndex >= players.Count)
-		{
-			return;
-		}
-
-		Figurehead player = players[playerIndex];
-		playerBankruptcyStatus[playerIndex] = true;
-
-		if (playerIndex < playerNameLabels.Count)
-		{
-			playerNameLabels[playerIndex].Text = $"{player.Name} (BANKRUT)";
-			playerNameLabels[playerIndex].AddThemeColorOverride("font_color", new Color(1, 0, 0));
-			player.Visible = false;
-		}
-
-		PlaySound(bankruptSoundPlayer);
-		notificationService.ShowNotification($"Gracz {player.Name} zbankrutował! Koniec gry dla tego gracza.",
-			NotificationService.NotificationType.Normal,
-			5f);
-		GD.Print($"Gracz {player.Name} zbankrutował! Koniec gry dla tego gracza.");
-
-		if (playerIndex == currentPlayerIndex)
-		{
-			EndTurn();
-		}
-
-		CheckForGameOver();
+		return;
 	}
+
+	Figurehead player = players[playerIndex];
+	playerBankruptcyStatus[playerIndex] = true;
+
+	if (playerIndex < playerNameLabels.Count)
+	{
+		playerNameLabels[playerIndex].Text = $"{player.Name} (BANKRUT)";
+		playerNameLabels[playerIndex].AddThemeColorOverride("font_color", new Color(1, 0, 0));
+		player.Visible = false;
+	}
+
+	PlaySound(bankruptSoundPlayer);
+	notificationService.ShowNotification($"Gracz {player.Name} zbankrutował! Koniec gry dla tego gracza.",
+		NotificationService.NotificationType.Normal,
+		5f);
+	GD.Print($"Gracz {player.Name} zbankrutował! Koniec gry dla tego gracza.");
+	// Dodaj wpis do historii ruchów
+	if (moveHistory != null)
+	{
+		moveHistory.AddActionEntry(player.Name, "zbankrutował!");
+	}
+
+	if (playerIndex == currentPlayerIndex)
+	{
+		EndTurn();
+	}
+
+	CheckForGameOver();
+}
 
 	private void CheckForGameOver()
 	{
@@ -643,8 +686,9 @@ public partial class GameManager : Node3D
 			NotificationService.NotificationType.Normal,
 			5f
 		);
-
+		
 		GD.Print($"Gra zakończona! Gracz {players[winnerIndex].Name} wygrywa!");
+		achievementManager.Call("track_game_win",currentRound);
 		ShowEndGameScreen($"Gracz {players[winnerIndex].Name} wygrywa!");
 	}
 
@@ -788,19 +832,25 @@ public partial class GameManager : Node3D
 		GD.Print("Wszyscy gracze zostali ustawieni na polu startowym.");
 	}
 
-	private void OnRollButtonPressed()
+private void OnRollButtonPressed()
+{
+	if (currentState == GameState.WaitingForInput)
 	{
-		if (currentState == GameState.WaitingForInput)
+		if (IsCurrentPlayerBankrupt())
 		{
-			if (IsCurrentPlayerBankrupt())
-			{
-				SkipBankruptPlayer();
-				return;
-			}
-
-			StartDiceRollForCurrentPlayer();
+			SkipBankruptPlayer();
+			return;
 		}
+
+		// Dodaj wpis do historii przed wykonaniem rzutu
+		if (moveHistory != null)
+		{
+			moveHistory.AddActionEntry(GetCurrentPlayerName(), "przygotowuje się do rzutu kostkami");
+		}
+
+		StartDiceRollForCurrentPlayer();
 	}
+}
 
 	private void OnEndTurnButtonPressed()
 	{
@@ -834,8 +884,9 @@ public partial class GameManager : Node3D
 		if (currentPlayerIndex == 0)
 		{
 			currentRound++;
+			
 			GD.Print($"Runda {currentRound}");
-
+			roundLabel.Text = $"{currentRound}";
 			if (maxRounds > 0 && currentRound > maxRounds)
 			{
 				EndGameByRoundLimit();
@@ -899,23 +950,26 @@ public partial class GameManager : Node3D
 		return true;
 	}
 
-	private void HandleBothDicesFinished()
+private void HandleBothDicesFinished()
+{
+	lastDiceTotal = die1Result.Value + die2Result.Value;
+	GD.Print($"Oba rzuty zakończone. Wynik sumaryczny: {lastDiceTotal}");
+	
+	// Emituj sygnał przed innymi operacjami
+	EmitSignal(SignalName.DicesStoppedRolling);
+	
+	switch (diceRollMode)
 	{
-		GD.Print($"Oba rzuty zakończone. Wynik sumaryczny: {lastDiceTotal}");
-		switch (diceRollMode)
-		{
-			case DiceRollMode.ForMovement:
-				HandleRegularRoll(CheckDiceResults());
-				break;
+		case DiceRollMode.ForMovement:
+			HandleRegularRoll(lastDiceTotal);
+			break;
 
-			case DiceRollMode.JustForDisplay:
-				lastDiceTotal = CheckDiceResults();
-				EmitSignal(SignalName.DicesStoppedRolling);
-				EmitSignal(SignalName.SpecialRollEnded);
-				ShowDiceResultsOnly(lastDiceTotal);
-				break;
-		}
+		case DiceRollMode.JustForDisplay:
+			EmitSignal(SignalName.SpecialRollEnded);
+			ShowDiceResultsOnly(lastDiceTotal);
+			break;
 	}
+}
 
 	private void ShowDiceResultsOnly(int total)
 	{
@@ -940,6 +994,7 @@ public partial class GameManager : Node3D
 		if (die1Result.Value == die2Result.Value)
 		{
 			GD.Print("Dublet! Kolejny rzut po ruchu.");
+			achievementManager.Call("track_dice_roll", true);
 			IsLastRegularRollDouble = true;
 			PlaySound(doubleSoundPlayer);
 		}
@@ -1035,29 +1090,45 @@ public partial class GameManager : Node3D
 		GD.Print($"Gracz {currentPlayerName} może wykonać kolejny rzut.");
 	}
 
-	private void EndTurn()
+private void EndTurn()
+{
+	if (isMovementInProgress) return;
+
+	StopTurnTimer(); // zatrzymujemy timer przed zmianą gracza
+
+	string previousPlayerName = GetCurrentPlayerName();
+	
+	die1Result = null;
+	die2Result = null;
+	totalSteps = 0;
+	// Find next active (non-bankrupt) player
+	FindNextActivePlayer();
+	SetBoardInteractions(true);
+	currentState = GameState.WaitingForInput;
+	rollButton.Visible = true;
+	endTurnButton.Visible = false;
+	string nextPlayerName = GetCurrentPlayerName();
+	playerLabel.Text = nextPlayerName;
+	PlaySound(nextTurnSoundPlayer);
+	notificationService.ShowNotification($"Tura gracza: {nextPlayerName}", NotificationService.NotificationType.Normal, 3f);
+	GD.Print($"Zakończono turę gracza {previousPlayerName}. Teraz tura gracza: {nextPlayerName}");
+	
+	// Dodaj wpis do historii ruchów - upewnij się, że moveHistory nie jest null
+	if (moveHistory != null)
 	{
-		if (isMovementInProgress) return;
-
-		StopTurnTimer(); // zatrzymujemy timer przed zmianą gracza
-
-		die1Result = null;
-		die2Result = null;
-		totalSteps = 0;
-		// Find next active (non-bankrupt) player
-		FindNextActivePlayer();
-		SetBoardInteractions(true);
-		currentState = GameState.WaitingForInput;
-		rollButton.Visible = true;
-		endTurnButton.Visible = false;
-		string nextPlayerName = GetCurrentPlayerName();
-		PlaySound(nextTurnSoundPlayer);
-		notificationService.ShowNotification($"Tura gracza: {nextPlayerName}", NotificationService.NotificationType.Normal, 3f);
-		GD.Print($"Zakończono turę gracza. Teraz tura gracza: {nextPlayerName}");
-
-		// Uruchamiamy timer dla nowego gracza
-		StartTurnTimer();
+		moveHistory.AddActionEntry(previousPlayerName, "zakończył swoją turę");
+		GD.Print("Dodano wpis o zakończeniu tury do historii ruchów.");
 	}
+	else
+	{
+		GD.PrintErr("Komponent MoveHistory jest null - nie można dodać wpisu do historii.");
+	}
+	
+	UpdateRoundCounter();
+	
+	// Uruchamiamy timer dla nowego gracza
+	StartTurnTimer();
+}
 
 	/// Find the next non-bankrupt player
 	private void FindNextActivePlayer()
@@ -1408,5 +1479,10 @@ public partial class GameManager : Node3D
 			return players[playerIndex].ECTS;
 		return 0;
 	}
+	
+	public int GetCurrentRound()
+{
+	return currentRound;
+}
 
 }

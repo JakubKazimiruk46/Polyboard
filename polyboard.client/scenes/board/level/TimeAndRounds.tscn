@@ -1,0 +1,133 @@
+[gd_scene load_steps=8 format=3 uid="uid://d2arsk7nm7cu3"]
+
+[ext_resource type="Script" uid="uid://n7nm70ibk2hv" path="res://scenes/board/level/TimeAndRounds.gd" id="1_t64tg"]
+
+[sub_resource type="SystemFont" id="SystemFont_ybkam"]
+font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
+
+[sub_resource type="SystemFont" id="SystemFont_oo00v"]
+font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
+
+[sub_resource type="LabelSettings" id="LabelSettings_ek1em"]
+font_size = 20
+
+[sub_resource type="SystemFont" id="SystemFont_vins5"]
+font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
+
+[sub_resource type="SystemFont" id="SystemFont_v7fts"]
+font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
+
+[sub_resource type="SystemFont" id="SystemFont_t64tg"]
+font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
+
+[node name="TimeAndRounds" type="PanelContainer"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -124.0
+offset_bottom = 48.0
+grow_horizontal = 0
+script = ExtResource("1_t64tg")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Label" type="Label" parent="HBoxContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_ybkam")
+theme_override_font_sizes/font_size = 20
+text = "CZAS GRY:"
+horizontal_alignment = 1
+
+[node name="Time" type="Label" parent="HBoxContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_oo00v")
+theme_override_font_sizes/font_size = 20
+text = "00:00"
+label_settings = SubResource("LabelSettings_ek1em")
+
+[node name="Timer" type="Timer" parent="HBoxContainer/MarginContainer/HBoxContainer"]
+autostart = true
+
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer"]
+modulate = Color(1, 1, 1, 0.662745)
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="HBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/MarginContainer2"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="RoundLabel" type="Label" parent="HBoxContainer/MarginContainer2/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_vins5")
+theme_override_font_sizes/font_size = 20
+text = "RUNDA"
+horizontal_alignment = 1
+
+[node name="RoundCount" type="Label" parent="HBoxContainer/MarginContainer2/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_v7fts")
+theme_override_font_sizes/font_size = 20
+text = "1"
+horizontal_alignment = 1
+
+[node name="VSeparator2" type="VSeparator" parent="HBoxContainer"]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+
+[node name="MarginContainer3" type="MarginContainer" parent="HBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/MarginContainer3"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="RoundLabel" type="Label" parent="HBoxContainer/MarginContainer3/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_vins5")
+theme_override_font_sizes/font_size = 20
+text = "GRACZ"
+horizontal_alignment = 1
+
+[node name="PlayerLabel" type="Label" parent="HBoxContainer/MarginContainer3/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_v7fts")
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+
+[node name="VSeparator3" type="VSeparator" parent="HBoxContainer"]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+
+[node name="TurnTimerLabel" type="Label" parent="HBoxContainer"]
+custom_minimum_size = Vector2(125, 0)
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_t64tg")
+theme_override_font_sizes/font_size = 20
+
+[connection signal="timeout" from="HBoxContainer/MarginContainer/HBoxContainer/Timer" to="." method="on_timer_timeout"]

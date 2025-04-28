@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://chsamsqbtkijr" path="res://assets/images/build.png" id="4_glt2l"]
 [ext_resource type="Texture2D" uid="uid://bnb0sdm2vdwhu" path="res://assets/images/zastaw.png" id="6_ninoq"]
 [ext_resource type="Texture2D" uid="uid://bof7cx2xbx3k1" path="res://assets/images/question_card.png" id="7_q3a1k"]
-[ext_resource type="PackedScene" uid="uid://d2arsk7nm7cu3" path="res://scenes/board/level/timer.tscn" id="8_8lgx8"]
+[ext_resource type="PackedScene" uid="uid://d2arsk7nm7cu3" path="res://scenes/board/level/TimeAndRounds.tscn" id="8_8lgx8"]
 [ext_resource type="Texture2D" uid="uid://dhyf7dobwsaob" path="res://assets/images/house.png" id="9_mvhbk"]
 [ext_resource type="Texture2D" uid="uid://canj32siuexxe" path="res://assets/images/get_money.png" id="11_8whly"]
 [ext_resource type="Texture2D" uid="uid://c2rcjvbudk1ip" path="res://assets/images/pay_money.png" id="12_ul3un"]
@@ -431,7 +431,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(60, 80)
 layout_mode = 2
 
-[node name="Timer" parent="." instance=ExtResource("8_8lgx8")]
+[node name="TimeAndRounds" parent="." instance=ExtResource("8_8lgx8")]
 anchors_preset = 0
 anchor_left = 0.0
 anchor_right = 0.0
