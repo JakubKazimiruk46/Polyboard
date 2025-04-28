@@ -63,7 +63,6 @@ public partial class GameManager : Node3D
 	private VBoxContainer gameResultsContainer;
 	private Node achievementManager;
 	private MoveHistory moveHistory;
-
 	private bool isGameOver = false;
 
 	//public dla wymian
@@ -113,7 +112,7 @@ public override void _Ready()
 	InitGameEndComponents();
 	InitMoveHistory(); 
 	SetAllPlayersOnStart();
-	InitAchievementManager
+	InitAchievementManager();
 	StartTurnTimer();
 	playerLabel.Text = GetCurrentPlayerName();
 }
@@ -616,7 +615,6 @@ private void DeclarePlayerBankrupt(int playerIndex)
 		NotificationService.NotificationType.Normal,
 		5f);
 	GD.Print($"Gracz {player.Name} zbankrutował! Koniec gry dla tego gracza.");
-	
 	// Dodaj wpis do historii ruchów
 	if (moveHistory != null)
 	{
