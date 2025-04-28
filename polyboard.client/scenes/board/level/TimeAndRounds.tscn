@@ -23,6 +23,7 @@ subpixel_positioning = 0
 
 [sub_resource type="SystemFont" id="SystemFont_t64tg"]
 font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
 
 [node name="TimeAndRounds" type="PanelContainer"]
 anchors_preset = 1
