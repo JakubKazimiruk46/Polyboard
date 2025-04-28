@@ -39,6 +39,10 @@ public partial class Field : Node3D
 	private GameManager gameManager;
 	private NotificationService notificationService;
 	
+	public string GetName(){
+		return Name;
+	}
+	
 	public void PayRent(Figurehead player, Field field)
 	{
 		if(field.isHotel == true)
@@ -60,6 +64,7 @@ public partial class Field : Node3D
 	
 	public void BuyField(Figurehead player, Field field)
 	{
+		GD.Print("Pole zostało zakupione type shi");
 		int id = gameManager.GetCurrentPlayerIndex();
 		player.SpendECTS(field.fieldCost);
 		gameManager.UpdateECTSUI(id);
@@ -80,9 +85,9 @@ public partial class Field : Node3D
 			return;
 		}
 
-	// Ustawienie koloru i widoczności ramki
-	_ownerBorder.Modulate = field.Owner.playerColor;
-	_ownerBorder.Visible = true;
+		// Ustawienie koloru i widoczności ramki
+		_ownerBorder.Modulate = field.Owner.playerColor;
+		_ownerBorder.Visible = true;
 	}
 
 	public void RemoveOwner(Figurehead player, Field field)	{
