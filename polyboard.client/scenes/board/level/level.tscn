@@ -29,6 +29,7 @@
 [ext_resource type="Script" uid="uid://f2um77lmy2ri" path="res://scenes/board/level/player.gd" id="23_pxos0"]
 [ext_resource type="Texture2D" uid="uid://crkwlpvqum0w3" path="res://assets/images/pozyczka.png" id="23_pxos0"]
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="27_we53p"]
+[ext_resource type="PackedScene" uid="uid://dc8i2sk5d8mv8" path="res://scenes/board/move_history/move_history.tscn" id="29_pxos0"]
 [ext_resource type="Script" uid="uid://b2krrm0vgoxwh" path="res://services/player_initializer.gd" id="29_tpxi3"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]
@@ -830,6 +831,8 @@ offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("23_dakaj")
 GameManagerPath = NodePath("../GameManager")
+
+[node name="MoveHistory" parent="." instance=ExtResource("29_pxos0")]
 
 [connection signal="pressed" from="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3/build_button" to="UI" method="on_build_button_pressed"]
 [connection signal="pressed" from="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer7/laon_button" to="UI" method="_on_laon_button_pressed"]

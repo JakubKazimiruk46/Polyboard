@@ -60,8 +60,6 @@ public partial class Field : Node3D
 		gameManager.UpdateECTSUI(OwnerId);
 	}
 	
-	
-	
 	public void BuyField(Figurehead player, Field field)
 	{
 		GD.Print("Pole zostało zakupione type shi");
@@ -76,9 +74,17 @@ public partial class Field : Node3D
 		GD.Print(player.Name);
 		GD.Print("Nowy owner pola: ",field.Owner.Name);
 		GD.Print(field.Owner.playerColor);
-		 // Pobranie referencji do obiektu ramki
+		
+		// Dodaj wpis do historii ruchów
+		var moveHistory = gameManager.GetNodeOrNull<MoveHistory>("/root/Level/MoveHistory");
+		if (moveHistory != null)
+		{
+			moveHistory.AddActionEntry(player.Name, $"kupił pole {field.Name} za {field.fieldCost} ECTS");
+		}
+		
+		// Pobranie referencji do obiektu ramki
 		_ownerBorder = GetNodeOrNull<Sprite3D>("OwnerBorder");
-	
+
 		if (_ownerBorder == null)
 		{
 			GD.PrintErr("Błąd: Nie znaleziono OwnerBorder!");
@@ -292,191 +298,203 @@ public partial class Field : Node3D
 			}
 		}
 	}
+	
 	public void RemoveAllHouses()
 	{
-	foreach (var house in builtHouses.OfType<Node3D>())
-	{
-		house.QueueFree(); // Usuwanie obiektu z gry
+		foreach (var house in builtHouses.OfType<Node3D>())
+		{
+			house.QueueFree(); // Usuwanie obiektu z gry
+		}
+		builtHouses.Clear(); // Wyczyszczenie listy
+		for (int i = 0; i < buildOccupied.Count; i++)
+		{
+			buildOccupied[i] = false; // Resetowanie stanu zajętości
+		}
 	}
-	builtHouses.Clear(); // Wyczyszczenie listy
-	for (int i = 0; i < buildOccupied.Count; i++)
-	{
-		buildOccupied[i] = false; // Resetowanie stanu zajętości
-	}
-	}
+	
 	public async void BuildingHouse(int FieldId)
 	{
 		await BuildHouse(FieldId);
+		
+		// Dodaj wpis do historii ruchów
+		var moveHistory = gameManager.GetNodeOrNull<MoveHistory>("/root/Level/MoveHistory");
+		if (moveHistory != null && Owner != null)
+		{
+			moveHistory.AddActionEntry(Owner.Name, $"zbudował dom na polu {Name}");
+		}
 	}
 	
 	private async Task BuildHouse(int FieldId)
 	{
-	HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
-	if (invalidFieldIds.Contains(FieldId))
-	{
-		return;
-	}
-	if (isHotel)
-	{
-		GD.Print("Hotel już jest zbudowany. Nie można budować więcej domków.");
-		return;
-	}
-	
-	var freeIndex = buildOccupied.FindIndex(occupied => !occupied);
-	if (freeIndex == -1 || freeIndex == 4)
-	{
-		BuildHotel(FieldId);
-		GD.Print("Nie ma wolnego miejsca na budowę domku.");
-		return;
-	}
-	var houseScene = GD.Load<PackedScene>("res://scenes/board/buildings/house.tscn");
-	var puffScene = GD.Load<PackedScene>("res://scenes/board/buildings/puff.tscn");
-	if (houseScene == null)
-	{
-		GD.PrintErr("Nie udało się załadować sceny domu.");
-		return;
-	}
-	if (puffScene == null)
-	{
-		GD.PrintErr("Nie udało się załadować sceny efektu");
-		return;
-	}
-
-	var homeInstance = houseScene.Instantiate<Node3D>();
-	var puffInstance = puffScene.Instantiate<Node3D>();
-	if (homeInstance != null && puffInstance != null)
-	{
-		builtHouses.Add(homeInstance);
-		homeInstance.RotationDegrees = new Vector3(0, -270, 0);
-		homeInstance.Scale = new Vector3(0.01f, 0.01f, 0.01f);
-		Vector3 defaultHouseScale = new Vector3(0.5f, 0.5f, 0.5f);
-		AddChild(homeInstance);
-		AddChild(puffInstance);
-		homeInstance.GlobalPosition = buildPositions[freeIndex];
-		puffInstance.GlobalPosition = buildPositions[freeIndex];
-		puffInstance.Scale = new Vector3(1.0f, 1.0f, 1.0f);
+		HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
+		if (invalidFieldIds.Contains(FieldId))
+		{
+			return;
+		}
+		if (isHotel)
+		{
+			GD.Print("Hotel już jest zbudowany. Nie można budować więcej domków.");
+			return;
+		}
 		
-		buildOccupied[freeIndex] = true;
+		var freeIndex = buildOccupied.FindIndex(occupied => !occupied);
+		if (freeIndex == -1 || freeIndex == 4)
+		{
+			BuildHotel(FieldId);
+			GD.Print("Nie ma wolnego miejsca na budowę domku.");
+			return;
+		}
+		var houseScene = GD.Load<PackedScene>("res://scenes/board/buildings/house.tscn");
+		var puffScene = GD.Load<PackedScene>("res://scenes/board/buildings/puff.tscn");
+		if (houseScene == null)
+		{
+			GD.PrintErr("Nie udało się załadować sceny domu.");
+			return;
+		}
+		if (puffScene == null)
+		{
+			GD.PrintErr("Nie udało się załadować sceny efektu");
+			return;
+		}
 
-		Timer timer = new Timer();
-		timer.WaitTime = 3.0f;
-		timer.OneShot = true;
-		GetTree().Root.AddChild(timer);
+		var homeInstance = houseScene.Instantiate<Node3D>();
+		var puffInstance = puffScene.Instantiate<Node3D>();
+		if (homeInstance != null && puffInstance != null)
+		{
+			builtHouses.Add(homeInstance);
+			homeInstance.RotationDegrees = new Vector3(0, -270, 0);
+			homeInstance.Scale = new Vector3(0.01f, 0.01f, 0.01f);
+			Vector3 defaultHouseScale = new Vector3(0.5f, 0.5f, 0.5f);
+			AddChild(homeInstance);
+			AddChild(puffInstance);
+			homeInstance.GlobalPosition = buildPositions[freeIndex];
+			puffInstance.GlobalPosition = buildPositions[freeIndex];
+			puffInstance.Scale = new Vector3(1.0f, 1.0f, 1.0f);
+			
+			buildOccupied[freeIndex] = true;
 
-		var buildCamera = new Camera3D();
-		GetTree().Root.AddChild(buildCamera);
-		buildCamera.GlobalPosition = buildCameraPosition;
-		buildCamera.LookAt(buildPositions[freeIndex], Vector3.Up);
-		buildCamera.Current = true;
+			Timer timer = new Timer();
+			timer.WaitTime = 3.0f;
+			timer.OneShot = true;
+			GetTree().Root.AddChild(timer);
 
-		timer.Start();
-		PlayConstructionSound();
-		Tween tween = CreateTween();
-		tween.TweenProperty(homeInstance, "scale", defaultHouseScale, 1.5f)
-			 .SetTrans(Tween.TransitionType.Linear)
-			 .SetEase(Tween.EaseType.InOut);
+			var buildCamera = new Camera3D();
+			GetTree().Root.AddChild(buildCamera);
+			buildCamera.GlobalPosition = buildCameraPosition;
+			buildCamera.LookAt(buildPositions[freeIndex], Vector3.Up);
+			buildCamera.Current = true;
 
-		
-		await ToSignal(tween, "finished");
-		await ToSignal(timer, "timeout");
-		StopConstructionSound();
-		
-		puffInstance.QueueFree();
-		
-		timer.WaitTime=1.5f;
-		timer.Start();
-		await ToSignal(timer, "timeout");
-		
-		buildCamera.QueueFree();
-		return;
-	}
-	else
-	{
-		notificationService.ShowNotification("Nie udało się stworzyć sceny domku.", NotificationService.NotificationType.Error);
-		GD.PrintErr("Nie udało się stworzyć sceny domku.");
-		return;
-	}
+			timer.Start();
+			PlayConstructionSound();
+			Tween tween = CreateTween();
+			tween.TweenProperty(homeInstance, "scale", defaultHouseScale, 1.5f)
+				 .SetTrans(Tween.TransitionType.Linear)
+				 .SetEase(Tween.EaseType.InOut);
+
+			
+			await ToSignal(tween, "finished");
+			await ToSignal(timer, "timeout");
+			StopConstructionSound();
+			
+			puffInstance.QueueFree();
+			
+			timer.WaitTime=1.5f;
+			timer.Start();
+			await ToSignal(timer, "timeout");
+			
+			buildCamera.QueueFree();
+			return;
+		}
+		else
+		{
+			notificationService.ShowNotification("Nie udało się stworzyć sceny domku.", NotificationService.NotificationType.Error);
+			GD.PrintErr("Nie udało się stworzyć sceny domku.");
+			return;
+		}
 	}
 
 	public async Task BuildHotel(int FieldId)
 	{
 		RemoveAllHouses();
 		HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
-	if (invalidFieldIds.Contains(FieldId))
-		return;
-	
+		if (invalidFieldIds.Contains(FieldId))
+			return;
+		
 		var hotelScene=GD.Load<PackedScene>("res://scenes/board/buildings/hotel.tscn");
 		var puffScene = GD.Load<PackedScene>("res://scenes/board/buildings/puff.tscn");
 		
-	if (hotelScene == null)
-	{
-		notificationService.ShowNotification("Nie udało się załadować sceny hotelu.", NotificationService.NotificationType.Error);
-		GD.PrintErr("Nie udało się załadować sceny hotelu.");
-		return;
-	}
-	
-	if (puffScene == null)
-	{
-		notificationService.ShowNotification("Nie udało się załadować sceny efektu", NotificationService.NotificationType.Error);
-		GD.PrintErr("Nie udało się załadować sceny efektu");
-		return;
-	}
-	
-	var hotelInstance = hotelScene.Instantiate() as Node3D;
-	var puffInstance = puffScene.Instantiate<Node3D>();
-	
-	 if (hotelInstance != null && puffInstance != null)
-	{
+		if (hotelScene == null)
+		{
+			notificationService.ShowNotification("Nie udało się załadować sceny hotelu.", NotificationService.NotificationType.Error);
+			GD.PrintErr("Nie udało się załadować sceny hotelu.");
+			return;
+		}
 		
-		hotelInstance.RotationDegrees = new Vector3(0, 0, 0);
-		hotelInstance.Scale=new Vector3(0.01f,0.01f,0.01f);
-		Vector3 defaultHotelScale = new Vector3(0.45f, 0.45f, 0.45f);
-		AddChild(hotelInstance);
-		AddChild(puffInstance);
-		hotelInstance.GlobalPosition = buildPositions[4];
-		puffInstance.GlobalPosition = buildPositions[4];
-		isHotel = true;
-		puffInstance.Scale = new Vector3(2.0f, 2.0f, 2.0f);
+		if (puffScene == null)
+		{
+			notificationService.ShowNotification("Nie udało się załadować sceny efektu", NotificationService.NotificationType.Error);
+			GD.PrintErr("Nie udało się załadować sceny efektu");
+			return;
+		}
+		
+		var hotelInstance = hotelScene.Instantiate() as Node3D;
+		var puffInstance = puffScene.Instantiate<Node3D>();
+		
+		if (hotelInstance != null && puffInstance != null)
+		{
+			hotelInstance.RotationDegrees = new Vector3(0, 0, 0);
+			hotelInstance.Scale=new Vector3(0.01f,0.01f,0.01f);
+			Vector3 defaultHotelScale = new Vector3(0.45f, 0.45f, 0.45f);
+			AddChild(hotelInstance);
+			AddChild(puffInstance);
+			hotelInstance.GlobalPosition = buildPositions[4];
+			puffInstance.GlobalPosition = buildPositions[4];
+			isHotel = true;
+			puffInstance.Scale = new Vector3(2.0f, 2.0f, 2.0f);
+			
+			// Dodaj wpis do historii ruchów
+			var moveHistory = gameManager.GetNodeOrNull<MoveHistory>("/root/Level/MoveHistory");
+			if (moveHistory != null && Owner != null)
+			{
+				moveHistory.AddActionEntry(Owner.Name, $"zbudował hotel na polu {Name}");
+			}
+			
+			Timer timer = new Timer();
+			timer.WaitTime = 3.0f;
+			timer.OneShot = true;
+			GetTree().Root.AddChild(timer);
 
-		
-		Timer timer = new Timer();
-		timer.WaitTime = 3.0f;
-		timer.OneShot = true;
-		GetTree().Root.AddChild(timer);
+			var buildCamera = new Camera3D();
+			GetTree().Root.AddChild(buildCamera);
+			buildCamera.GlobalPosition = buildCameraPosition;
+			buildCamera.LookAt(buildPositions[4], Vector3.Up);
+			buildCamera.Current = true;
 
-		var buildCamera = new Camera3D();
-		GetTree().Root.AddChild(buildCamera);
-		buildCamera.GlobalPosition = buildCameraPosition;
-		buildCamera.LookAt(buildPositions[4], Vector3.Up);
-		buildCamera.Current = true;
-
-		timer.Start();
-		PlayHotelConstructionSound();
-		Tween tween = CreateTween();
-		tween.TweenProperty(hotelInstance, "scale", defaultHotelScale, 1.5f)
-			 .SetTrans(Tween.TransitionType.Linear)
-			 .SetEase(Tween.EaseType.InOut);
-
-		
-		await ToSignal(tween, "finished");
-		await ToSignal(timer, "timeout");
-		StopConstructionSound();
-		
-		puffInstance.QueueFree();
-		
-		timer.WaitTime=1.5f;
-		timer.Start();
-		await ToSignal(timer, "timeout");
-		
-		buildCamera.QueueFree();
-		return;
-
-	}
-	else
-	{
-		notificationService.ShowNotification("Nie udało się stworzyć sceny hotelu.", NotificationService.NotificationType.Error);
-		GD.PrintErr("Nie udało się stworzyć sceny hotelu.");
-	}
+			timer.Start();
+			PlayHotelConstructionSound();
+			Tween tween = CreateTween();
+			tween.TweenProperty(hotelInstance, "scale", defaultHotelScale, 1.5f)
+				 .SetTrans(Tween.TransitionType.Linear)
+				 .SetEase(Tween.EaseType.InOut);
+			
+			await ToSignal(tween, "finished");
+			await ToSignal(timer, "timeout");
+			StopConstructionSound();
+			
+			puffInstance.QueueFree();
+			
+			timer.WaitTime=1.5f;
+			timer.Start();
+			await ToSignal(timer, "timeout");
+			
+			buildCamera.QueueFree();
+			return;
+		}
+		else
+		{
+			notificationService.ShowNotification("Nie udało się stworzyć sceny hotelu.", NotificationService.NotificationType.Error);
+			GD.PrintErr("Nie udało się stworzyć sceny hotelu.");
+		}
 	}
 
 	public void ShowDetailsDialog()
@@ -501,7 +519,7 @@ public partial class Field : Node3D
 		_border.Visible = true;
 	}
 
-private void PlayConstructionSound()
+	private void PlayConstructionSound()
 	{
 		if (constructionSoundPlayer != null)
 		{
@@ -514,7 +532,8 @@ private void PlayConstructionSound()
 			GD.PrintErr("Błąd: AudioStreamPlayer3D nie jest zainicjalizowany.");
 		}
 	}
-private void PlayHotelConstructionSound()
+	
+	private void PlayHotelConstructionSound()
 	{
 		if (hotelConstructionSoundPlayer != null)
 		{
@@ -526,6 +545,7 @@ private void PlayHotelConstructionSound()
 			GD.PrintErr("Błąd: AudioStreamPlayer3D nie jest zainicjalizowany.");
 		}
 	}
+	
 	private void StopConstructionSound()
 	{
 		if (constructionSoundPlayer != null && constructionSoundPlayer.Playing)
@@ -542,10 +562,8 @@ private void PlayHotelConstructionSound()
 		viewDetailsDialog.Visible = false;
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
 		// Any additional logic that you want to execute every frame
 	}
-	
 }

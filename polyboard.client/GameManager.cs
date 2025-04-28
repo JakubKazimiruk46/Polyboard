@@ -22,7 +22,7 @@ public partial class GameManager : Node3D
 	[Export] public NodePath playerInitializerPath;
 	[Export] public NodePath notificationServicePath;
 	[Export] public float turnTimeLimit = 60.0f; // czas tury w sekundach
-	[Export] public int maxRounds = 30; // Maksymalna liczba rund, po której gra się kończy (ustaw 0 dla braku limitu)
+	[Export] public int maxRounds = 0; // Maksymalna liczba rund, po której gra się kończy (ustaw 0 dla braku limitu)
 	[Export] public NodePath gameEndScreenPath; // Ścieżka do ekranu końcowego
 	[Export] public NodePath returnToMenuButtonPath; // Przycisk powrotu do menu
 	[Export] public NodePath gameResultsContainerPath; // Kontener na wyniki końcowe
@@ -62,6 +62,7 @@ public partial class GameManager : Node3D
 	private CanvasLayer gameEndScreen;
 	private Button returnToMenuButton;
 	private VBoxContainer gameResultsContainer;
+	private MoveHistory moveHistory;
 
 	private bool isGameOver = false;
 
@@ -107,23 +108,38 @@ public partial class GameManager : Node3D
 	private DiceRollMode diceRollMode = DiceRollMode.ForMovement;
 	private GameState currentState = GameState.WaitingForInput;
 
-	public override void _Ready()
+public override void _Ready()
+{
+	InitCameras();
+	InitNotifications();
+	InitBoard();
+	InitPlayers();
+	InitDice();
+	InitRollButton();
+	InitEndTurnButton();
+	InitPlayersUI();
+	InitSoundPlayers();
+	InitTurnTimer();
+	InitGameEndComponents();
+	InitMoveHistory(); 
+	SetAllPlayersOnStart();
+	StartTurnTimer();
+	playerLabel.Text = GetCurrentPlayerName();
+}
+
+// Dodaj tę nową metodę
+private void InitMoveHistory()
+{
+	moveHistory = GetNodeOrNull<MoveHistory>("/root/Level/MoveHistory");
+	if (moveHistory == null)
 	{
-		InitCameras();
-		InitNotifications();
-		InitBoard();
-		InitPlayers();
-		InitDice();
-		InitRollButton();
-		InitEndTurnButton();
-		InitPlayersUI();
-		InitSoundPlayers();
-		InitTurnTimer();
-		InitGameEndComponents();
-		SetAllPlayersOnStart();
-		StartTurnTimer();
-		playerLabel.Text = GetCurrentPlayerName();
+		GD.PrintErr("Błąd: Nie znaleziono komponentu MoveHistory.");
 	}
+	else
+	{
+		GD.Print("System historii ruchów zainicjalizowany.");
+	}
+}
 
 	private void InitTurnTimer()
 	{
@@ -587,36 +603,42 @@ public partial class GameManager : Node3D
 		}
 	}
 
-	private void DeclarePlayerBankrupt(int playerIndex)
+private void DeclarePlayerBankrupt(int playerIndex)
+{
+	if (playerIndex < 0 || playerIndex >= players.Count)
 	{
-		if (playerIndex < 0 || playerIndex >= players.Count)
-		{
-			return;
-		}
-
-		Figurehead player = players[playerIndex];
-		playerBankruptcyStatus[playerIndex] = true;
-
-		if (playerIndex < playerNameLabels.Count)
-		{
-			playerNameLabels[playerIndex].Text = $"{player.Name} (BANKRUT)";
-			playerNameLabels[playerIndex].AddThemeColorOverride("font_color", new Color(1, 0, 0));
-			player.Visible = false;
-		}
-
-		PlaySound(bankruptSoundPlayer);
-		notificationService.ShowNotification($"Gracz {player.Name} zbankrutował! Koniec gry dla tego gracza.",
-			NotificationService.NotificationType.Normal,
-			5f);
-		GD.Print($"Gracz {player.Name} zbankrutował! Koniec gry dla tego gracza.");
-
-		if (playerIndex == currentPlayerIndex)
-		{
-			EndTurn();
-		}
-
-		CheckForGameOver();
+		return;
 	}
+
+	Figurehead player = players[playerIndex];
+	playerBankruptcyStatus[playerIndex] = true;
+
+	if (playerIndex < playerNameLabels.Count)
+	{
+		playerNameLabels[playerIndex].Text = $"{player.Name} (BANKRUT)";
+		playerNameLabels[playerIndex].AddThemeColorOverride("font_color", new Color(1, 0, 0));
+		player.Visible = false;
+	}
+
+	PlaySound(bankruptSoundPlayer);
+	notificationService.ShowNotification($"Gracz {player.Name} zbankrutował! Koniec gry dla tego gracza.",
+		NotificationService.NotificationType.Normal,
+		5f);
+	GD.Print($"Gracz {player.Name} zbankrutował! Koniec gry dla tego gracza.");
+	
+	// Dodaj wpis do historii ruchów
+	if (moveHistory != null)
+	{
+		moveHistory.AddActionEntry(player.Name, "zbankrutował!");
+	}
+
+	if (playerIndex == currentPlayerIndex)
+	{
+		EndTurn();
+	}
+
+	CheckForGameOver();
+}
 
 	private void CheckForGameOver()
 	{
@@ -1048,31 +1070,40 @@ public partial class GameManager : Node3D
 		GD.Print($"Gracz {currentPlayerName} może wykonać kolejny rzut.");
 	}
 
-	private void EndTurn()
+private void EndTurn()
+{
+	if (isMovementInProgress) return;
+
+	StopTurnTimer(); // zatrzymujemy timer przed zmianą gracza
+
+	string previousPlayerName = GetCurrentPlayerName();
+	
+	die1Result = null;
+	die2Result = null;
+	totalSteps = 0;
+	// Find next active (non-bankrupt) player
+	FindNextActivePlayer();
+	SetBoardInteractions(true);
+	currentState = GameState.WaitingForInput;
+	rollButton.Visible = true;
+	endTurnButton.Visible = false;
+	string nextPlayerName = GetCurrentPlayerName();
+	playerLabel.Text = nextPlayerName;
+	PlaySound(nextTurnSoundPlayer);
+	notificationService.ShowNotification($"Tura gracza: {nextPlayerName}", NotificationService.NotificationType.Normal, 3f);
+	GD.Print($"Zakończono turę gracza {previousPlayerName}. Teraz tura gracza: {nextPlayerName}");
+	
+	// Dodaj wpis do historii ruchów
+	if (moveHistory != null)
 	{
-		if (isMovementInProgress) return;
-
-		StopTurnTimer(); // zatrzymujemy timer przed zmianą gracza
-
-		die1Result = null;
-		die2Result = null;
-		totalSteps = 0;
-		// Find next active (non-bankrupt) player
-		FindNextActivePlayer();
-		SetBoardInteractions(true);
-		currentState = GameState.WaitingForInput;
-		rollButton.Visible = true;
-		endTurnButton.Visible = false;
-		string nextPlayerName = GetCurrentPlayerName();
-		playerLabel.Text = nextPlayerName;
-		PlaySound(nextTurnSoundPlayer);
-		notificationService.ShowNotification($"Tura gracza: {nextPlayerName}", NotificationService.NotificationType.Normal, 3f);
-		GD.Print($"Zakończono turę gracza. Teraz tura gracza: {nextPlayerName}");
-		UpdateRoundCounter();
-		
-		// Uruchamiamy timer dla nowego gracza
-		StartTurnTimer();
+		moveHistory.AddActionEntry(previousPlayerName, "zakończył swoją turę");
 	}
+	
+	UpdateRoundCounter();
+	
+	// Uruchamiamy timer dla nowego gracza
+	StartTurnTimer();
+}
 
 	/// Find the next non-bankrupt player
 	private void FindNextActivePlayer()
@@ -1423,5 +1454,10 @@ public partial class GameManager : Node3D
 			return players[playerIndex].ECTS;
 		return 0;
 	}
+	
+	public int GetCurrentRound()
+{
+	return currentRound;
+}
 
 }
