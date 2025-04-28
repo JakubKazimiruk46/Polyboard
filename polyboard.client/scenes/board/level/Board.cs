@@ -28,6 +28,7 @@ public partial class Board : StaticBody3D
 	private PopupMenu _contextMenu;
 	private Vector2 _lastMousePosition;
 	private Label _popupInfoLabel;
+	private Node achievementManager;
 	private enum PopupIds
 	{
 		SellProperty = 100,
@@ -50,8 +51,12 @@ public partial class Board : StaticBody3D
 		InitializeComponents();
 		InitializeCardEffects();
 		InitializePopupMenu();
+		InitAchievementManager();
 	}
-
+	private void InitAchievementManager()
+	{
+		achievementManager = GetNodeOrNull<Node>("GameManager/AchievementManager");
+	}
 	private void InitializeComponents()
 	{
 		step_on_card = GetNodeOrNull<Sprite2D>("/root/Level/BuyCard/HBoxContainer/FieldView/TextureRect/FieldToBuy");
@@ -556,7 +561,7 @@ private void TryBuildHouse(Field field, Figurehead player)
 				player.SpendECTS(field.houseCost);
 				
 				field.BuildingHouse(field.FieldId);
-				
+				achievementManager.Call("track_house_built");
 				ShowPopupNotification($"Building house on {field.Name} for {field.houseCost} ECTS", 3.0f);
 
 				gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
@@ -602,7 +607,7 @@ private async void TryBuildHotel(Field field, Figurehead player)
 				player.SpendECTS(field.hotelCost);
 				
 				await field.BuildHotel(field.FieldId);
-				
+				achievementManager.Call("track_hotel_build", field.Department.ToString());
 				ShowPopupNotification($"Built hotel on {field.Name} for {field.hotelCost} ECTS", 3.0f);
 				
 				gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
@@ -900,6 +905,7 @@ private void ShowPopupError(string message, float duration = 4.0f)
 		{
 			deanOfficeSoundPlayer.Play();
 			GD.Print("Odtwarzanie dźwięku pójścia do dziekanatu.");
+			achievementManager.Call("track_dean_office_visit");
 		}
 		else
 		{
@@ -1010,10 +1016,13 @@ private void ShowPopupError(string message, float duration = 4.0f)
 			if (!field.owned)
 			{
 				BuyField(fieldId);
+				achievementManager.Call("track_property_purchase");
 			}
 			else if (field.Owner != currentFigureHead)
 			{
 				field.PayRent(currentFigureHead, field);
+				int rent = field.CheckHouseQuantity(field);
+				achievementManager.Call("track_tax_payment", rent);
 			}
 		}
 	}
