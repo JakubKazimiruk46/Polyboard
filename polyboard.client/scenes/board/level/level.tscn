@@ -27,7 +27,7 @@
 [ext_resource type="PackedScene" uid="uid://h1ww7awlbuhf" path="res://scenes/board/level/trade.tscn" id="17_bq0mx"]
 [ext_resource type="Script" uid="uid://bl415ydbyrgk0" path="res://test/Tests.cs" id="23_dakaj"]
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="27_we53p"]
-[ext_resource type="PackedScene" uid="uid://dc8i2sk5d8mv8" path="res://scenes/board/move_history/move_history.tscn" id="29_pxos0"]
+[ext_resource type="PackedScene" uid="uid://dhtrkxp2t6i8" path="res://scenes/board/move_history/move_history.tscn" id="29_pxos0"]
 [ext_resource type="Script" uid="uid://b2krrm0vgoxwh" path="res://services/player_initializer.gd" id="29_tpxi3"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]

@@ -5,21 +5,19 @@ public partial class ToggleHistoryButton : Button
 {
     [Export] public NodePath moveHistoryPath;
     
-    private Control moveHistoryPanel;
+    private MoveHistory moveHistory;
     private bool isHistoryVisible = true;
     
     public override void _Ready()
     {
-        moveHistoryPanel = GetNodeOrNull<Control>(moveHistoryPath);
+        // Zmodyfikowana ścieżka do historii ruchów - bezpośrednio użyj referencji do węzła
+        moveHistory = GetNode<MoveHistory>("/root/Level/MoveHistory");
         
-        if (moveHistoryPanel == null)
+        if (moveHistory == null)
         {
             GD.PrintErr("Błąd: Nie znaleziono panelu historii ruchów.");
             return;
         }
-        
-        // Domyślnie pokaż historię
-        moveHistoryPanel.Visible = isHistoryVisible;
         
         // Zastosuj styl do przycisku
         ApplyButtonStyle();
@@ -76,11 +74,31 @@ public partial class ToggleHistoryButton : Button
     
     private void OnToggleButtonPressed()
     {
-        if (moveHistoryPanel == null) return;
+        if (moveHistory == null) return;
         
+        // Wywołaj metodę przełączania widoczności z komponentu MoveHistory
+        moveHistory.ToggleHistoryVisibility();
+        
+        // Zaktualizuj status widoczności
         isHistoryVisible = !isHistoryVisible;
-        moveHistoryPanel.Visible = isHistoryVisible;
+        
+        // Zaktualizuj tekst przycisku
         UpdateButtonText();
+    }
+    
+    public override void _Input(InputEvent @event)
+    {
+        // Obsługa klawisza Tab do przełączania widoczności historii
+        if (@event is InputEventKey eventKey && eventKey.Pressed && eventKey.Keycode == Key.Tab)
+        {
+            if (moveHistory == null) return;
+            
+            // Zaktualizuj status widoczności
+            isHistoryVisible = !isHistoryVisible;
+            
+            // Zaktualizuj tekst przycisku
+            UpdateButtonText();
+        }
     }
     
     private void UpdateButtonText()
