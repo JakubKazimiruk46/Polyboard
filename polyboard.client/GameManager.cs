@@ -22,7 +22,7 @@ public partial class GameManager : Node3D
 	[Export] public NodePath playerInitializerPath;
 	[Export] public NodePath notificationServicePath;
 	[Export] public float turnTimeLimit = 60.0f; // czas tury w sekundach
-	[Export] public int maxRounds = 0; // Maksymalna liczba rund, po której gra się kończy (ustaw 0 dla braku limitu)
+	[Export] public int maxRounds = 30; // Maksymalna liczba rund, po której gra się kończy (ustaw 0 dla braku limitu)
 	[Export] public NodePath gameEndScreenPath; // Ścieżka do ekranu końcowego
 	[Export] public NodePath returnToMenuButtonPath; // Przycisk powrotu do menu
 	[Export] public NodePath gameResultsContainerPath; // Kontener na wyniki końcowe
@@ -62,6 +62,7 @@ public partial class GameManager : Node3D
 	private CanvasLayer gameEndScreen;
 	private Button returnToMenuButton;
 	private VBoxContainer gameResultsContainer;
+	private Node achievementManager;
 	private MoveHistory moveHistory;
 
 	private bool isGameOver = false;
@@ -123,6 +124,7 @@ public override void _Ready()
 	InitGameEndComponents();
 	InitMoveHistory(); 
 	SetAllPlayersOnStart();
+	InitAchievementManager
 	StartTurnTimer();
 	playerLabel.Text = GetCurrentPlayerName();
 }
@@ -148,6 +150,15 @@ private void InitMoveHistory()
 	}
 }
 
+	private void InitAchievementManager()
+	{
+		achievementManager = GetNodeOrNull<Node>("/root/Level/GameManager/AchievementManager");
+		if (achievementManager == null)
+		{
+			GD.Print("Nie znaleziono AchievementManagera.");
+		}
+		GD.Print("jest git");
+	}
 	private void InitTurnTimer()
 	{
 		turnTimer = new Timer();
@@ -684,8 +695,9 @@ private void DeclarePlayerBankrupt(int playerIndex)
 			NotificationService.NotificationType.Normal,
 			5f
 		);
-
+		
 		GD.Print($"Gra zakończona! Gracz {players[winnerIndex].Name} wygrywa!");
+		achievementManager.Call("track_game_win",currentRound);
 		ShowEndGameScreen($"Gracz {players[winnerIndex].Name} wygrywa!");
 	}
 
@@ -991,6 +1003,7 @@ private void HandleBothDicesFinished()
 		if (die1Result.Value == die2Result.Value)
 		{
 			GD.Print("Dublet! Kolejny rzut po ruchu.");
+			achievementManager.Call("track_dice_roll", true);
 			IsLastRegularRollDouble = true;
 			PlaySound(doubleSoundPlayer);
 		}
