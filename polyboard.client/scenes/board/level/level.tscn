@@ -27,7 +27,9 @@
 [ext_resource type="PackedScene" uid="uid://h1ww7awlbuhf" path="res://scenes/board/level/trade.tscn" id="17_bq0mx"]
 [ext_resource type="Script" uid="uid://bl415ydbyrgk0" path="res://test/Tests.cs" id="23_dakaj"]
 [ext_resource type="Texture2D" uid="uid://crkwlpvqum0w3" path="res://assets/images/pozyczka.png" id="23_pxos0"]
+[ext_resource type="Script" path="res://scenes/board/level/player.gd" id="23_pxos0"]
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="27_we53p"]
+[ext_resource type="PackedScene" uid="uid://dhtrkxp2t6i8" path="res://scenes/board/move_history/move_history.tscn" id="29_pxos0"]
 [ext_resource type="PackedScene" uid="uid://dhtrkxp2t6i8" path="res://scenes/board/move_history/move_history.tscn" id="29_pxos0"]
 [ext_resource type="Script" uid="uid://b2krrm0vgoxwh" path="res://services/player_initializer.gd" id="29_tpxi3"]
 
@@ -340,6 +342,21 @@ visible = false
 
 [node name="UI" parent="." instance=ExtResource("13_ivesl")]
 
+[node name="Player1" parent="UI/Players" index="0"]
+script = ExtResource("23_pxos0")
+
+[node name="Player2" parent="UI/Players" index="1"]
+script = ExtResource("23_pxos0")
+player_id = 1
+
+[node name="Player3" parent="UI/Players" index="2"]
+script = ExtResource("23_pxos0")
+player_id = 2
+
+[node name="Player4" parent="UI/Players" index="3"]
+script = ExtResource("23_pxos0")
+player_id = 3
+
 [node name="card_button" parent="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer" index="0"]
 tooltip_text = "Kliknij, aby zobaczyć swoje nieruchomości"
 theme = SubResource("Theme_2w06e")
@@ -573,11 +590,11 @@ grow_vertical = 2
 expand_mode = 1
 
 [node name="TimeAndRounds" parent="UI" index="3"]
+[node name="TimeAndRounds" parent="UI" index="3"]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -150.0
-offset_top = 0.0
 offset_right = 150.0
 offset_bottom = 52.0
 grow_horizontal = 2
@@ -597,9 +614,15 @@ text = "Rzut kostami"
 
 [node name="ZakończTure" type="Button" parent="UI"]
 anchors_preset = -1
+anchors_preset = -1
 anchor_left = 0.5
 anchor_top = 0.095
+anchor_top = 0.095
 anchor_right = 0.5
+anchor_bottom = 0.095
+offset_left = -54.5
+offset_right = 54.5
+offset_bottom = 40.0
 anchor_bottom = 0.095
 offset_left = -54.5
 offset_right = 54.5
@@ -614,6 +637,159 @@ anchor_right = 1.0
 offset_left = -40.0
 offset_bottom = 23.0
 grow_horizontal = 0
+
+[node name="PlayerStatsPanelContainer" type="PanelContainer" parent="UI"]
+offset_left = 245.0
+offset_top = 181.0
+offset_right = 926.0
+offset_bottom = 483.0
+
+[node name="PlayerStatsPanel" type="Panel" parent="UI/PlayerStatsPanelContainer"]
+layout_mode = 2
+
+[node name="PlayerStats" type="VBoxContainer" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel"]
+layout_mode = 2
+offset_right = 680.0
+offset_bottom = 302.0
+
+[node name="HSeparator2" type="HSeparator" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats"]
+layout_mode = 2
+
+[node name="Playername" type="RichTextLabel" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats"]
+layout_mode = 2
+text = "Playername"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats"]
+layout_mode = 2
+
+[node name="Cash" type="HBoxContainer" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats"]
+layout_mode = 2
+alignment = 1
+
+[node name="Title" type="RichTextLabel" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/Cash"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "Gotówka:"
+fit_content = true
+
+[node name="Value" type="RichTextLabel" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/Cash"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+text = "100 ETCS"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="Properties" type="HBoxContainer" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats"]
+layout_mode = 2
+alignment = 1
+
+[node name="Title" type="RichTextLabel" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/Properties"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "Liczba nieruchomości:"
+fit_content = true
+
+[node name="Value" type="RichTextLabel" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/Properties"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+text = "5"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="PropertiesList" type="HBoxContainer" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats"]
+layout_mode = 2
+alignment = 1
+
+[node name="Title" type="RichTextLabel" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/PropertiesList"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "Lista nieruchomości:"
+fit_content = true
+
+[node name="Value" type="RichTextLabel" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/PropertiesList"]
+custom_minimum_size = Vector2(300, 60)
+layout_mode = 2
+text = "siemano koleandjnsfmndskfhdskj
+fdsfdsfds
+fdsfds
+fds"
+horizontal_alignment = 1
+
+[node name="FullSets" type="HBoxContainer" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats"]
+layout_mode = 2
+alignment = 1
+
+[node name="Title" type="RichTextLabel" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/FullSets"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "Całe kolory:"
+fit_content = true
+
+[node name="Value" type="RichTextLabel" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/FullSets"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+text = "0"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="Houses" type="HBoxContainer" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats"]
+layout_mode = 2
+alignment = 1
+
+[node name="Title" type="RichTextLabel" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/Houses"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "Domy:"
+fit_content = true
+
+[node name="Value" type="RichTextLabel" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/Houses"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+text = "0"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="Hotels" type="HBoxContainer" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats"]
+layout_mode = 2
+alignment = 1
+
+[node name="Title" type="RichTextLabel" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/Hotels"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "Hotele:"
+fit_content = true
+
+[node name="Value" type="RichTextLabel" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/Hotels"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+text = "0"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="Status" type="HBoxContainer" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats"]
+layout_mode = 2
+alignment = 1
+
+[node name="Title" type="RichTextLabel" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/Status"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "Status:
+"
+fit_content = true
+
+[node name="Value" type="RichTextLabel" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/Status"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+text = "Wolny"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="ExitButton" type="Button" parent="UI/PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats"]
+layout_mode = 2
+size_flags_vertical = 10
+text = "Zamknij"
 
 [node name="PlayerStatsPanelContainer" type="PanelContainer" parent="UI"]
 offset_left = 245.0
@@ -783,6 +959,18 @@ auto_translate_mode = 0
 editor_description = ""
 script = null
 
+[node name="GPUParticles2D" parent="BuyCard/HBoxContainer" index="2"]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
+
 [node name="Trade" parent="." instance=ExtResource("17_bq0mx")]
 visible = false
 
@@ -827,6 +1015,8 @@ offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("23_dakaj")
 GameManagerPath = NodePath("../GameManager")
+
+[node name="MoveHistory" parent="." instance=ExtResource("29_pxos0")]
 
 [node name="MoveHistory" parent="." instance=ExtResource("29_pxos0")]
 
