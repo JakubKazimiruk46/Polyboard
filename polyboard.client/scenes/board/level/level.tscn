@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=40 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" uid="uid://emvyo0uo8qs7" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" uid="uid://bgtflv4fbokq6" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -343,21 +343,6 @@ visible = false
 
 [node name="UI" parent="." instance=ExtResource("13_ivesl")]
 
-[node name="Player1" parent="UI/Players" index="0"]
-script = ExtResource("23_pxos0")
-
-[node name="Player2" parent="UI/Players" index="1"]
-script = ExtResource("23_pxos0")
-player_id = 1
-
-[node name="Player3" parent="UI/Players" index="2"]
-script = ExtResource("23_pxos0")
-player_id = 2
-
-[node name="Player4" parent="UI/Players" index="3"]
-script = ExtResource("23_pxos0")
-player_id = 3
-
 [node name="card_button" parent="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer" index="0"]
 tooltip_text = "Kliknij, aby zobaczyć swoje nieruchomości"
 theme = SubResource("Theme_2w06e")
@@ -595,6 +580,7 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -150.0
+offset_top = 0.0
 offset_right = 150.0
 offset_bottom = 52.0
 grow_horizontal = 2

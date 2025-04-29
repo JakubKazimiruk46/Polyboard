@@ -208,10 +208,7 @@ private void InitMoveHistory()
 		return board.GetFieldById(position);
 	}
 	
-	public List<Figurehead> GetPlayers()
-	{
-		return players;
-	}
+	
 	
 
 	
