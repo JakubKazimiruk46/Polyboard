@@ -13,7 +13,7 @@ public partial class MoveHistory : Node
 	private List<string> moveHistory = new List<string>();
 	private GameManager gameManager;
 	private Control moveHistoryPanel;
-	private bool isHistoryVisible = true;
+	private bool isHistoryVisible = false;
 	private ScrollContainer scrollContainer;
 	
 	public override void _Ready()
