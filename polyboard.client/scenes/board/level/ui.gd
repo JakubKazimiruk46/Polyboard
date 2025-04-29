@@ -7,12 +7,18 @@ extends CanvasLayer
 @onready var card_hbox_container = $Cards/ScrollContainer/MarginContainer/CardHBoxContainer
 @onready var special_cards = $SpecialCards
 @onready var special_card_button = $HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer5/special_card_button
+@onready var loan_button=$HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer7/laon_button
 
 var cards_view = false
 var buttons_view = false
 const Figurehead=preload("res://scenes/board/figurehead/Figurehead.cs")
 var game_manager = null
 var board = null
+const LoanPopupScene = preload("res://scenes/board/level/loan_popup.tscn")
+const LoanPayPopupScene=preload("res://scenes/board/level/loan_pay_popup.tscn")
+
+
+
 
 func _ready() -> void:
 	game_manager = $"../GameManager"
@@ -58,6 +64,8 @@ func on_build_button_pressed():
 			Field.BuildingHouse(current_position)
 		else:
 			print("Nie znaleziono pola dla indeksu: %d / Pole nie należy do gracza" % current_position)
+
+
 
 func on_view_buttons_pressed():
 	if buttons_view == false:
@@ -201,3 +209,47 @@ func _on_special_card_button_pressed():
 		tween.tween_property(special_cards, "anchor_bottom", target_anchor_bottom, 0.5)
 		tween.set_parallel(false)
 		tween.tween_callback(Callable(special_cards, "hide"))
+
+
+func _on_laon_button_pressed() -> void:
+	var player = game_manager.getCurrentPlayer() as Figurehead
+	var player_index = game_manager.GetCurrentPlayerIndex()
+
+	if !player.hasLoan:
+		var loan_popup = LoanPopupScene.instantiate()
+		add_child(loan_popup)
+		
+		loan_popup.confirm_button.pressed.connect(func():
+			var amount_taken = loan_popup.selected_amount
+			var topay_amount = loan_popup.topay_amount
+			print("Gracz", player, "wziął pożyczkę na:", amount_taken, "ECTS")
+			game_manager.AddEctsToPlayer(player_index, amount_taken)
+			player.hasLoan = true
+			player.Loan = topay_amount
+		)
+	else:
+		var loan_pay_popup = LoanPayPopupScene.instantiate()
+		add_child(loan_pay_popup)
+		loan_pay_popup.topay_amount = player.Loan
+		loan_pay_popup.amountselect.max_value = player.Loan
+		loan_pay_popup.pay_amount.text = " " + str(player.Loan) + " ECTS"
+
+		loan_pay_popup.confirm_button.pressed.connect(func():
+			var amount_paid = loan_pay_popup.selected_amount
+			print("Gracz", player, "spłacił:", amount_paid, "ECTS")
+			
+			game_manager.SubtractEctsFromPlayer(player_index, amount_paid)
+			player.Loan -= amount_paid
+
+			if player.Loan <= 0:
+				player.Loan = 0
+				player.hasLoan = false
+				print("Gracz", player, "spłacił całą pożyczkę!")
+		)
+
+
+			
+	
+	
+	
+	

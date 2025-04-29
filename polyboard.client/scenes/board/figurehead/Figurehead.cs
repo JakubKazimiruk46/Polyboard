@@ -15,6 +15,8 @@ public partial class Figurehead : CharacterBody3D
 	private AnimationPlayer animationPlayer;
 	private NotificationService notificationService;
 	public List<bool> ownedFields = new List<bool>(40);
+	public bool hasLoan=false;
+	public int Loan=0;
 
 	private bool hasAnimation = false;
 	public int ECTS { get; private set; }

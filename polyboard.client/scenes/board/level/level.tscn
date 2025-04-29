@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=39 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" uid="uid://emvyo0uo8qs7" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" uid="uid://bgtflv4fbokq6" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -26,6 +26,7 @@
 [ext_resource type="Script" uid="uid://ip1fswlgagt8" path="res://scenes/board/level/players.gd" id="17_6omuv"]
 [ext_resource type="PackedScene" uid="uid://h1ww7awlbuhf" path="res://scenes/board/level/trade.tscn" id="17_bq0mx"]
 [ext_resource type="Script" uid="uid://bl415ydbyrgk0" path="res://test/Tests.cs" id="23_dakaj"]
+[ext_resource type="Texture2D" uid="uid://crkwlpvqum0w3" path="res://assets/images/pozyczka.png" id="23_pxos0"]
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="27_we53p"]
 [ext_resource type="Script" uid="uid://b2krrm0vgoxwh" path="res://services/player_initializer.gd" id="29_tpxi3"]
 
@@ -58,6 +59,8 @@ ambient_light_energy = 0.9
 bg_color = Color(0.147672, 0.147672, 0.147672, 1)
 expand_margin_left = 4.0
 expand_margin_right = 4.0
+
+[sub_resource type="Theme" id="Theme_2w06e"]
 
 [node name="Level" type="Node3D"]
 script = ExtResource("1_djwtq")
@@ -338,18 +341,41 @@ visible = false
 
 [node name="card_button" parent="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer" index="0"]
 tooltip_text = "Kliknij, aby zobaczyć swoje nieruchomości"
+theme = SubResource("Theme_2w06e")
 
 [node name="trade_button" parent="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2" index="0"]
 tooltip_text = "Kliknij, aby dokonać wymiany z innym graczem"
+theme = SubResource("Theme_2w06e")
 
 [node name="build_button" parent="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3" index="0"]
 tooltip_text = "Kliknij, aby zbudować domek lub hotel"
+theme = SubResource("Theme_2w06e")
 
 [node name="mortgage_button" parent="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer4" index="0"]
 tooltip_text = "Kliknij, aby zastawić daną nieruchomość. Otrzymasz natychmiast pieniądze, ale nie będziesz miał możliwości pobierać czynszu od graczy "
+theme = SubResource("Theme_2w06e")
 
 [node name="special_card_button" parent="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer5" index="0"]
 tooltip_text = "Kliknij, aby zobaczyć swoje karty szansy i kasy społecznej"
+theme = SubResource("Theme_2w06e")
+
+[node name="VBoxContainer7" type="VBoxContainer" parent="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons" index="5"]
+layout_mode = 2
+
+[node name="laon_button" type="TextureButton" parent="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer7"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tooltip_text = "Kliknij, aby wziąć pożyczkę"
+theme = SubResource("Theme_2w06e")
+texture_normal = ExtResource("23_pxos0")
+
+[node name="loan_label" type="Label" parent="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer7"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "POŻYCZKA"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Cards" parent="UI" index="2"]
 anchor_top = 1.003
@@ -624,6 +650,7 @@ script = ExtResource("23_dakaj")
 GameManagerPath = NodePath("../GameManager")
 
 [connection signal="pressed" from="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3/build_button" to="UI" method="on_build_button_pressed"]
+[connection signal="pressed" from="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer7/laon_button" to="UI" method="_on_laon_button_pressed"]
 
 [editable path="NotificationLayer"]
 [editable path="UI"]

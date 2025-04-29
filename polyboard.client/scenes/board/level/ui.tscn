@@ -435,8 +435,10 @@ layout_mode = 2
 anchors_preset = 0
 anchor_left = 0.0
 anchor_right = 0.0
-offset_left = 0.0
-offset_right = 136.0
+offset_left = 10.0
+offset_top = 9.0
+offset_right = 183.0
+offset_bottom = 57.0
 grow_horizontal = 1
 
 [node name="SpecialCards" type="PanelContainer" parent="."]

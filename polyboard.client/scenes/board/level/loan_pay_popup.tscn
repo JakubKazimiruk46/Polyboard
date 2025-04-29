@@ -1,0 +1,54 @@
+[gd_scene load_steps=3 format=3 uid="uid://bqlimqyg8tn2y"]
+
+[ext_resource type="Texture2D" uid="uid://cw3b1a7dgv5j0" path="res://assets/images/payloanpopup.png" id="1_jjlrk"]
+[ext_resource type="Script" uid="uid://cusmktikwnlbh" path="res://scenes/board/level/loan_pay_popup.gd" id="2_qlvai"]
+
+[node name="LoanPay" type="TextureRect"]
+custom_minimum_size = Vector2(400, 200)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -215.0
+offset_top = -115.0
+offset_right = 215.0
+offset_bottom = 115.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_jjlrk")
+script = ExtResource("2_qlvai")
+
+[node name="close" type="Button" parent="."]
+layout_mode = 0
+offset_left = 385.0
+offset_top = 13.0
+offset_right = 402.0
+offset_bottom = 32.0
+
+[node name="SpinBox" type="SpinBox" parent="."]
+layout_mode = 0
+offset_left = 141.0
+offset_top = 75.0
+offset_right = 255.0
+offset_bottom = 106.0
+max_value = 1000.0
+step = 10.0
+value = 100.0
+rounded = true
+
+[node name="pay_amount" type="Label" parent="."]
+layout_mode = 0
+offset_left = 148.0
+offset_top = 139.0
+offset_right = 265.0
+offset_bottom = 165.0
+
+[node name="confirm" type="Button" parent="."]
+layout_mode = 0
+offset_left = 168.0
+offset_top = 169.0
+offset_right = 247.0
+offset_bottom = 196.0
+theme_override_font_sizes/font_size = 10
+text = "POTWIERDŹ"

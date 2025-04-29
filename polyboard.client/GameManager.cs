@@ -33,8 +33,8 @@ public partial class GameManager : Node3D
 	private Panel notificationPanel;
 	private RigidBody3D dieNode1;
 	private RigidBody3D dieNode2;
-	private List<Figurehead> players = new List<Figurehead>();
-	private int currentPlayerIndex = 0;
+	public List<Figurehead> players = new List<Figurehead>();
+	public int currentPlayerIndex = 0;
 	private int? die1Result = null;
 	private int? die2Result = null;
 	private int totalSteps = 0;
@@ -147,7 +147,7 @@ public partial class GameManager : Node3D
 			turnTimerLabel.Text = $"Czas: {Math.Ceiling(turnTimer.TimeLeft)}s";
 		}
 	}
-
+	
 	public Figurehead getCurrentPlayer()
 	{
 		return players[currentPlayerIndex];
@@ -157,7 +157,14 @@ public partial class GameManager : Node3D
 	{
 		return board.GetFieldById(position);
 	}
+	
+	public List<Figurehead> GetPlayers()
+	{
+		return players;
+	}
+	
 
+	
 	private void InitSoundPlayers()
 	{
 		doubleSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/DoubleSound");
