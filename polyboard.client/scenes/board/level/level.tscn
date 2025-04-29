@@ -29,6 +29,7 @@
 [ext_resource type="Script" uid="uid://f2um77lmy2ri" path="res://scenes/board/level/player.gd" id="23_pxos0"]
 [ext_resource type="Texture2D" uid="uid://crkwlpvqum0w3" path="res://assets/images/pozyczka.png" id="23_pxos0"]
 [ext_resource type="Script" path="res://scenes/board/level/player.gd" id="23_pxos0"]
+[ext_resource type="Texture2D" uid="uid://crkwlpvqum0w3" path="res://assets/images/pozyczka.png" id="23_pxos0"]
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="27_we53p"]
 [ext_resource type="PackedScene" uid="uid://dhtrkxp2t6i8" path="res://scenes/board/move_history/move_history.tscn" id="29_pxos0"]
 [ext_resource type="Script" uid="uid://b2krrm0vgoxwh" path="res://services/player_initializer.gd" id="29_tpxi3"]

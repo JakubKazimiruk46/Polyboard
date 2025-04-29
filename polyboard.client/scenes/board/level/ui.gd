@@ -7,6 +7,7 @@ extends CanvasLayer
 @onready var card_hbox_container = $Cards/ScrollContainer/MarginContainer/CardHBoxContainer
 @onready var special_cards = $SpecialCards
 @onready var special_card_button = $HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer5/special_card_button
+@onready var loan_button=$HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer7/laon_button
 @onready var player_stats_panel = $PlayerStatsPanelContainer
 @onready var exit_stats_button = $PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/ExitButton
 @onready var loan_button=$HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer7/laon_button
