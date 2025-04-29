@@ -7,8 +7,6 @@ extends CanvasLayer
 @onready var card_hbox_container = $Cards/ScrollContainer/MarginContainer/CardHBoxContainer
 @onready var special_cards = $SpecialCards
 @onready var special_card_button = $HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer5/special_card_button
-@onready var player_stats_panel = $PlayerStatsPanelContainer
-@onready var exit_stats_button = $PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/ExitButton
 @onready var loan_button=$HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer7/laon_button
 @onready var player_stats_panel = $PlayerStatsPanelContainer
 @onready var exit_stats_button = $PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/ExitButton
@@ -29,108 +27,6 @@ func _ready() -> void:
 	game_manager = $"../GameManager"
 	board = $"../Board"
 	special_cards.visible = false
-	apply_style_to_stats_panel()
-	
-	exit_stats_button.pressed.connect(_on_exit_stats_button)
-	
-	for panel in $Players.get_children():
-		if panel is PanelContainer and panel.has_signal("panel_clicked"):
-			print("istnieje taki panel")
-			panel.panel_clicked.connect(_on_panel_clicked)
-
-func _on_exit_stats_button():
-	player_stats_panel.visible = false
-
-func _on_panel_clicked(player_id: int):
-	var player_name = GameData.get_player_name_by_id(player_id)
-	if not player_name:
-		print("Nie znaleziono gracza o ID:", player_id)
-		return
-		
-	player_stats_panel.visible = true
-	var stats_panel = $PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats
-	
-	var players = game_manager.GetPlayers()
-	if player_id < 0 or player_id >= players.size():
-		printerr("Invalid player ID: ", player_id)
-		return
-	
-	var player = players[player_id]
-	if not player:
-		printerr("Player not found!")
-		return
-	
-	var name_label = stats_panel.get_node("Playername")
-	var cash_label = stats_panel.get_node("Cash/Value")
-	var properties_label = stats_panel.get_node("Properties/Value")
-	var properties_list_label = stats_panel.get_node("PropertiesList/Value")
-	
-	var owned_fields = player.GetOwnedFields()
-	var field_names = []
-	for field in board.GetFieldsOwnedByPlayerName(player_name):
-		field_names.push_back(field["name"])
-	
-	name_label.text = player_name
-	cash_label.text = str(player.ECTS)
-	properties_label.text = str(owned_fields.size())
-	properties_list_label.text = ", ".join(field_names)
-	
-func apply_style_to_stats_panel():
-	var panel = $PlayerStatsPanelContainer/PlayerStatsPanel
-
-	var panel_style = StyleBoxFlat.new()
-	panel_style.bg_color = Color(0.1, 0.1, 0.1, 0.85)
-	panel_style.corner_radius_top_left = 12
-	panel_style.corner_radius_top_right = 12
-	panel_style.corner_radius_bottom_left = 12
-	panel_style.corner_radius_bottom_right = 12
-	panel_style.border_width_top = 4
-	panel_style.border_width_bottom = 4
-	panel_style.border_width_left = 4
-	panel_style.border_width_right = 4
-	panel_style.border_color = Color("#62ff45") 
-	
-	panel.add_theme_stylebox_override("panel", panel_style)
-
-	var font = preload("res://assets/fonts/PlayerStatsFont.tres") 
-	var text_color = Color(0.9, 0.9, 0.9) 
-
-	for container in $PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats.get_children():
-		for label in container.get_children():
-			if label is RichTextLabel:
-				label.add_theme_color_override("default_color", text_color)
-				label.add_theme_font_override("normal_font", font)
-				label.add_theme_font_size_override("normal_font_size", 18)
-
-	var button = $PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/ExitButton
-	button.add_theme_color_override("font_color", text_color)
-	button.add_theme_color_override("font_color_hover", Color(0.95, 1.0, 0.95))
-	button.add_theme_color_override("font_color_pressed", Color(0.85, 1.0, 0.85))
-	button.add_theme_font_override("font", font)
-	button.add_theme_font_size_override("font_size", 16)
-
-	var button_style_normal = StyleBoxFlat.new()
-	button_style_normal.bg_color = Color("#62ff45")
-	button_style_normal.corner_radius_top_left = 10
-	button_style_normal.corner_radius_top_right = 10
-	button_style_normal.corner_radius_bottom_left = 10
-	button_style_normal.corner_radius_bottom_right = 10
-	button_style_normal.border_width_top = 4
-	button_style_normal.border_width_bottom = 4
-	button_style_normal.border_width_left = 4
-	button_style_normal.border_width_right = 4
-	button_style_normal.border_color = Color(1, 1, 1, 0.3)
-
-
-	var button_style_hover = button_style_normal.duplicate()
-	button_style_hover.bg_color = Color(0.3, 0.9, 0.6) 
-
-	var button_style_pressed = button_style_normal.duplicate()
-	button_style_pressed.bg_color = Color(0.2, 0.7, 0.5) 
-
-	button.add_theme_stylebox_override("normal", button_style_normal)
-	button.add_theme_stylebox_override("hover", button_style_hover)
-	button.add_theme_stylebox_override("pressed", button_style_pressed)
 	apply_style_to_stats_panel()
 	
 	exit_stats_button.pressed.connect(_on_exit_stats_button)
@@ -339,9 +235,6 @@ func display_owned_fields():
 				else:
 					colorrect.visible = false
 					
-func _gui_input(event):
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		pass
 func _gui_input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		pass
