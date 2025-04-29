@@ -124,7 +124,7 @@ public override void _Ready()
 	InitGameEndComponents();
 	InitMoveHistory(); 
 	SetAllPlayersOnStart();
-	InitAchievementManager
+	InitAchievementManager();
 	StartTurnTimer();
 	playerLabel.Text = GetCurrentPlayerName();
 }

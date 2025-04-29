@@ -10,7 +10,7 @@ extends CanvasLayer
 @onready var loan_button=$HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer7/laon_button
 @onready var player_stats_panel = $PlayerStatsPanelContainer
 @onready var exit_stats_button = $PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/ExitButton
-@onready var loan_button=$HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer7/laon_button
+
 
 var cards_view = false
 var buttons_view = false

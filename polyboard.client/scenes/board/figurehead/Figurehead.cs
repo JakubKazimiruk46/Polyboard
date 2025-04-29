@@ -30,8 +30,6 @@ public partial class Figurehead : CharacterBody3D
 		return array;
 	}
 
-	public bool hasLoan=false;
-	public int Loan=0;
 
 	private bool hasAnimation = false;
 	public int ECTS { get; private set; }
