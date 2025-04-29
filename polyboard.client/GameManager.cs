@@ -613,7 +613,7 @@ private void InitMoveHistory()
 		}
 	}
 
-private void DeclarePlayerBankrupt(int playerIndex)
+public void DeclarePlayerBankrupt(int playerIndex)
 {
 	if (playerIndex < 0 || playerIndex >= players.Count)
 	{
@@ -746,57 +746,62 @@ private void DeclarePlayerBankrupt(int playerIndex)
 		return richestPlayerIndex;
 	}
 
-	private void DisableGameControls()
+private void DisableGameControls()
+{
+	rollButton.Disabled = true;
+	endTurnButton.Disabled = true;
+	
+	// Disable the surrender button if it exists
+	Button surrenderButton = GetNodeOrNull<Button>("/root/Level/UI/SurrenderButton");
+	if (surrenderButton != null)
 	{
-		rollButton.Disabled = true;
-		endTurnButton.Disabled = true;
-		StopTurnTimer();
+		surrenderButton.Disabled = true;
+	}
+	
+	// Disable trade and build buttons if they exist
+	TextureButton tradeButton = GetNodeOrNull<TextureButton>("/root/Level/UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2/trade_button");
+	if (tradeButton != null)
+	{
+		tradeButton.Disabled = true;
+	}
+	
+	TextureButton buildButton = GetNodeOrNull<TextureButton>("/root/Level/UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3/build_button");
+	if (buildButton != null)
+	{
+		buildButton.Disabled = true;
+	}
+	
+	StopTurnTimer();
 
-		// Wyłączamy interakcje z planszą
-		if (board != null)
+	// Wyłączamy interakcje z planszą
+	if (board != null)
+	{
+		foreach (Field field in board.GetFields())
 		{
-			foreach (Field field in board.GetFields())
-			{
-				field.isMouseEventEnabled = false;
-			}
+			field.isMouseEventEnabled = false;
 		}
 	}
+}
 
-	private void ShowEndGameScreen(string resultMessage)
+public void ShowEndGameScreen(string resultMessage)
+{
+	// Upewnij się, że ekran końcowy jest inicjalizowany
+	if (gameEndScreen == null)
 	{
-		// Upewnij się, że ekran końcowy jest inicjalizowany
-		if (gameEndScreen == null)
-		{
-			InitGameEndComponents();
-		}
-
-		// Wyświetl ekran końcowy
-		gameEndScreen.Visible = true;
-
-		// Przygotuj tablicę wyników graczy
-		Godot.Collections.Array playerResults = new Godot.Collections.Array();
-
-		// Sortuj graczy wg ilości ECTS (malejąco)
-		var sortedPlayers = new List<(Figurehead player, int index)>();
-		for (int i = 0; i < players.Count; i++)
-		{
-			sortedPlayers.Add((players[i], i));
-		}
-		sortedPlayers.Sort((a, b) => b.player.ECTS.CompareTo(a.player.ECTS));
-
-		// Dodaj dane każdego gracza do tablicy wyników
-		foreach (var (player, index) in sortedPlayers)
-		{
-			var playerResult = new Godot.Collections.Dictionary();
-			playerResult.Add("name", player.Name);
-			playerResult.Add("ects", player.ECTS);
-			playerResult.Add("bankrupt", playerBankruptcyStatus[index]);
-			playerResults.Add(playerResult);
-		}
-
-		// Wywołaj metodę set_results z ekranu końcowego
-		gameEndScreen.Call("set_results", resultMessage, playerResults);
+		InitGameEndComponents();
 	}
+
+	// Wyświetl ekran końcowy
+	gameEndScreen.Visible = true;
+	isGameOver = true;
+	DisableGameControls();
+
+	// Użyj istniejącej metody GetPlayerResults
+	Godot.Collections.Array playerResults = GetPlayerResults();
+
+	// Wywołaj metodę set_results z ekranu końcowego
+	gameEndScreen.Call("set_results", resultMessage, playerResults);
+}
 
 	// Metoda do obsługi przycisku powrotu do menu
 	private void OnReturnToMenuPressed()
@@ -1483,6 +1488,45 @@ private void EndTurn()
 	public int GetCurrentRound()
 {
 	return currentRound;
+}
+
+public bool ShouldGameEnd()
+{
+	if (isGameOver) return true;
+
+	int activePlayers = 0;
+	for (int i = 0; i < playerBankruptcyStatus.Count; i++)
+	{
+		if (!playerBankruptcyStatus[i])
+		{
+			activePlayers++;
+		}
+	}
+
+	return activePlayers <= 1;
+}
+
+public Godot.Collections.Array GetPlayerResults()
+{
+	Godot.Collections.Array playerResults = new Godot.Collections.Array();
+
+	var sortedPlayers = new List<(Figurehead player, int index)>();
+	for (int i = 0; i < players.Count; i++)
+	{
+		sortedPlayers.Add((players[i], i));
+	}
+	sortedPlayers.Sort((a, b) => b.player.ECTS.CompareTo(a.player.ECTS));
+
+	foreach (var (player, index) in sortedPlayers)
+	{
+		var playerResult = new Godot.Collections.Dictionary();
+		playerResult.Add("name", player.Name);
+		playerResult.Add("ects", player.ECTS);
+		playerResult.Add("bankrupt", playerBankruptcyStatus[index]);
+		playerResults.Add(playerResult);
+	}
+
+	return playerResults;
 }
 
 }
