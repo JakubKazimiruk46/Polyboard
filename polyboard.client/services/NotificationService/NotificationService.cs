@@ -6,7 +6,9 @@ public partial class NotificationService : Node
 	public enum NotificationType
 	{
 		Normal,
-		Error
+		Error,
+		Achievement,
+		Progress
 	}
 	
 	static private Node? GetNotifications()
@@ -21,8 +23,12 @@ public partial class NotificationService : Node
 		{
 			if (type == NotificationType.Normal)
 				notifications.Call("show_notification", message, duration);
-			else
+			else if (type == NotificationType.Error)
 				notifications.Call("show_error", message, duration);
+			else if (type == NotificationType.Achievement)
+				notifications.Call("show_achievement", message, duration);
+			else
+				notifications.Call("show_progress", message, duration);
 		}
 		else
 		{
@@ -30,5 +36,16 @@ public partial class NotificationService : Node
 			if (type == NotificationType.Error)
 				GD.PrintErr(message);
 		}
+	}
+	public void ShowAchievement(string achievementName)
+	{
+		string message = $"Osiągnięcie zdobyte: {achievementName}";
+		ShowNotification(message, NotificationType.Achievement, 4.0f);
+	}
+
+	public void ShowProgress(string achievementName, float percent)
+	{
+		string message = $"Postęp: {achievementName} - {Mathf.FloorToInt(percent)}%";
+		ShowNotification(message, NotificationType.Progress, 2.5f);
 	}
 }

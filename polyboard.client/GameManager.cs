@@ -156,7 +156,6 @@ private void InitMoveHistory()
 		{
 			GD.Print("Nie znaleziono AchievementManagera.");
 		}
-		GD.Print("jest git");
 	}
 	private void InitTurnTimer()
 	{
@@ -634,6 +633,7 @@ public void DeclarePlayerBankrupt(int playerIndex)
 	notificationService.ShowNotification($"Gracz {player.Name} zbankrutował! Koniec gry dla tego gracza.",
 		NotificationService.NotificationType.Normal,
 		5f);
+	achievementManager.Call("track_player_bankruptcy", currentRound);
 	GD.Print($"Gracz {player.Name} zbankrutował! Koniec gry dla tego gracza.");
 	// Dodaj wpis do historii ruchów
 	if (moveHistory != null)
@@ -1005,6 +1005,7 @@ private void HandleBothDicesFinished()
 		}
 		else
 		{
+			achievementManager.Call("track_dice_roll, false");
 			GD.Print("Nie wyrzucono dubletu. Przygotowanie do zakończenia tury.");
 		}
 	}
@@ -1221,6 +1222,7 @@ private void EndTurn()
 		if (playerIndex >= 0 && playerIndex < players.Count)
 		{
 			players[playerIndex].AddECTS(amount);
+			achievementManager.Call("track_money_earned", amount);
 			PlaySound(gainECTSSoundPlayer);
 			UpdateECTSUI(playerIndex);
 			// If player was bankruptcy but got back to positive ECTS, remove bankruptcy status

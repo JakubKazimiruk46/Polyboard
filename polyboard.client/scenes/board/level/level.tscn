@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=40 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" uid="uid://emvyo0uo8qs7" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" uid="uid://bgtflv4fbokq6" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -30,6 +30,7 @@
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="27_we53p"]
 [ext_resource type="PackedScene" uid="uid://dhtrkxp2t6i8" path="res://scenes/board/move_history/move_history.tscn" id="29_pxos0"]
 [ext_resource type="Script" uid="uid://b2krrm0vgoxwh" path="res://services/player_initializer.gd" id="29_tpxi3"]
+[ext_resource type="Script" uid="uid://dji2b6k7yrqy4" path="res://scenes/account/achievement_manager.gd" id="29_wc3jh"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3sahm"]
 size = Vector3(28.5, 0.2, 28.5)
@@ -760,18 +761,6 @@ text = "Zamknij"
 [node name="BuyCard" parent="." instance=ExtResource("16_8p6lx")]
 visible = false
 
-[node name="GPUParticles2D" parent="BuyCard/HBoxContainer" index="2"]
-_import_path = NodePath("")
-unique_name_in_owner = false
-process_mode = 0
-process_priority = 0
-process_physics_priority = 0
-process_thread_group = 0
-physics_interpolation_mode = 0
-auto_translate_mode = 0
-editor_description = ""
-script = null
-
 [node name="Trade" parent="." instance=ExtResource("17_bq0mx")]
 visible = false
 
@@ -800,6 +789,10 @@ player_container_path = NodePath("../Players")
 
 [node name="walkSoundPlayer" type="AudioStreamPlayer3D" parent="GameManager"]
 stream = ExtResource("27_we53p")
+
+[node name="AchievementManager" type="Node" parent="GameManager"]
+script = ExtResource("29_wc3jh")
+metadata/_custom_type_script = "uid://dji2b6k7yrqy4"
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.5043, 0)
