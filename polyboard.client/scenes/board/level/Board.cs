@@ -55,7 +55,11 @@ public partial class Board : StaticBody3D
 	}
 	private void InitAchievementManager()
 	{
-		achievementManager = GetNodeOrNull<Node>("GameManager/AchievementManager");
+		achievementManager = GetNodeOrNull<Node>("/root/Level/GameManager/AchievementManager");
+		if (achievementManager == null)
+		{
+			GD.Print("Nie znaleziono AchievementManagera.");
+		}
 	}
 	private void InitializeComponents()
 	{
@@ -561,7 +565,7 @@ private void TryBuildHouse(Field field, Figurehead player)
 				player.SpendECTS(field.houseCost);
 				
 				field.BuildingHouse(field.FieldId);
-				achievementManager.Call("track_house_built");
+				achievementManager.Call("track_hotel_built", field.Department.ToString());
 				ShowPopupNotification($"Building house on {field.Name} for {field.houseCost} ECTS", 3.0f);
 
 				gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
@@ -959,6 +963,7 @@ private void ShowPopupError(string message, float duration = 4.0f)
 			{
 				GD.Print("Kupienie publicznego pola z powodu braku właściciela.");
 				BuyField(fieldId);
+				achievementManager.Call("track_property_purchase", field.Department.ToString(), field.fieldCost, true);
 				return;
 			}
 			GD.Print("Rozliczenie pola.");
@@ -1016,7 +1021,7 @@ private void ShowPopupError(string message, float duration = 4.0f)
 			if (!field.owned)
 			{
 				BuyField(fieldId);
-				achievementManager.Call("track_property_purchase");
+				achievementManager.Call("track_property_purchase", field.Department.ToString(), field.fieldCost, publicUtilities.Contains(fieldId));
 			}
 			else if (field.Owner != currentFigureHead)
 			{

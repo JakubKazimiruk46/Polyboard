@@ -8,6 +8,8 @@ var slide_tween: Tween
 
 const COLOR_NORMAL := Color("#62ff45")
 const COLOR_ERROR := Color("#ff0015")
+const COLOR_ACHIEVEMENT := Color("#ffd700") 
+const COLOR_PROGRESS := Color("#45caff")
 const FADE_DURATION := 1.2
 const SLIDE_DURATION := 0.4
 
@@ -25,6 +27,10 @@ func show_error(message: String, duration: float = 4.0) -> void:
 	_display_notification(message, COLOR_ERROR, duration)
 	push_error(message)
 
+func show_achievement(message: String, duration: float = 4.0) -> void:
+	_display_notification(message, COLOR_ACHIEVEMENT, duration)
+func show_progress(message: String, duration: float = 4.0) -> void:
+	_display_notification(message, COLOR_PROGRESS, duration)
 func _display_notification(message: String, color: Color, duration: float) -> void:
 	if fade_tween and fade_tween.is_valid():
 		fade_tween.kill()

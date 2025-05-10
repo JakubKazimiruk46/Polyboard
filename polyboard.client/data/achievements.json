@@ -1,7 +1,7 @@
 [
   {
 	"name": "Dziekan wydziału inwestycji",
-	"requirement": "Zbuduj hotele na wszystkich polach jednego koloru",
+	"requirement": "Zbuduj hotele na wszystkich polach jednego wydziału",
 	"number_to_reach": 3
   },
   {
@@ -16,7 +16,7 @@
   },
   {
 	"name": "Magnat inwestycyjny",
-	"requirement": "Kup wszystkie pola z trzech kolorów w jednej grze",
+	"requirement": "Kup wszystkie pola z trzech wydziałów w jednej grze",
 	"number_to_reach": 9
   },
   {
@@ -51,7 +51,7 @@
   },
   {
 	"name": "Ekspert ds. dywersyfikacji",
-	"requirement": "Zdobądź co najmniej jedną nieruchomość każdego koloru",
+	"requirement": "Zdobądź co najmniej jedną nieruchomość z każdego wydziału",
 	"number_to_reach": 8
   },
   {
@@ -61,7 +61,7 @@
   },
   {
 	"name": "Milioner",
-	"requirement": "Zgromadź łącznie 100.000 punktów ECTS",
+	"requirement": "Zgromadź łącznie 100000 punktów ECTS",
 	"number_to_reach": 100000
   }
 ]
