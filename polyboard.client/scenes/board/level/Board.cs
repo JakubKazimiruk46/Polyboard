@@ -963,6 +963,7 @@ private void ShowPopupError(string message, float duration = 4.0f)
 		// Hide end turn button initially
 		endTurnButton.Visible = false;
 		const int goToDeanOfficeFieldId = 30;
+		const int deanOfficeFieldId = 10;
 		int[] publicUtilities = [12, 28];
 		int[] deanOffice = [4, 10, goToDeanOfficeFieldId];
 		int[] communityCards = [2, 17, 33];
@@ -1000,7 +1001,17 @@ private void ShowPopupError(string message, float duration = 4.0f)
 			if (fieldId == goToDeanOfficeFieldId)
 			{
 				var currentPlayer = gameManager.getCurrentPlayer();
-				await currentPlayer.MoveBackward(20, this);
+				
+				currentPlayer.IsInDeanOffice = true;
+				currentPlayer.DeanOfficeRollsRemaining = 2;
+				
+				var moveHistory = gameManager.GetNodeOrNull<MoveHistory>("/root/Level/MoveHistory");
+				if (moveHistory != null)
+				{
+					moveHistory.AddActionEntry(currentPlayer.Name, "został wysłany do dziekanatu (2 tury pauzy)");
+				}
+				
+				await currentPlayer.MoveToField(deanOfficeFieldId, this);
 			}
 			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
 			endTurnButton.Visible = true;
@@ -1230,4 +1241,6 @@ public async void ShowFieldTexture(int fieldId)
 		
 		return result;
 	}
+	//Dziekanat
+
 }

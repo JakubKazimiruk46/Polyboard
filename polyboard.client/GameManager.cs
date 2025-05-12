@@ -867,15 +867,31 @@ private void OnRollButtonPressed()
 			SkipBankruptPlayer();
 			return;
 		}
+		Figurehead currentPlayer = players[currentPlayerIndex];
 
-		// Dodaj wpis do historii przed wykonaniem rzutu
-		if (moveHistory != null)
-		{
-			moveHistory.AddActionEntry(GetCurrentPlayerName(), "przygotowuje się do rzutu kostkami");
-		}
+				if (currentPlayer.IsInDeanOffice && currentPlayer.DeanOfficeRollsRemaining > 0)
+				{
+					notificationService.ShowNotification(
+						$"Gracz {currentPlayer.Name} próbuje wyjść z dziekanatu! Potrzebny dublet!", 
+						NotificationService.NotificationType.Normal, 
+						2f
+					);
+					
+					if (moveHistory != null)
+					{
+						moveHistory.AddActionEntry(GetCurrentPlayerName(), "próbuje wyrzucić dublet, by wyjść z dziekanatu");
+					}
+				}
+				else
+				{
+					if (moveHistory != null)
+					{
+						moveHistory.AddActionEntry(GetCurrentPlayerName(), "przygotowuje się do rzutu kostkami");
+					}
+				}
 
-		StartDiceRollForCurrentPlayer();
-	}
+				StartDiceRollForCurrentPlayer();
+			}
 }
 
 	private void OnEndTurnButtonPressed()
@@ -942,7 +958,19 @@ private void OnRollButtonPressed()
 		diceRollMode = mode;
 
 		string currentPlayerName = GetCurrentPlayerName();
-		notificationService.ShowNotification($"Gracz {currentPlayerName} rzuca kostkami...", NotificationService.NotificationType.Normal, 2f);
+		
+		// Special message for Dean's Office
+		if (players[currentPlayerIndex].IsInDeanOffice)
+		{
+			notificationService.ShowNotification($"Gracz {currentPlayerName} próbuje wyjść z dziekanatu...", 
+				NotificationService.NotificationType.Normal, 2f);
+		}
+		else
+		{
+			notificationService.ShowNotification($"Gracz {currentPlayerName} rzuca kostkami...", 
+				NotificationService.NotificationType.Normal, 2f);
+		}
+		
 		GD.Print($"Rzut kostkami dla gracza: {currentPlayerName}");
 		dieNode1.Call("_roll");
 		dieNode2.Call("_roll");
@@ -979,21 +1007,107 @@ private void OnRollButtonPressed()
 private void HandleBothDicesFinished()
 {
 	lastDiceTotal = die1Result.Value + die2Result.Value;
-	GD.Print($"Oba rzuty zakończone. Wynik sumaryczny: {lastDiceTotal}");
+	bool isDouble = die1Result.Value == die2Result.Value;
+	
+	GD.Print($"Oba rzuty zakończone. Wynik sumaryczny: {lastDiceTotal}, Dublet: {isDouble}");
 	
 	// Emituj sygnał przed innymi operacjami
 	EmitSignal(SignalName.DicesStoppedRolling);
 	
-	switch (diceRollMode)
+	Figurehead currentPlayer = players[currentPlayerIndex];
+	
+	// Check if player is in Dean's Office
+	if (currentPlayer.IsInDeanOffice && currentPlayer.DeanOfficeRollsRemaining > 0)
 	{
-		case DiceRollMode.ForMovement:
-			HandleRegularRoll(lastDiceTotal);
-			break;
+		if (isDouble)
+		{
+			// Player rolled doubles and can leave Dean's Office
+			currentPlayer.IsInDeanOffice = false;
+			currentPlayer.DeanOfficeRollsRemaining = 0;
+			
+			notificationService.ShowNotification(
+				$"Gracz {currentPlayer.Name} wyrzucił dublet i wychodzi z dziekanatu!", 
+				NotificationService.NotificationType.Normal, 
+				3f
+			);
+			
+			// Add to history
+			if (moveHistory != null)
+			{
+				moveHistory.AddActionEntry(currentPlayer.Name, "wyrzucił dublet i wydostał się z dziekanatu");
+			}
+			
+			// Continue with normal dice roll processing
+			switch (diceRollMode)
+			{
+				case DiceRollMode.ForMovement:
+					HandleRegularRoll(lastDiceTotal);
+					break;
 
-		case DiceRollMode.JustForDisplay:
-			EmitSignal(SignalName.SpecialRollEnded);
-			ShowDiceResultsOnly(lastDiceTotal);
-			break;
+				case DiceRollMode.JustForDisplay:
+					EmitSignal(SignalName.SpecialRollEnded);
+					ShowDiceResultsOnly(lastDiceTotal);
+					break;
+			}
+		}
+		else
+		{
+			// Player didn't roll doubles, decrement counter
+			currentPlayer.DeanOfficeRollsRemaining--;
+			
+			if (currentPlayer.DeanOfficeRollsRemaining > 0)
+			{
+				notificationService.ShowNotification(
+					$"Gracz {currentPlayer.Name} nie wyrzucił dubletu. Pozostało {currentPlayer.DeanOfficeRollsRemaining} tur!", 
+					NotificationService.NotificationType.Normal, 
+					3f
+				);
+				
+				// Add to history
+				if (moveHistory != null)
+				{
+					moveHistory.AddActionEntry(currentPlayer.Name, 
+						$"nie wyrzucił dubletu i pozostaje w dziekanacie (pozostało {currentPlayer.DeanOfficeRollsRemaining} tur)");
+				}
+			}
+			else
+			{
+				// Player has served their time
+				currentPlayer.IsInDeanOffice = false;
+				
+				notificationService.ShowNotification(
+					$"Gracz {currentPlayer.Name} może wyjść z dziekanatu w następnej turze!", 
+					NotificationService.NotificationType.Normal, 
+					3f
+				);
+				
+				// Add to history
+				if (moveHistory != null)
+				{
+					moveHistory.AddActionEntry(currentPlayer.Name, "odbył karę i będzie mógł wyjść z dziekanatu w następnej turze");
+				}
+			}
+			
+			// Switch to master camera and prepare for end turn
+			SwitchToMasterCamera();
+			currentState = GameState.WaitingForInput;
+			endTurnButton.Visible = true;
+		}
+	}
+	else
+	{
+		// Regular dice processing
+		switch (diceRollMode)
+		{
+			case DiceRollMode.ForMovement:
+				HandleRegularRoll(lastDiceTotal);
+				break;
+
+			case DiceRollMode.JustForDisplay:
+				EmitSignal(SignalName.SpecialRollEnded);
+				ShowDiceResultsOnly(lastDiceTotal);
+				break;
+		}
 	}
 }
 
@@ -1013,12 +1127,14 @@ private void HandleBothDicesFinished()
 		return rollSum;
 	}
 
-	private void HandleRegularRoll(int totalSteps)
+	private int HandleRegularRoll(int totalSteps)
 	{
 		SwitchToMasterCamera();
-		MoveCurrentPlayerPawnSequentially(totalSteps);
+		//TODO ZMIENIĆ Z 10 -> int totalSteps
+		MoveCurrentPlayerPawnSequentially(10);
 		if (die1Result.Value == die2Result.Value)
 		{
+			return 0;
 			DoublesCounter++;
 			GD.Print("Dublet! Kolejny rzut po ruchu.");
 			achievementManager.Call("track_dice_roll", true);
@@ -1031,6 +1147,7 @@ private void HandleBothDicesFinished()
 			GD.Print("Nie wyrzucono dubletu. Przygotowanie do zakończenia tury.");
 			DoublesCounter = 0;
 		}
+		return 0;
 	}
 
 	private void PlaySound(AudioStreamPlayer3D player)
@@ -1139,7 +1256,17 @@ private void EndTurn()
 	string nextPlayerName = GetCurrentPlayerName();
 	playerLabel.Text = nextPlayerName;
 	PlaySound(nextTurnSoundPlayer);
-	notificationService.ShowNotification($"Tura gracza: {nextPlayerName}", NotificationService.NotificationType.Normal, 3f);
+	
+	if (players[currentPlayerIndex].IsInDeanOffice && players[currentPlayerIndex].DeanOfficeRollsRemaining > 0)
+	{
+		notificationService.ShowNotification($"Tura gracza: {nextPlayerName} (w dziekanacie, pozostało {players[currentPlayerIndex].DeanOfficeRollsRemaining} tur)",
+			NotificationService.NotificationType.Normal, 3f);
+	}
+	else
+	{
+		notificationService.ShowNotification($"Tura gracza: {nextPlayerName}", NotificationService.NotificationType.Normal, 3f);
+	}
+	
 	GD.Print($"Zakończono turę gracza {previousPlayerName}. Teraz tura gracza: {nextPlayerName}");
 	
 	// Dodaj wpis do historii ruchów - upewnij się, że moveHistory nie jest null
