@@ -1127,7 +1127,7 @@ private void HandleBothDicesFinished()
 		return rollSum;
 	}
 
-	private int HandleRegularRoll(int totalSteps)
+	private void HandleRegularRoll(int totalSteps)
 	{
 		SwitchToMasterCamera();
 		//TODO ZMIENIĆ Z 10 -> int totalSteps
@@ -1135,7 +1135,6 @@ private void HandleBothDicesFinished()
 		MoveCurrentPlayerPawnSequentially(10);
 		if (die1Result.Value == die2Result.Value)
 		{
-			return 0;
 			DoublesCounter++;
 			GD.Print("Dublet! Kolejny rzut po ruchu.");
 			achievementManager.Call("track_dice_roll", true);
@@ -1148,7 +1147,7 @@ private void HandleBothDicesFinished()
 			GD.Print("Nie wyrzucono dubletu. Przygotowanie do zakończenia tury.");
 			DoublesCounter = 0;
 		}
-		return 0;
+
 	}
 
 	private void PlaySound(AudioStreamPlayer3D player)
