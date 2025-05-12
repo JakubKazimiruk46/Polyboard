@@ -31,6 +31,7 @@ public partial class Field : Node3D
 	public Figurehead Owner;
 	public int OwnerId;
 	public bool owned = false;
+	public bool mortgage = false;
 	public int houseCost;
 	public int hotelCost;
 	public int fieldCost;
@@ -95,7 +96,24 @@ public partial class Field : Node3D
 		_ownerBorder.Modulate = field.Owner.playerColor;
 		_ownerBorder.Visible = true;
 	}
-
+	public void OnMortgage(Figurehead player, Field field)
+	{
+		int id = gameManager.GetCurrentPlayerIndex();
+		if(id == field.OwnerId){
+			player.AddECTS((field.fieldCost)/2);
+			gameManager.UpdateECTSUI(id);
+			field.mortgage = true;
+		}
+	}
+	public void CancelMortgage(Figurehead player, Field field)
+	{
+		int id = gameManager.GetCurrentPlayerIndex();
+		if(id == field.OwnerId){
+			player.SpendECTS((field.fieldCost)/2 + (field.fieldCost)/4);
+			gameManager.UpdateECTSUI(id);
+			field.mortgage = false;
+		}
+	}
 	public void RemoveOwner(Figurehead player, Field field)	{
 		
 		int id = gameManager.GetCurrentPlayerIndex();
