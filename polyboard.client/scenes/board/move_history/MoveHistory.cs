@@ -15,6 +15,11 @@ public partial class MoveHistory : Node
 	private ScrollContainer scrollContainer;
 	private GameManager gameManager;
 
+	// Nowe wskaźniki
+	private Label roundIndicatorLabel;
+	private Label timerIndicatorLabel;
+	private Label playerIndicatorLabel;
+
 	// Pełna historia wszystkich ruchów
 	private List<HistoryEntry> fullHistory = new List<HistoryEntry>();
 
@@ -64,6 +69,12 @@ public partial class MoveHistory : Node
 			ToggleHistoryVisibility();
 			GetViewport().SetInputAsHandled();
 		}
+	}
+
+	public override void _Process(double delta)
+	{
+		// Aktualizuj wskaźniki co klatkę
+		UpdateIndicators();
 	}
 
 	public void ToggleHistoryVisibility()
@@ -131,6 +142,51 @@ public partial class MoveHistory : Node
 			vboxContainer.AddChild(tabInfoLabel);
 			vboxContainer.MoveChild(tabInfoLabel, 1);
 		}
+
+		// Dodaj wskaźniki na górze panelu
+		roundIndicatorLabel = new Label();
+		roundIndicatorLabel.Name = "RoundIndicatorLabel";
+		roundIndicatorLabel.Text = "Runda: ?";
+		roundIndicatorLabel.AddThemeColorOverride("font_color", new Color("#ffd700"));
+		roundIndicatorLabel.AddThemeFontSizeOverride("font_size", 14);
+
+		timerIndicatorLabel = new Label();
+		timerIndicatorLabel.Name = "TimerIndicatorLabel";
+		timerIndicatorLabel.Text = "Czas tury: ?";
+		timerIndicatorLabel.AddThemeColorOverride("font_color", new Color("#45b6ff"));
+		timerIndicatorLabel.AddThemeFontSizeOverride("font_size", 14);
+
+		playerIndicatorLabel = new Label();
+		playerIndicatorLabel.Name = "PlayerIndicatorLabel";
+		playerIndicatorLabel.Text = "Gracz: ?";
+		playerIndicatorLabel.AddThemeColorOverride("font_color", new Color("#a66cff"));
+		playerIndicatorLabel.AddThemeFontSizeOverride("font_size", 14);
+
+		// Dodaj wskaźniki na początek VBoxContainer
+		if (vboxContainer != null)
+		{
+			vboxContainer.AddChild(roundIndicatorLabel);
+			vboxContainer.MoveChild(roundIndicatorLabel, 0);
+			vboxContainer.AddChild(timerIndicatorLabel);
+			vboxContainer.MoveChild(timerIndicatorLabel, 1);
+			vboxContainer.AddChild(playerIndicatorLabel);
+			vboxContainer.MoveChild(playerIndicatorLabel, 2);
+		}
+	}
+
+	private void UpdateIndicators()
+	{
+		if (gameManager == null) return;
+		// Runda
+		roundIndicatorLabel.Text = $"Runda: {gameManager.GetCurrentRound()}";
+		// Czas tury
+		var turnTimerLabel = gameManager.GetNodeOrNull<Label>("/root/Level/UI/TimeAndRounds/HBoxContainer/TurnTimerLabel");
+		if (turnTimerLabel != null)
+			timerIndicatorLabel.Text = turnTimerLabel.Text;
+		else
+			timerIndicatorLabel.Text = "Czas tury: ?";
+		// Aktywny gracz
+		playerIndicatorLabel.Text = $"Gracz: {gameManager.getCurrentPlayer().Name}";
 	}
 
 	// --- Nowy model wpisu historii ---
@@ -329,7 +385,7 @@ public partial class MoveHistory : Node
 			scrollContainer.GetVScrollBar().Value = 0;
 	}
 
-	// --- Czyszczenie i eksport ---
+	// --- Czyszczenie historii ---
 
 	public void ClearHistory()
 	{
@@ -340,16 +396,7 @@ public partial class MoveHistory : Node
 		notificationService?.Call("ShowNotification", "Historia ruchów została wyczyszczona", 0, 1.5f);
 	}
 
-	public void ExportHistoryToFile(string path = "user://move_history.txt")
-	{
-		var file = FileAccess.Open(path, FileAccess.ModeFlags.Write);
-		foreach (var entry in fullHistory.Reverse<HistoryEntry>())
-			file.StoreLine($"{entry.Timestamp:HH:mm:ss} {FormatEntry(entry)}");
-		file.Close();
-		var notificationService = GetNode("/root/NotificationService");
-		notificationService?.Call("ShowNotification", $"Wyeksportowano historię do {path}", 0, 2f);
-	}
-
+	// Usunięto funkcję eksportu historii!
 
 	public List<HistoryEntry> GetFullHistory() => new List<HistoryEntry>(fullHistory);
 }
