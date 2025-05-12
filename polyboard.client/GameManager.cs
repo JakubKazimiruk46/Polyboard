@@ -26,7 +26,9 @@ public partial class GameManager : Node3D
 	[Export] public NodePath gameEndScreenPath; // Ścieżka do ekranu końcowego
 	[Export] public NodePath returnToMenuButtonPath; // Przycisk powrotu do menu
 	[Export] public NodePath gameResultsContainerPath; // Kontener na wyniki końcowe
-
+	[Export] private NodePath doublesLabelPath;
+	
+	private Label doublesLabel;
 	private Label roundLabel;
 	private Label playerLabel;
 	private Board board;
@@ -65,6 +67,7 @@ public partial class GameManager : Node3D
 	private Node achievementManager;
 	private MoveHistory moveHistory;
 	private bool isGameOver = false;
+	
 
 	//public dla wymian
 	public List<Figurehead> Players
@@ -84,7 +87,23 @@ public partial class GameManager : Node3D
 	
 	public bool IsSpecialRollHappening = false;
 	public bool IsLastRegularRollDouble = false;
-
+	public int doublesCounter = 0;
+	public int DoublesCounter 
+	{
+		get { return doublesCounter; }
+		set 
+	{
+		doublesCounter = value;
+		UpdateDoublesLabel(); // Automatycznie aktualizuj UI przy zmianie
+	}
+	}
+	private void UpdateDoublesLabel()
+	{
+		if (doublesLabel != null)
+		{
+			doublesLabel.Text = $"Dublety: {doublesCounter}";
+		}
+	}
 	[Signal]
 	public delegate void DicesStoppedRollingEventHandler();
 
@@ -126,6 +145,8 @@ public override void _Ready()
 	InitAchievementManager();
 	StartTurnTimer();
 	playerLabel.Text = GetCurrentPlayerName();
+	doublesLabel = GetNode<Label>(doublesLabelPath);
+	UpdateDoublesLabel();
 }
 
 
@@ -998,6 +1019,7 @@ private void HandleBothDicesFinished()
 		MoveCurrentPlayerPawnSequentially(totalSteps);
 		if (die1Result.Value == die2Result.Value)
 		{
+			DoublesCounter++;
 			GD.Print("Dublet! Kolejny rzut po ruchu.");
 			achievementManager.Call("track_dice_roll", true);
 			IsLastRegularRollDouble = true;
@@ -1007,6 +1029,7 @@ private void HandleBothDicesFinished()
 		{
 			achievementManager.Call("track_dice_roll, false");
 			GD.Print("Nie wyrzucono dubletu. Przygotowanie do zakończenia tury.");
+			DoublesCounter = 0;
 		}
 	}
 
