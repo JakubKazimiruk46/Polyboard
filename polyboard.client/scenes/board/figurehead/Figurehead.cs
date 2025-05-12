@@ -146,14 +146,18 @@ public partial class Figurehead : CharacterBody3D
 
 			if (CurrentPositionIndex == 0 || CurrentPositionIndex == 10 || CurrentPositionIndex == 20 || CurrentPositionIndex == 30)
 			{
-				var currentRotation = RotationDegrees;
-				var newRotation = currentRotation + new Vector3(0, -90, 0);
-
-
+				var rotationY = -180;
+				if(CurrentPositionIndex == 10) rotationY = -270;
+				if(CurrentPositionIndex == 20) rotationY = 0;
+				if(CurrentPositionIndex == 30) rotationY = 90;
+				var newRotation = new Vector3(0, rotationY, 0);
+				
 				tween.TweenProperty(this, "rotation_degrees", newRotation, 0.5f)
 					.SetTrans(Tween.TransitionType.Linear)
 					.SetEase(Tween.EaseType.InOut);
 			}
+			
+			
 			await ToSignal(tween, "finished");
 		}
 
