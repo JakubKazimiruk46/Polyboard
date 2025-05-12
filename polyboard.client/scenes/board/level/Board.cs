@@ -782,6 +782,13 @@ private void ShowPopupError(string message, float duration = 4.0f)
 			}
 		}
 	}
+	
+	private async Task RetrunToStart()
+	{
+		var currentPlayer = gameManager.getCurrentPlayer();
+		await currentPlayer.MoveToField(0, this);
+		currentPlayer.SpendECTS(200);
+	}
 
 	private void InitializeCardEffects()
 	{
@@ -816,11 +823,7 @@ private void ShowPopupError(string message, float duration = 4.0f)
 			var currentPlayer = gameManager.getCurrentPlayer();
 			await currentPlayer.MoveToField(29, this);
 		}));
-		cardEffects.Add(("community", 12), (200, async () => 
-		{
-			var currentPlayer = gameManager.getCurrentPlayer();
-			await currentPlayer.MoveToField(0, this);
-		}));
+		cardEffects.Add(("community", 12), (200, RetrunToStart));
 		cardEffects.Add(("community", 13), (-100, null));
 		cardEffects.Add(("community", 14), (100, null));
 		cardEffects.Add(("community", 15), (200, null));
@@ -833,37 +836,17 @@ private void ShowPopupError(string message, float duration = 4.0f)
 		// Chance cards effects
 		cardEffects.Add(("chance", 2), (100, null));
 		cardEffects.Add(("chance", 3), (150, null));
-		cardEffects.Add(("chance", 4), (0, async () => 
-		{
-			var currentPlayer = gameManager.getCurrentPlayer();
-			await currentPlayer.MoveToField(0, this);
-		}));
+		cardEffects.Add(("chance", 4), (0, RetrunToStart));
 		cardEffects.Add(("chance", 5), (0, async () => 
 		{
 			var currentPlayer = gameManager.getCurrentPlayer();
 			await currentPlayer.MoveByFields(-2, this);
 		}));
 		cardEffects.Add(("chance", 6), (100, null));
-		cardEffects.Add(("chance", 7), (0, async () => 
-		{
-			var currentPlayer = gameManager.getCurrentPlayer();
-			await currentPlayer.MoveToField(0, this);
-		}));
-		cardEffects.Add(("chance", 8), (0, async () => 
-		{
-			var currentPlayer = gameManager.getCurrentPlayer();
-			await currentPlayer.MoveToField(0, this);
-		}));
-		cardEffects.Add(("chance", 9), (0, async () => 
-		{
-			var currentPlayer = gameManager.getCurrentPlayer();
-			await currentPlayer.MoveToField(0, this);
-		}));
-		cardEffects.Add(("chance", 10), (0, async () => 
-		{
-			var currentPlayer = gameManager.getCurrentPlayer();
-			await currentPlayer.MoveToField(0, this);
-		}));
+		cardEffects.Add(("chance", 7), (0, RetrunToStart));
+		cardEffects.Add(("chance", 8), (0, RetrunToStart));
+		cardEffects.Add(("chance", 9), (0, RetrunToStart));
+		cardEffects.Add(("chance", 10), (0, RetrunToStart));
 		cardEffects.Add(("chance", 11), (-150, null));
 		cardEffects.Add(("chance", 12), (-150, null));
 		cardEffects.Add(("chance", 13), (-50, async () => 
@@ -871,21 +854,9 @@ private void ShowPopupError(string message, float duration = 4.0f)
 			var currentPlayer = gameManager.getCurrentPlayer();
 			await currentPlayer.MoveByFields(-2, this);
 		}));
-		cardEffects.Add(("chance", 14), (0, async () => 
-		{
-			var currentPlayer = gameManager.getCurrentPlayer();
-			await currentPlayer.MoveToField(0, this);
-		}));
-		cardEffects.Add(("chance", 15), (0, async () => 
-		{
-			var currentPlayer = gameManager.getCurrentPlayer();
-			await currentPlayer.MoveToField(0, this);
-		}));
-		cardEffects.Add(("chance", 16), (0, async () => 
-		{
-			var currentPlayer = gameManager.getCurrentPlayer();
-			await currentPlayer.MoveToField(0, this);
-		}));
+		cardEffects.Add(("chance", 14), (0, RetrunToStart));
+		cardEffects.Add(("chance", 15), (0, RetrunToStart));
+		cardEffects.Add(("chance", 16), (0, RetrunToStart));
 	}
 
 	private async Task ProcessCardEffect(string cardType, int cardNumber)
