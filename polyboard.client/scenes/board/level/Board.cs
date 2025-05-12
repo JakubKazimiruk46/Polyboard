@@ -963,11 +963,12 @@ private void ShowPopupError(string message, float duration = 4.0f)
 		// Hide end turn button initially
 		endTurnButton.Visible = false;
 		const int goToDeanOfficeFieldId = 30;
+		const int deanOfficeFieldId = 10;
 		int[] publicUtilities = [12, 28];
 		int[] deanOffice = [4, 10, goToDeanOfficeFieldId];
 		int[] communityCards = [2, 17, 33];
 		int[] chanceCards = [7, 22, 36];
-		int[] noActionFields = [0, 4, 10, 20, 38];
+		int[] noActionFields = [0, 4, 10, 20, 30, 38];
 		int[] fineFields = [4, 38];
 
 		if (publicUtilities.Contains(fieldId))
@@ -1000,6 +1001,16 @@ private void ShowPopupError(string message, float duration = 4.0f)
 			if (fieldId == goToDeanOfficeFieldId)
 			{
 				var currentPlayer = gameManager.getCurrentPlayer();
+				
+				currentPlayer.IsInDeanOffice = true;
+				currentPlayer.DeanOfficeRollsRemaining = 2;
+				
+				var moveHistory = gameManager.GetNodeOrNull<MoveHistory>("/root/Level/MoveHistory");
+				if (moveHistory != null)
+				{
+					moveHistory.AddActionEntry(currentPlayer.Name, "został wysłany do dziekanatu (2 tury pauzy)");
+				}
+				
 				await currentPlayer.MoveBackward(20, this);
 			}
 			await ToSignal(GetTree().CreateTimer(0.5f), "timeout");
@@ -1029,7 +1040,6 @@ private void ShowPopupError(string message, float duration = 4.0f)
 			endTurnButton.Visible = true;
 		}
 		else {
-			// Domyślna akcja: zakup pola lub płacenie czynszu
 			Figurehead currentFigureHead = gameManager.getCurrentPlayer();
 			int currentPosition = currentFigureHead.GetCurrentPositionIndex();
 			Field field = gameManager.getCurrentField(currentPosition);
@@ -1230,4 +1240,6 @@ public async void ShowFieldTexture(int fieldId)
 		
 		return result;
 	}
+	//Dziekanat
+
 }

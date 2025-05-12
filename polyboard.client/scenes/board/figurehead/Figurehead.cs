@@ -366,5 +366,8 @@ public partial class Figurehead : CharacterBody3D
 
 		notificationService.ShowNotification(message, NotificationService.NotificationType.Normal,4F);
 	}
+	//Dziekanat
+	public bool IsInDeanOffice { get; set; } = false;
+	public int DeanOfficeRollsRemaining { get; set; } = 0;
 
 }
