@@ -13,6 +13,7 @@ public partial class Board : StaticBody3D
 	private Sprite2D textureDisplay;
 	private Sprite2D randomCard;
 	private Label ownerNickname;
+	private Label mortgageInfo;
 	private Sprite2D step_on_card;
 	private Button endTurnButton;
 	private TextureButton tradeButton;
@@ -36,7 +37,9 @@ public partial class Board : StaticBody3D
 		BuildHouse = 102,
 		ExchangeProperty = 103,
 		Cancel = 104,
-		UseSpecialCard = 105
+		UseSpecialCard = 105,
+		SetOnMortgage = 106,
+		CancelMortgage = 107
 	}
 
 	private readonly Dictionary<(string type, int number), (int ectsEffect, Func<Task> specialEffect)> cardEffects;
@@ -66,7 +69,8 @@ public partial class Board : StaticBody3D
 		step_on_card = GetNodeOrNull<Sprite2D>("/root/Level/BuyCard/HBoxContainer/FieldView/TextureRect/FieldToBuy");
 		randomCard = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/RandomCard");
 		textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/FieldCard");
-		ownerNickname = GetNodeOrNull<Label>("/root/Level/CanvasLayer/OwnerNickname/owner_nickname");
+		ownerNickname = GetNodeOrNull<Label>("/root/Level/CanvasLayer/OwnerNickname/VBoxContainer/owner_nickname");
+		mortgageInfo = GetNodeOrNull<Label>("/root/Level/CanvasLayer/OwnerNickname/VBoxContainer/mortgage_info");
 		cardView = GetNodeOrNull<TextureRect>("/root/Level/BuyCard/HBoxContainer/FieldView/TextureRect");
 		buyTime = GetNodeOrNull<Timer>("/root/Level/BuyCard/Timer");
 		endTurnButton = GetNodeOrNull<Button>("/root/Level/UI/ZakończTure");
@@ -342,6 +346,8 @@ private void InitializePopupMenu()
 	_contextMenu.AddItem("Build House", (int)PopupIds.BuildHouse);
 	_contextMenu.AddItem("Exchange Property", (int)PopupIds.ExchangeProperty);
 	_contextMenu.AddItem("Use Special Card", (int)PopupIds.UseSpecialCard);
+	_contextMenu.AddItem("Set property on mortgage", (int)PopupIds.SetOnMortgage);
+	_contextMenu.AddItem("Cancel mortgage", (int)PopupIds.CancelMortgage);
 	
 	_contextMenu.AddSeparator();
 	_contextMenu.AddItem("Cancel", (int)PopupIds.Cancel);
@@ -402,6 +408,14 @@ private void InitializePopupMenu()
 				//TryUseSpecialCard(currentPlayer);
 				break;
 				
+			case PopupIds.SetOnMortgage:
+				TrySetOnMortgage(selectedField,currentPlayer);
+				break;
+				
+			case PopupIds.CancelMortgage:
+				TryCancelMortgage(selectedField,currentPlayer);
+				break;
+				
 			case PopupIds.Cancel:
 				break;
 		}
@@ -414,7 +428,38 @@ private void InitializePopupMenu()
 			}
 		}
 	}
-
+private void TryCancelMortgage(Field field, Figurehead player)
+{
+	string ownerClassName = field.Owner?.GetType().Name ?? "null";
+	bool playerOwnsAccordingToArray = player.ownedFields[field.FieldId];
+	if (field.owned && playerOwnsAccordingToArray)
+	{
+		int cancelValue = field.fieldCost / 2 + field.fieldCost / 4;
+		field.CancelMortgage(player,field);
+		ShowPopupNotification($"{player.Name} canceled mortgage on {field.Name} and spent {cancelValue} ECTS", 3.0f);
+	}
+	else
+	{
+		ShowPopupNotification("You don't own this property!", 2.0f);
+		GD.Print($"Ownership check failed: owned={field.owned}, playerOwnsAccordingToArray={playerOwnsAccordingToArray}");
+	}
+}
+private void TrySetOnMortgage(Field field, Figurehead player)
+{
+	string ownerClassName = field.Owner?.GetType().Name ?? "null";
+	bool playerOwnsAccordingToArray = player.ownedFields[field.FieldId];
+	if (field.owned && playerOwnsAccordingToArray)
+	{
+		int mortgageValue = field.fieldCost / 2;
+		field.OnMortgage(player,field);
+		ShowPopupNotification($"{field.Name} is on mortgage. {player.Name} gain {mortgageValue} ECTS", 3.0f);
+	}
+	else
+	{
+		ShowPopupNotification("You don't own this property!", 2.0f);
+		GD.Print($"Ownership check failed: owned={field.owned}, playerOwnsAccordingToArray={playerOwnsAccordingToArray}");
+	}
+}
 private void TrySellProperty(Field field, Figurehead player)
 {
 	int currentPlayerIndex = gameManager.GetCurrentPlayerIndex();
@@ -1025,9 +1070,16 @@ private void ShowPopupError(string message, float duration = 4.0f)
 			}
 			else if (field.Owner != currentFigureHead)
 			{
-				field.PayRent(currentFigureHead, field);
-				int rent = field.CheckHouseQuantity(field);
-				achievementManager.Call("track_tax_payment", rent);
+				if(field.mortgage)
+				{
+					ShowPopupNotification("This property is on mortgage. You don't have to pay rent ", 3.0f);
+				}
+				else
+				{
+					field.PayRent(currentFigureHead, field);
+					int rent = field.CheckHouseQuantity(field);
+					achievementManager.Call("track_tax_payment", rent);
+				}
 			}
 		}
 	}
@@ -1118,7 +1170,9 @@ public async void ShowFieldTexture(int fieldId)
 			if(field.owned == true)
 			{
 				string nickname = field.GetUserNickname(field);
-				ownerNickname.Text = $"właściciel:\n{nickname}";
+				ownerNickname.Text = $"właściciel:{nickname}";
+				if(field.mortgage)
+					mortgageInfo.Text = "Pole jest aktualnie oddane pod zastaw.";
 			}
 			else
 			{
