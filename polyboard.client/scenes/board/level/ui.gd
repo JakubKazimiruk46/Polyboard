@@ -21,6 +21,7 @@ func _ready() -> void:
 	board = $"../Board"
 	special_cards.visible = false
 	apply_style_to_stats_panel()
+	apply_style_to_doubles_container()
 	
 	exit_stats_button.pressed.connect(_on_exit_stats_button)
 	
@@ -143,6 +144,23 @@ func on_cards_button_pressed():
 		tween.tween_property($Cards, "anchor_bottom", target_anchor_bottom, 0.5)
 		tween.set_parallel(false)
 		cards_view = false
+
+func apply_style_to_doubles_container():
+	var container = $PanelContainer
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.1, 0.1, 0.1, 0.8)
+	style.border_width_left = 2
+	style.border_width_right = 2
+	style.border_width_top = 2
+	style.border_width_bottom = 2
+	style.border_color = Color("#62ff45")  
+	style.corner_radius_top_left = 8
+	style.corner_radius_top_right = 8
+	style.corner_radius_bottom_left = 8
+	style.corner_radius_bottom_right = 8
+	style.shadow_size = 4
+	style.shadow_color = Color(0, 0, 0, 0.5)
+	container.add_theme_stylebox_override("panel", style)
 
 func on_trade_button_pressed():
 	trade.visible = true

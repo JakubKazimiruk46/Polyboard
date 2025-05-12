@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bjk4ynvdco7q8"]
 
-[ext_resource type="Script" path="res://scenes/board/move_history/ToggleHistoryButton.cs" id="1_m5x2r"]
+[ext_resource type="Script" uid="uid://cru6nmbxyolmu" path="res://scenes/board/move_history/ToggleHistoryButton.cs" id="1_m5x2r"]
 
 [node name="ToggleHistoryButton" type="Button"]
 offset_right = 150.0

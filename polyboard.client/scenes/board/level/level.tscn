@@ -779,6 +779,7 @@ endTurnButtonPath = NodePath("../UI/ZakończTure")
 ectsUIContainerPath = NodePath("../UI/Players")
 playersUIContainerPath = NodePath("../UI/Players")
 playerInitializerPath = NodePath("PlayerInitializer")
+doublesLabelPath = NodePath("../UI/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/DoublesLabel")
 
 [node name="Players" type="Node3D" parent="GameManager"]
 script = ExtResource("17_6omuv")
