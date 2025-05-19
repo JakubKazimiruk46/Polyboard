@@ -1132,7 +1132,7 @@ private void HandleBothDicesFinished()
 		SwitchToMasterCamera();
 		//TODO ZMIENIĆ Z 10 -> int totalSteps
 		//MoveCurrentPlayerPawnSequentially(totalSteps);
-		MoveCurrentPlayerPawnSequentially(10);
+		MoveCurrentPlayerPawnSequentially(totalSteps);
 		if (die1Result.Value == die2Result.Value)
 		{
 			DoublesCounter++;
