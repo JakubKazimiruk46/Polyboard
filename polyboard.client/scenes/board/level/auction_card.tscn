@@ -228,7 +228,6 @@ custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_vertical = 2
 theme_override_font_sizes/font_size = 20
-text = "JACEK"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -278,7 +277,6 @@ custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_vertical = 2
 theme_override_font_sizes/font_size = 20
-text = "KUBA"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -328,7 +326,6 @@ custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_vertical = 2
 theme_override_font_sizes/font_size = 20
-text = "ŁUKASZ"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -378,7 +375,6 @@ custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_vertical = 2
 theme_override_font_sizes/font_size = 20
-text = "DAWID"
 horizontal_alignment = 1
 vertical_alignment = 1
 
