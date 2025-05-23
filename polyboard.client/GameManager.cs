@@ -1303,6 +1303,18 @@ private void EndTurn()
 		} while (playerBankruptcyStatus[currentPlayerIndex]);
 		// If everyone is bankrupt, currentPlayerIndex will remain unchanged
 	}
+	public Figurehead GetPlayerByName(string name)
+	{
+		foreach (var player in players)
+		{
+			if (player.Name == name)
+			{
+				return player;
+			}
+		}
+		GD.PrintErr($"Gracz o nazwie '{name}' nie został znaleziony.");
+		return null;
+	}
 
 	private void SwitchToMasterCamera()
 	{

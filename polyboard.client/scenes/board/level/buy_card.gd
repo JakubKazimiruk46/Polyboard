@@ -5,7 +5,7 @@ extends CanvasLayer
 @onready var buildButton = $"../UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3/build_button" as TextureButton
 @onready var auction = $AuctionCard as CanvasLayer
 @onready var auction_time = $AuctionCard/AuctionTime as Timer
-
+signal auction_reset
 var board_view = false
 var total_time_in_secs : int = 30
 # Called when the node enters the scene tree for the first time.
@@ -88,6 +88,7 @@ func on_auctionButtonPressed():
 	$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.text = ''
 	$HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/TimeLeft.add_theme_color_override("font_color","white")
 	turn_on_buttons()
+	emit_signal("auction_reset")
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
