@@ -39,3 +39,16 @@ texture = ExtResource("3_qjaje")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.0595093)
 shape = SubResource("BoxShape3D_k4ob6")
+
+[node name="FieldPrice" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.87673, 0)
+visible = false
+billboard = 1
+font_size = 150
+uppercase = true
+
+[node name="OwnerLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.74452, 0)
+visible = false
+billboard = 1
+font_size = 100
