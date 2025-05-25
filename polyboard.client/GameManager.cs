@@ -1130,8 +1130,6 @@ private void HandleBothDicesFinished()
 	private void HandleRegularRoll(int totalSteps)
 	{
 		SwitchToMasterCamera();
-		//TODO ZMIENIĆ Z 10 -> int totalSteps
-		//MoveCurrentPlayerPawnSequentially(totalSteps);
 		MoveCurrentPlayerPawnSequentially(totalSteps);
 		if (die1Result.Value == die2Result.Value)
 		{

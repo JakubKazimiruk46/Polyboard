@@ -113,10 +113,16 @@ custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/outline_size = 3
-text = "This field has no owner. Do you want to buy it for 100ECTS?"
+text = "This field has no owner. Do you want to buy it for "
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
+
+[node name="Price" type="Label" parent="HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/outline_size = 3
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TimeLeft" type="Label" parent="HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer"]
 layout_mode = 2

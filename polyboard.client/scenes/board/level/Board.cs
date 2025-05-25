@@ -8,6 +8,7 @@ using Polyboard.Enums;
 
 public partial class Board : StaticBody3D
 {
+	private Label priceLabel;
 	private Vector3 targetPosition;
 	private List<Field> fields = new List<Field>();
 	private Sprite2D textureDisplay;
@@ -80,6 +81,7 @@ public partial class Board : StaticBody3D
 		ownerNicknameView = GetNodeOrNull<PanelContainer>("/root/Level/CanvasLayer/OwnerNickname");
 		deanOfficeSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/DeanOfficeSound");
 		lostECTSSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/LostECTSSound");
+		priceLabel = GetNodeOrNull<Label>("/root/Level/BuyCard/HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/Price");
 		
 		if (textureDisplay == null || step_on_card == null)
 		{
@@ -1085,6 +1087,8 @@ private void ShowPopupError(string message, float duration = 4.0f)
 
 			step_on_card.Scale = scale;
 			cardView.Scale = scale;
+			var field = GetFieldById(fieldId);
+			priceLabel.Text = $"{field.fieldCost} ECTS";
 			BuyCard.Visible = true;
 		}
 	}
