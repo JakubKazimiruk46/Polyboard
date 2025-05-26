@@ -1,5 +1,8 @@
 extends CanvasLayer
 
+# Camera switching
+signal camera_switch_requested(camera_name)
+
 @onready var trade = $"../Trade"
 @onready var buycard = $"../BuyCard"
 @onready var tradebutton = $HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2/trade_button
@@ -9,6 +12,8 @@ extends CanvasLayer
 @onready var special_card_button = $HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer5/special_card_button
 @onready var player_stats_panel = $PlayerStatsPanelContainer
 @onready var exit_stats_button = $PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/ExitButton
+@onready var master_camera_button = $CameraButtons/MasterCameraButton
+@onready var dice_camera_button = $CameraButtons/DiceCameraButton
 
 var cards_view = false
 var buttons_view = false
@@ -25,6 +30,12 @@ func _ready() -> void:
 	
 	exit_stats_button.pressed.connect(_on_exit_stats_button)
 	
+	# Connect camera buttons
+	if master_camera_button:
+		master_camera_button.pressed.connect(_on_master_camera_pressed)
+	if dice_camera_button:
+		dice_camera_button.pressed.connect(_on_dice_camera_pressed)
+
 	for panel in $Players.get_children():
 		if panel is PanelContainer and panel.has_signal("panel_clicked"):
 			print("istnieje taki panel")
@@ -325,3 +336,9 @@ func _on_special_card_button_pressed():
 		tween.tween_property(special_cards, "anchor_bottom", target_anchor_bottom, 0.5)
 		tween.set_parallel(false)
 		tween.tween_callback(Callable(special_cards, "hide"))
+
+func _on_master_camera_pressed():
+	emit_signal("camera_switch_requested", "master")
+
+func _on_dice_camera_pressed():
+	emit_signal("camera_switch_requested", "dice")

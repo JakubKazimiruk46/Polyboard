@@ -524,6 +524,30 @@ offset_bottom = 130.0
 text = "Poddaj się"
 script = ExtResource("13_ul3un")
 
+[node name="CameraButtons" type="HBoxContainer" parent="."]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -50.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="MasterCameraButton" type="Button" parent="CameraButtons"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Main View"
+
+[node name="DiceCameraButton" type="Button" parent="CameraButtons"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Dice View"
+
 [connection signal="pressed" from="HBoxContainer/view_buttons" to="." method="on_view_buttons_pressed"]
 [connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer/card_button" to="." method="on_cards_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2/trade_button" to="." method="on_trade_button_pressed"]
