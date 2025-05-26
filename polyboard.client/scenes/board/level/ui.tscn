@@ -548,11 +548,6 @@ custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 text = "Dice View"
 
-[node name="FigureCameraButton" type="Button" parent="CameraButtons"]
-custom_minimum_size = Vector2(120, 0)
-layout_mode = 2
-text = "Figure View"
-
 [connection signal="pressed" from="HBoxContainer/view_buttons" to="." method="on_view_buttons_pressed"]
 [connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer/card_button" to="." method="on_cards_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2/trade_button" to="." method="on_trade_button_pressed"]

@@ -14,7 +14,6 @@ signal camera_switch_requested(camera_name)
 @onready var exit_stats_button = $PlayerStatsPanelContainer/PlayerStatsPanel/PlayerStats/ExitButton
 @onready var master_camera_button = $CameraButtons/MasterCameraButton
 @onready var dice_camera_button = $CameraButtons/DiceCameraButton
-@onready var figure_camera_button = $CameraButtons/FigureCameraButton
 
 var cards_view = false
 var buttons_view = false
@@ -36,8 +35,6 @@ func _ready() -> void:
 		master_camera_button.pressed.connect(_on_master_camera_pressed)
 	if dice_camera_button:
 		dice_camera_button.pressed.connect(_on_dice_camera_pressed)
-	if figure_camera_button:
-		figure_camera_button.pressed.connect(_on_figure_camera_pressed)
 
 	for panel in $Players.get_children():
 		if panel is PanelContainer and panel.has_signal("panel_clicked"):
@@ -345,6 +342,3 @@ func _on_master_camera_pressed():
 
 func _on_dice_camera_pressed():
 	emit_signal("camera_switch_requested", "dice")
-
-func _on_figure_camera_pressed():
-	emit_signal("camera_switch_requested", "figure")

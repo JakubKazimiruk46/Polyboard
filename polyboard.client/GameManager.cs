@@ -167,14 +167,6 @@ private void OnCameraSwitchRequested(string cameraName)
 		case "dice":
 			SwitchToDiceCamera();
 			break;
-		case "figure":
-			// If you have a figure camera, activate it here
-			var figureCamera = GetNodeOrNull<Camera3D>("/root/Level/FigureCamera");
-			if (figureCamera != null)
-			{
-				SetActiveCamera(figureCamera);
-			}
-			break;
 	}
 }
 
