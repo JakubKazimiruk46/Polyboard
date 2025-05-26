@@ -75,7 +75,7 @@ public partial class Field : Node3D
 		GD.Print(player.Name);
 		GD.Print("Nowy owner pola: ",field.Owner.Name);
 		GD.Print(field.Owner.playerColor);
-		
+		_ownerBorder.Visible = true;
 		// Dodaj wpis do historii ruchów
 		var moveHistory = gameManager.GetNodeOrNull<MoveHistory>("/root/Level/MoveHistory");
 		if (moveHistory != null)
