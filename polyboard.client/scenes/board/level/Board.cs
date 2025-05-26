@@ -553,17 +553,19 @@ private void RemoveLastHouse(Field field)
 	}
 }
 
-private List<Field> GetAllFieldsByDepartmentName(DepartmentName departmentName){
-	List<Field> fields = new List<Field>();
+private List<Field> GetAllFieldsByDepartmentName(DepartmentName departmentName)
+{
+	List<Field> fieldsInDepartment = new List<Field>();
 	
 	foreach (Node child in GetChildren())
+	{
+		if (child is Field field && field.Department == departmentName)
 		{
-			if (child is Field field && field.Department == departmentName)
-			{
-				fields.Add(field);
-			}
+			fieldsInDepartment.Add(field);
 		}
-	return fields;
+	}
+	
+	return fieldsInDepartment;
 }
 
 private bool DoesPlayerOwnFields(List<Field> fields, Figurehead player){
@@ -578,142 +580,178 @@ private bool DoesPlayerOwnFields(List<Field> fields, Figurehead player){
 
 private void TryBuildHouse(Field field, Figurehead player)
 {
-	GD.Print("Inside funtcion TryBuildHouse");
+	GD.Print("Inside function TryBuildHouse");
 	
-	if (field.owned && field.Owner == player)
-	{	
-		DepartmentName departmentName = field.Department;
-		
-		if (!DoesPlayerOwnFields(GetAllFieldsByDepartmentName(departmentName), player)){
-			ShowPopupNotification("You need to own all the fields in department to build!", 2.0f);
+	if (!field.owned || field.Owner != player)
+	{
+		ShowPopupNotification("You don't own this property!", 2.0f);
+		return;
+	}
+	
+	HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
+	if (invalidFieldIds.Contains(field.FieldId))
+	{
+		ShowPopupNotification("Cannot build houses on this type of property!", 2.0f);
+		return;
+	}
+	
+	if (field.Department == DepartmentName.None)
+	{
+		ShowPopupNotification("This property doesn't belong to any department!", 2.0f);
+		return;
+	}
+	
+	DepartmentName departmentName = field.Department;
+	
+	if (!DoesPlayerOwnAllFieldsInDepartment(departmentName, player))
+	{
+		ShowPopupNotification("You need to own all the fields in this department to build!", 2.0f);
+		return;
+	}
+	
+	if (player.ECTS >= field.houseCost)
+	{
+		if (field.isHotel)
+		{
+			ShowPopupNotification("There's already a hotel on this property!", 2.0f);
 			return;
 		}
 		
-		HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
-		if (invalidFieldIds.Contains(field.FieldId))
+		int houseCount = field.CheckHouseQuantity(field);
+		if (houseCount < 4)
 		{
-			ShowPopupNotification("Cannot build houses on this type of property!", 2.0f);
-			return;
-		}
-		
-		if (player.ECTS >= field.houseCost)
-		{
-			if (field.isHotel)
-			{
-				ShowPopupNotification("There's already a hotel on this property!", 2.0f);
-				return;
-			}
+			player.SpendECTS(field.houseCost);
 			
-			int houseCount = field.CheckHouseQuantity(field);
-			if (houseCount < 4)
-			{
-				player.SpendECTS(field.houseCost);
-				
-				field.BuildingHouse(field.FieldId);
-				achievementManager.Call("track_hotel_built", field.Department.ToString());
-				ShowPopupNotification($"Building house on {field.Name} for {field.houseCost} ECTS", 3.0f);
+			field.BuildingHouse(field.FieldId);
+			achievementManager.Call("track_house_built", field.Department.ToString());
+			ShowPopupNotification($"Built house on {field.Name} for {field.houseCost} ECTS", 3.0f);
 
-				gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
-			}
-			else
-			{
-				ShowPopupNotification("Maximum number of houses reached! Consider building a hotel.", 2.0f);
-			}
+			gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
+		}
+		else if (houseCount == 4)
+		{
+			ShowPopupNotification("Maximum houses reached! You can now build a hotel.", 2.0f);
 		}
 		else
 		{
-			ShowPopupNotification("Not enough ECTS to build a house!", 2.0f);
+			ShowPopupNotification("Maximum number of houses reached!", 2.0f);
 		}
 	}
 	else
 	{
-		ShowPopupNotification("You don't own this property!", 2.0f);
+		ShowPopupNotification("Not enough ECTS to build a house!", 2.0f);
 	}
 }
 
 private async void TryBuildHotel(Field field, Figurehead player)
 {
-	if (field.owned && field.Owner == player)
+	if (!field.owned || field.Owner != player)
 	{
-		HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
-		if (invalidFieldIds.Contains(field.FieldId))
+		ShowPopupNotification("You don't own this property!", 2.0f);
+		return;
+	}
+	
+	HashSet<int> invalidFieldIds = new HashSet<int> { 0, 2, 4, 5, 7, 10, 12, 15, 17, 20, 22, 25, 28, 30, 33, 35, 36, 38 };
+	if (invalidFieldIds.Contains(field.FieldId))
+	{
+		ShowPopupNotification("Cannot build a hotel on this type of property!", 2.0f);
+		return;
+	}
+	
+	if (field.Department == DepartmentName.None)
+	{
+		ShowPopupNotification("This property doesn't belong to any department!", 2.0f);
+		return;
+	}
+	
+	if (!DoesPlayerOwnAllFieldsInDepartment(field.Department, player))
+	{
+		ShowPopupNotification("You need to own all the fields in this department to build a hotel!", 2.0f);
+		return;
+	}
+	
+	if (player.ECTS >= field.hotelCost)
+	{
+		if (field.isHotel)
 		{
-			ShowPopupNotification("Cannot build a hotel on this type of property!", 2.0f);
+			ShowPopupNotification("There's already a hotel on this property!", 2.0f);
 			return;
 		}
 		
-		if (player.ECTS >= field.hotelCost)
+		int houseCount = field.CheckHouseQuantity(field);
+		if (houseCount == 4)
 		{
-			if (field.isHotel)
-			{
-				ShowPopupNotification("There's already a hotel on this property!", 2.0f);
-				return;
-			}
+			player.SpendECTS(field.hotelCost);
 			
-			int houseCount = field.CheckHouseQuantity(field);
-			if (houseCount == 4)
-			{
-				player.SpendECTS(field.hotelCost);
-				
-				await field.BuildHotel(field.FieldId);
-				achievementManager.Call("track_hotel_build", field.Department.ToString());
-				ShowPopupNotification($"Built hotel on {field.Name} for {field.hotelCost} ECTS", 3.0f);
-				
-				gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
-			}
-			else
-			{
-				ShowPopupNotification($"You need 4 houses before building a hotel! (Current: {houseCount})", 3.0f);
-			}
+			await field.BuildHotel(field.FieldId);
+			achievementManager.Call("track_hotel_built", field.Department.ToString());
+			ShowPopupNotification($"Built hotel on {field.Name} for {field.hotelCost} ECTS", 3.0f);
+			
+			gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
 		}
 		else
 		{
-			ShowPopupNotification("Not enough ECTS to build a hotel!", 2.0f);
+			ShowPopupNotification($"You need 4 houses before building a hotel! (Current: {houseCount})", 3.0f);
 		}
 	}
 	else
 	{
-		ShowPopupNotification("You don't own this property!", 2.0f);
+		ShowPopupNotification("Not enough ECTS to build a hotel!", 2.0f);
 	}
 }
 
-private void TryExchangeProperty(Field field, Figurehead player)
+private bool DoesPlayerOwnAllFieldsInDepartment(DepartmentName departmentName, Figurehead player)
 {
-
-	if (field.owned && field.Owner == player)
+	List<Field> fieldsInDepartment = GetAllFieldsByDepartmentName(departmentName);
+	
+	foreach (Field field in fieldsInDepartment)
 	{
-		// Get the trade UI
-		var tradeUI = GetNode<CanvasLayer>("/root/Level/Trade");
-		if (tradeUI != null)
+		if (!field.owned || field.Owner != player)
 		{
+			return false;
+		}
+	}
+	
+	return fieldsInDepartment.Count > 0; // Upewnij się, że department ma jakieś pola
+}
 
-			Godot.Collections.Array playerData = new Godot.Collections.Array();
-			
-			for (int i = 0; i < gameManager.Players.Count; i++)
+private void TryExchangeProperty(Field field, Figurehead player)
+	{
+
+		if (field.owned && field.Owner == player)
+		{
+			// Get the trade UI
+			var tradeUI = GetNode<CanvasLayer>("/root/Level/Trade");
+			if (tradeUI != null)
 			{
-				var p = gameManager.Players[i];
-				var playerInfo = new Godot.Collections.Dictionary
+
+				Godot.Collections.Array playerData = new Godot.Collections.Array();
+
+				for (int i = 0; i < gameManager.Players.Count; i++)
+				{
+					var p = gameManager.Players[i];
+					var playerInfo = new Godot.Collections.Dictionary
 				{
 					{ "name", p.Name },
 					{ "id", i }
 				};
-				playerData.Add(playerInfo);
+					playerData.Add(playerInfo);
+				}
+
+				tradeUI.Call("setup_trade", player.Name, playerData, field.FieldId);
+
+				ShowPopupNotification("Otwieranie interfejsu wymiany...", 2.0f);
 			}
-			
-			tradeUI.Call("setup_trade", player.Name, playerData, field.FieldId);
-			
-			ShowPopupNotification("Otwieranie interfejsu wymiany...", 2.0f);
+			else
+			{
+				ShowPopupError("Nie znaleziono interfejsu wymiany!", 2.0f);
+			}
 		}
 		else
 		{
-			ShowPopupError("Nie znaleziono interfejsu wymiany!", 2.0f);
+			ShowPopupNotification("Nie jesteś właścicielem tego pola!", 2.0f);
 		}
 	}
-	else
-	{
-		ShowPopupNotification("Nie jesteś właścicielem tego pola!", 2.0f);
-	}
-}
 private void ShowPopupNotification(string message, float duration = 3.0f)
 {
 	var notifications = GetNode<Node>("/root/Notifications");
@@ -1240,6 +1278,22 @@ public async void ShowFieldTexture(int fieldId)
 		
 		return result;
 	}
-	//Dziekanat
+	private void DebugDepartmentOwnership(DepartmentName departmentName, Figurehead player)
+{
+	List<Field> fieldsInDepartment = GetAllFieldsByDepartmentName(departmentName);
+	
+	GD.Print($"=== DEBUG: Department {departmentName} ownership ===");
+	GD.Print($"Player: {player.Name}");
+	GD.Print($"Fields in department: {fieldsInDepartment.Count}");
+	
+	foreach (Field field in fieldsInDepartment)
+	{
+		GD.Print($"Field {field.FieldId} ({field.Name}): owned={field.owned}, owner={field.Owner?.Name ?? "none"}");
+	}
+	
+	bool ownsAll = DoesPlayerOwnAllFieldsInDepartment(departmentName, player);
+	GD.Print($"Player owns all fields: {ownsAll}");
+	GD.Print("=== END DEBUG ===");
+}
 
 }
