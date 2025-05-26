@@ -35,11 +35,12 @@ public partial class Board : StaticBody3D
 		SellProperty = 100,
 		SellHouse = 101,
 		BuildHouse = 102,
-		ExchangeProperty = 103,
-		Cancel = 104,
-		UseSpecialCard = 105,
-		SetOnMortgage = 106,
-		CancelMortgage = 107
+		BuildHotel = 103,
+		ExchangeProperty = 104,
+		Cancel = 105,
+		UseSpecialCard = 106,
+		SetOnMortgage = 107,
+		CancelMortgage = 108
 	}
 
 	private readonly Dictionary<(string type, int number), (int ectsEffect, Func<Task> specialEffect)> cardEffects;
@@ -344,6 +345,7 @@ private void InitializePopupMenu()
 	_contextMenu.AddItem("Sell Property", (int)PopupIds.SellProperty);
 	_contextMenu.AddItem("Sell House", (int)PopupIds.SellHouse);
 	_contextMenu.AddItem("Build House", (int)PopupIds.BuildHouse);
+	_contextMenu.AddItem("Build Hotel", (int)PopupIds.BuildHotel);
 	_contextMenu.AddItem("Exchange Property", (int)PopupIds.ExchangeProperty);
 	_contextMenu.AddItem("Use Special Card", (int)PopupIds.UseSpecialCard);
 	_contextMenu.AddItem("Set property on mortgage", (int)PopupIds.SetOnMortgage);
@@ -398,6 +400,10 @@ private void InitializePopupMenu()
 				
 			case PopupIds.BuildHouse:
 				TryBuildHouse(selectedField, currentPlayer);
+				break;
+
+			case PopupIds.BuildHotel:
+				TryBuildHotel(selectedField, currentPlayer);
 				break;
 				
 			case PopupIds.ExchangeProperty:
@@ -645,6 +651,8 @@ private void TryBuildHouse(Field field, Figurehead player)
 
 private async void TryBuildHotel(Field field, Figurehead player)
 {
+	GD.Print("Inside function TryBuildHotel");
+	
 	if (!field.owned || field.Owner != player)
 	{
 		ShowPopupNotification("You don't own this property!", 2.0f);
@@ -658,46 +666,47 @@ private async void TryBuildHotel(Field field, Figurehead player)
 		return;
 	}
 	
+	// Sprawdź czy pole ma przypisany department
 	if (field.Department == DepartmentName.None)
 	{
 		ShowPopupNotification("This property doesn't belong to any department!", 2.0f);
 		return;
 	}
 	
+	// Sprawdź czy gracz posiada wszystkie pola w tym departamencie
 	if (!DoesPlayerOwnAllFieldsInDepartment(field.Department, player))
 	{
 		ShowPopupNotification("You need to own all the fields in this department to build a hotel!", 2.0f);
 		return;
 	}
 	
-	if (player.ECTS >= field.hotelCost)
+	if (field.isHotel)
 	{
-		if (field.isHotel)
-		{
-			ShowPopupNotification("There's already a hotel on this property!", 2.0f);
-			return;
-		}
-		
-		int houseCount = field.CheckHouseQuantity(field);
-		if (houseCount == 4)
-		{
-			player.SpendECTS(field.hotelCost);
-			
-			await field.BuildHotel(field.FieldId);
-			achievementManager.Call("track_hotel_built", field.Department.ToString());
-			ShowPopupNotification($"Built hotel on {field.Name} for {field.hotelCost} ECTS", 3.0f);
-			
-			gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
-		}
-		else
-		{
-			ShowPopupNotification($"You need 4 houses before building a hotel! (Current: {houseCount})", 3.0f);
-		}
+		ShowPopupNotification("There's already a hotel on this property!", 2.0f);
+		return;
 	}
-	else
+	
+	int houseCount = field.CheckHouseQuantity(field);
+	if (houseCount < 4)
+	{
+		ShowPopupNotification($"You need 4 houses before building a hotel! (Current: {houseCount})", 3.0f);
+		return;
+	}
+	
+	if (player.ECTS < field.hotelCost)
 	{
 		ShowPopupNotification("Not enough ECTS to build a hotel!", 2.0f);
+		return;
 	}
+	
+	// Wszystkie sprawdzenia przeszły - buduj hotel
+	player.SpendECTS(field.hotelCost);
+	
+	await field.BuildHotel(field.FieldId);
+	achievementManager.Call("track_hotel_built", field.Department.ToString());
+	ShowPopupNotification($"Built hotel on {field.Name} for {field.hotelCost} ECTS", 3.0f);
+	
+	gameManager.UpdateECTSUI(gameManager.GetCurrentPlayerIndex());
 }
 
 private bool DoesPlayerOwnAllFieldsInDepartment(DepartmentName departmentName, Figurehead player)
@@ -1107,8 +1116,6 @@ private void ShowPopupError(string message, float duration = 4.0f)
 	{
 		buyTime.Start();
 		randomCard.Visible = false;
-		tradeButton.Disabled = true;
-		buildButton.Disabled = true;
 		string textureName = $"Field{fieldId}";
 		Texture2D fieldTexture = ResourceLoader.Load<Texture2D>($"res://scenes/board/level/textures/{textureName}.png");
 

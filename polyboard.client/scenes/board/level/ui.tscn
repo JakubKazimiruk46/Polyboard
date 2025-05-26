@@ -1,15 +1,12 @@
-[gd_scene load_steps=23 format=3 uid="uid://be5o85k4nbeu5"]
+[gd_scene load_steps=20 format=3 uid="uid://be5o85k4nbeu5"]
 
 [ext_resource type="Script" uid="uid://phhlfshpbr6k" path="res://scenes/board/level/ui.gd" id="1_e26wc"]
 [ext_resource type="Texture2D" uid="uid://dhxn8lostrjd4" path="res://assets/images/cards.png" id="2_oospi"]
 [ext_resource type="Texture2D" uid="uid://d2lj75ugtvjgi" path="res://assets/images/coin.png" id="2_qslas"]
 [ext_resource type="Texture2D" uid="uid://bgg3f806aptjs" path="res://assets/images/button_view.png" id="3_6jkhu"]
-[ext_resource type="Texture2D" uid="uid://ckbi5x2ob710h" path="res://assets/images/trade_icon.png" id="3_27i78"]
-[ext_resource type="Texture2D" uid="uid://chsamsqbtkijr" path="res://assets/images/build.png" id="4_glt2l"]
 [ext_resource type="Texture2D" uid="uid://bnb0sdm2vdwhu" path="res://assets/images/zastaw.png" id="6_ninoq"]
 [ext_resource type="Texture2D" uid="uid://bof7cx2xbx3k1" path="res://assets/images/question_card.png" id="7_q3a1k"]
 [ext_resource type="PackedScene" uid="uid://d2arsk7nm7cu3" path="res://scenes/board/level/TimeAndRounds.tscn" id="8_8lgx8"]
-[ext_resource type="Texture2D" uid="uid://dhyf7dobwsaob" path="res://assets/images/house.png" id="9_mvhbk"]
 [ext_resource type="Texture2D" uid="uid://canj32siuexxe" path="res://assets/images/get_money.png" id="11_8whly"]
 [ext_resource type="Texture2D" uid="uid://c2rcjvbudk1ip" path="res://assets/images/pay_money.png" id="12_ul3un"]
 [ext_resource type="Script" uid="uid://bt1q3fnp471gp" path="res://scenes/board/level/surrender_button.gd" id="13_ul3un"]
@@ -262,51 +259,6 @@ text = "NIERUCHOMOŚCI"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons"]
-custom_minimum_size = Vector2(150, 0)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-
-[node name="trade_button" type="TextureButton" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-theme = SubResource("Theme_2w06e")
-texture_normal = ExtResource("3_27i78")
-texture_pressed = ExtResource("3_27i78")
-texture_disabled = ExtResource("3_27i78")
-stretch_mode = 0
-
-[node name="trade_label" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2"]
-layout_mode = 2
-size_flags_horizontal = 4
-text = "WYMIANA"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer3" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons"]
-custom_minimum_size = Vector2(150, 0)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-
-[node name="build_button" type="TextureButton" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-theme = SubResource("Theme_2w06e")
-texture_normal = ExtResource("4_glt2l")
-texture_pressed = ExtResource("4_glt2l")
-texture_disabled = ExtResource("4_glt2l")
-
-[node name="build_label" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3"]
-layout_mode = 2
-size_flags_horizontal = 4
-text = "BUDUJ"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="VBoxContainer4" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons"]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
@@ -349,11 +301,6 @@ vertical_alignment = 1
 
 [node name="VBoxContainer6" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons"]
 layout_mode = 2
-
-[node name="remove_owner_button" type="TextureButton" parent="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer6"]
-layout_mode = 2
-tooltip_text = "Sprzedaj"
-texture_normal = ExtResource("9_mvhbk")
 
 [node name="Cards" type="PanelContainer" parent="."]
 anchors_preset = -1
@@ -550,6 +497,4 @@ text = "Dice View"
 
 [connection signal="pressed" from="HBoxContainer/view_buttons" to="." method="on_view_buttons_pressed"]
 [connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer/card_button" to="." method="on_cards_button_pressed"]
-[connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2/trade_button" to="." method="on_trade_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer5/special_card_button" to="." method="_on_special_card_button_pressed"]
-[connection signal="pressed" from="HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer6/remove_owner_button" to="." method="on_remove_owner_button_pressed"]

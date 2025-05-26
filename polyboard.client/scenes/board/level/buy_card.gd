@@ -45,8 +45,6 @@ func on_timer_timeout():
 
 func turn_on_buttons():
 	endturnbutton.visible = true
-	tradeButton.disabled = false
-	buildButton.disabled = false
 
 func on_buyButtonPressed():
 	var figurehead_script = preload("res://scenes/board/figurehead/Figurehead.cs")
