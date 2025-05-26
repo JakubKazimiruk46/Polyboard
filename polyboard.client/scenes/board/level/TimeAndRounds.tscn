@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://d2arsk7nm7cu3"]
+[gd_scene load_steps=9 format=3 uid="uid://d2arsk7nm7cu3"]
 
 [ext_resource type="Script" uid="uid://n7nm70ibk2hv" path="res://scenes/board/level/TimeAndRounds.gd" id="1_t64tg"]
+[ext_resource type="Texture2D" uid="uid://c77rjgrj7g6by" path="res://assets/images/Pause-Button-PNG-Pic-Background.png" id="2_sitw4"]
 
 [sub_resource type="SystemFont" id="SystemFont_ybkam"]
 font_names = PackedStringArray("Impact")
@@ -130,4 +131,10 @@ layout_mode = 2
 theme_override_fonts/font = SubResource("SystemFont_t64tg")
 theme_override_font_sizes/font_size = 20
 
+[node name="PauseButton" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+icon = ExtResource("2_sitw4")
+flat = true
+
 [connection signal="timeout" from="HBoxContainer/MarginContainer/HBoxContainer/Timer" to="." method="on_timer_timeout"]
+[connection signal="pressed" from="HBoxContainer/PauseButton" to="." method="_on_pause_button_pressed"]
