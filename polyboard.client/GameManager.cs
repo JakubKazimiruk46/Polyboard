@@ -65,10 +65,10 @@ public partial class GameManager : Node3D
 	private Button returnToMenuButton;
 	private VBoxContainer gameResultsContainer;
 	private Node achievementManager;
+	private Node playerInitializer;
 	private MoveHistory moveHistory;
 	private bool isGameOver = false;
 	
-
 	//public dla wymian
 	public List<Figurehead> Players
 	{
@@ -126,9 +126,10 @@ public partial class GameManager : Node3D
 
 	private DiceRollMode diceRollMode = DiceRollMode.ForMovement;
 	private GameState currentState = GameState.WaitingForInput;
+	private bool IsSignalConnected = false;
 
 public override void _Ready()
-{
+{	
 	InitCameras();
 	InitNotifications();
 	InitBoard();
@@ -147,8 +148,33 @@ public override void _Ready()
 	playerLabel.Text = GetCurrentPlayerName();
 	doublesLabel = GetNode<Label>(doublesLabelPath);
 	UpdateDoublesLabel();
+	
+	/*if (!IsSignalConnected){
+		playerInitializer.Connect("game_started", new Callable(this, nameof(ResetState)));
+		IsSignalConnected = true;
+	}*/
+	
+
 }
 
+/*private void ResetState(){
+	Node playersContainer = GetNode(playersContainerPath);
+	
+	foreach (Node player in playersContainer.GetChildren())
+	{
+		player.QueueFree();
+	}
+	
+	players.Clear();
+	
+	InitPlayers();
+	InitPlayersUI();
+	InitSoundPlayers();
+	InitTurnTimer();
+	InitMoveHistory(); 
+	SetAllPlayersOnStart();
+	StartTurnTimer();
+}*/
 
 private void InitMoveHistory()
 {
@@ -270,6 +296,7 @@ private void InitMoveHistory()
 		if (board == null)
 		{
 			notificationService.ShowNotification("Błąd: Nie znaleziono planszy.", NotificationService.NotificationType.Error);
+			GD.PrintErr("Nie znaleziono planszy");
 		}
 		else
 		{
@@ -280,7 +307,7 @@ private void InitMoveHistory()
 	private void InitPlayers()
 	{
 		GD.Print($"Szukanie PlayerInitializer pod ścieżką: {playerInitializerPath}");
-		Node playerInitializer = GetNodeOrNull(playerInitializerPath);
+		playerInitializer = GetNodeOrNull(playerInitializerPath);
 		if (playerInitializer == null)
 		{
 			notificationService.ShowNotification("Błąd: Nie znaleziono PlayerInitializer w scenie!", NotificationService.NotificationType.Error);
@@ -832,20 +859,36 @@ public void ShowEndGameScreen(string resultMessage)
 
 	private void SetAllPlayersOnStart()
 	{
+		GD.Print("Metoda SetAllPlayersOnStart zaczęła wykonywanie");
+		GD.Print($"Liczba graczy: {players?.Count}");
 		if (board == null)
 		{
 			notificationService.ShowNotification("Board is not initialized. Cannot set players on start.", NotificationService.NotificationType.Error);
+			GD.Print("SetAllPlayers: Board nie jest zainicjalizowany");
+
 			return;
 		}
-
+	
 		for (int i = 0; i < players.Count; i++)
-		{
+		{	
+			var field = board.GetFieldById(0);
+			if (field == null)
+			{
+				GD.PrintErr("Pole o ID 0 nie istnieje.");
+				return;
+			}
 			Figurehead player = players[i];
-			Vector3? startPosition = board.GetPositionForPawn(0, i % board.GetFieldById(0).positions.Count);
+			GD.Print($"Pobieram pozycję startową dla gracza {i}");
+			Vector3? startPosition = board.GetPositionForPawn(0, i % field.positions.Count);
+			GD.Print($"Pozycja startowa dla gracza {i}: {startPosition}");
+
+			
 			if (!startPosition.HasValue)
 			{
 				notificationService.ShowNotification($"Błąd: Nie znaleziono pozycji startowej dla gracza {i + 1}.",
 					NotificationService.NotificationType.Error);
+				GD.PrintErr("SetAllPlayers: Nie znaleziono pozycji startowej");
+
 				continue;
 			}
 
@@ -856,6 +899,7 @@ public void ShowEndGameScreen(string resultMessage)
 		}
 
 		GD.Print("Wszyscy gracze zostali ustawieni na polu startowym.");
+		GD.Print("Metoda SetAllPlayersOnStart zakonczyła wykonywanie");
 	}
 
 private void OnRollButtonPressed()
@@ -1130,9 +1174,7 @@ private void HandleBothDicesFinished()
 	private void HandleRegularRoll(int totalSteps)
 	{
 		SwitchToMasterCamera();
-		//TODO ZMIENIĆ Z 10 -> int totalSteps
-		//MoveCurrentPlayerPawnSequentially(totalSteps);
-		MoveCurrentPlayerPawnSequentially(10);
+		MoveCurrentPlayerPawnSequentially(totalSteps);
 		if (die1Result.Value == die2Result.Value)
 		{
 			DoublesCounter++;

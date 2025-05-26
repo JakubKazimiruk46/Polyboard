@@ -373,7 +373,7 @@ _data = {
 }
 
 [node name="pizza-pionek" type="CharacterBody3D"]
-transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, -0.530184, 0)
 script = ExtResource("2_fwfm1")
 pawnInstancePath = NodePath(".")
 

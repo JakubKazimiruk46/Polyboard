@@ -41,6 +41,10 @@ theme_override_constants/margin_bottom = 12
 [node name="MainVContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
+[node name="VSplitContainer2" type="VSplitContainer" parent="MarginContainer/MainVContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
 [node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/MainVContainer"]
 layout_mode = 2
 
@@ -84,11 +88,11 @@ text = "Add Player ➕
 "
 
 [node name="PlayersContainer" type="VBoxContainer" parent="MarginContainer/MainVContainer"]
-custom_minimum_size = Vector2(0, 350)
+custom_minimum_size = Vector2(0, 332)
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/MainVContainer/PlayersContainer"]
-custom_minimum_size = Vector2(200, 200)
+custom_minimum_size = Vector2(200, 46)
 layout_mode = 2
 
 [node name="GeneralButtonsContainer" type="HBoxContainer" parent="MarginContainer/MainVContainer"]
