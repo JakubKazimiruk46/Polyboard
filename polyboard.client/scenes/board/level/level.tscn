@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3 uid="uid://c1oq52jpnu57"]
+[gd_scene load_steps=40 format=3 uid="uid://c1oq52jpnu57"]
 
 [ext_resource type="Script" uid="uid://emvyo0uo8qs7" path="res://scenes/board/level/Board.cs" id="1_85jf0"]
 [ext_resource type="Script" uid="uid://bgtflv4fbokq6" path="res://scenes/board/level/level.gd" id="1_djwtq"]
@@ -25,7 +25,6 @@
 [ext_resource type="Texture2D" uid="uid://cf2h1ti7o58l2" path="res://assets/images/game_background/noc.jpg" id="16_we53p"]
 [ext_resource type="Script" uid="uid://ip1fswlgagt8" path="res://scenes/board/level/players.gd" id="17_6omuv"]
 [ext_resource type="PackedScene" uid="uid://h1ww7awlbuhf" path="res://scenes/board/level/trade.tscn" id="17_bq0mx"]
-[ext_resource type="Script" uid="uid://omlm4ep4ahjd" path="res://scenes/board/level/figure_kamera.gd" id="18_o42ta"]
 [ext_resource type="Script" uid="uid://bl415ydbyrgk0" path="res://test/Tests.cs" id="23_dakaj"]
 [ext_resource type="Script" uid="uid://f2um77lmy2ri" path="res://scenes/board/level/player.gd" id="23_pxos0"]
 [ext_resource type="AudioStream" uid="uid://bjfwofec40f4h" path="res://assets/effects/schritte-auf-kies-142718.mp3" id="27_we53p"]
@@ -265,10 +264,6 @@ script = ExtResource("8_cd8t5")
 
 [node name="KostkiKamera" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1.19249e-08, 1, 0, -1, 1.19249e-08, 0, 14, 0)
-
-[node name="FigureKamera" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1.19249e-08, 1, 0, -1, 1.19249e-08, 0, 14, 0)
-script = ExtResource("18_o42ta")
 
 [node name="Die1" parent="." instance=ExtResource("5_p3toi")]
 transform = Transform3D(1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 0, 2.04084, 0)
