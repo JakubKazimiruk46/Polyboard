@@ -96,6 +96,44 @@ public partial class Field : Node3D
 		_ownerBorder.Modulate = field.Owner.playerColor;
 		_ownerBorder.Visible = true;
 	}
+	public void BuyFieldAfterAuction(Figurehead winner, Field field, int auctionPrice)
+	{
+		GD.Print($"{winner.Name} wygrał aukcję i kupuje pole {field.FieldId} za {auctionPrice} ECTS");
+
+		// Odejmij koszt aukcji od gracza
+		winner.SpendECTS(auctionPrice);
+
+		// Zaktualizuj ECTS w UI
+		int winnerId = gameManager.GetPlayerIndex(winner);
+   		gameManager.UpdateECTSUI(winnerId);
+
+		// Przypisz właściciela pola
+		field.Owner = winner;
+		field.OwnerId = winnerId;
+		field.owned = true;
+		winner.ownedFields[field.FieldId] = true;
+
+		// Historia ruchów
+		var moveHistory = gameManager.GetNodeOrNull<MoveHistory>("/root/Level/MoveHistory");
+		if (moveHistory != null)
+		{
+			moveHistory.AddActionEntry(winner.Name, $"wygrał aukcję na pole {field.Name} za {auctionPrice} ECTS");
+		}
+
+	// Obiekt ramki właściciela
+		_ownerBorder = GetNodeOrNull<Sprite3D>("OwnerBorder");
+
+		if (_ownerBorder == null)
+		{
+			GD.PrintErr("Błąd: Nie znaleziono OwnerBorder!");
+			return;
+		}
+
+	// Pokaż ramkę właściciela
+		_ownerBorder.Modulate = winner.playerColor;
+		_ownerBorder.Visible = true;
+	}
+
 	public void OnMortgage(Figurehead player, Field field)
 	{
 		int id = gameManager.GetCurrentPlayerIndex();
