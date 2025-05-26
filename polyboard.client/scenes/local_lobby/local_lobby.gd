@@ -9,6 +9,8 @@ extends Control
 
 const PLAYER_SCENE = preload("res://scenes/local_lobby/local_lobby_player.tscn")
 
+signal game_started
+
 var max_players = GameData.MAX_PLAYERS
 var min_players = GameData.MIN_PLAYERS
 
@@ -39,10 +41,6 @@ func _on_add_player_pressed():
 	update_buttons()
 	print("Aktualna liczba graczy: " + str(GameData.get_player_count()))
 
-
-
-
-
 func _on_remove_player_pressed():
 	if GameData.get_player_count() <= min_players:
 		print("Nie można usunąć gracza — osiągnięto minimum:", min_players)
@@ -58,12 +56,10 @@ func _on_remove_player_pressed():
 	update_buttons()
 	print("Aktualna liczba graczy: " + str(GameData.get_player_count()))
 
-
-
-
 func _on_start_button_pressed():
 	var level_path = "res://scenes/board/level/level.tscn"
 	if ResourceLoader.exists(level_path):
+		game_started.emit()
 		get_tree().change_scene_to_file(level_path)
 	else:
 		print("Błąd: Scena levelu nie istnieje pod ścieżką: " + level_path)

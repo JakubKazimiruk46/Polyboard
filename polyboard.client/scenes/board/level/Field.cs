@@ -21,7 +21,7 @@ public partial class Field : Node3D
 	protected Label3D OwnerLabel;
 	protected Area3D _area;
 	protected Sprite3D _ownerBorder;
-	protected static int nextId = 0;
+	public static int nextId = 0;
 	public int FieldId;
 	public List<Node3D> builtHouses = new List<Node3D>();
 	public bool isHotel = false;
@@ -217,7 +217,7 @@ public partial class Field : Node3D
 	}
 
 	public override void _Ready()
-	{
+	{		
 		gameManager = GetNode<GameManager>("/root/Level/GameManager");
 		viewDetailsDialog = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect/ViewDetailsDialog");
 		constructionSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/ConstructionSound");

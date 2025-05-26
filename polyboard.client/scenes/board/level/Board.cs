@@ -49,9 +49,11 @@ public partial class Board : StaticBody3D
 	{
 		cardEffects = new Dictionary<(string type, int number), (int ectsEffect, Func<Task> specialEffect)>();
 	}
-
+	
 	public override void _Ready()
 	{
+		Field.nextId = 0;
+		
 		InitializeComponents();
 		InitializeCardEffects();
 		InitializePopupMenu();
