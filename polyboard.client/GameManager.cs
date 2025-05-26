@@ -22,7 +22,7 @@ public partial class GameManager : Node3D
 	[Export] public NodePath playerInitializerPath;
 	[Export] public NodePath notificationServicePath;
 	[Export] public float turnTimeLimit = 60.0f; // czas tury w sekundach
-	[Export] public int maxRounds = 100; // Maksymalna liczba rund, po której gra się kończy (ustaw 0 dla braku limitu)
+	[Export] public int maxRounds = 30; // Maksymalna liczba rund, po której gra się kończy (ustaw 0 dla braku limitu)
 	[Export] public NodePath gameEndScreenPath; // Ścieżka do ekranu końcowego
 	[Export] public NodePath returnToMenuButtonPath; // Przycisk powrotu do menu
 	[Export] public NodePath gameResultsContainerPath; // Kontener na wyniki końcowe
