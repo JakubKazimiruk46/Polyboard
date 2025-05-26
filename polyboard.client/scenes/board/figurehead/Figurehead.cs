@@ -15,11 +15,12 @@ public partial class Figurehead : CharacterBody3D
 	private AnimationPlayer animationPlayer;
 	private NotificationService notificationService;
 	public List<bool> ownedFields = new List<bool>(40);
-	
-	public Godot.Collections.Array GetOwnedFields(){
+
+	public Godot.Collections.Array GetOwnedFields()
+	{
 		var array = new Godot.Collections.Array();
-		
-		for(int i = 0; i < ownedFields.Count; i++)
+
+		for (int i = 0; i < ownedFields.Count; i++)
 		{
 			if (ownedFields[i] == true)
 				array.Add(i);
@@ -86,6 +87,13 @@ public partial class Figurehead : CharacterBody3D
 		int steps = Math.Abs(fieldCount); // Ilość kroków do wykonania
 		int direction = Math.Sign(fieldCount); // 1 dla ruchu w przód, -1 dla ruchu w tył
 
+		//HOTFIX blokowania pionków
+		Field previousField = board.GetFieldById(CurrentPositionIndex);
+		if (previousField != null)
+		{
+			ClearPawnFromField(previousField);
+		}
+
 		// Dla każdego kroku
 		for (int i = 1; i <= steps; i++)
 		{
@@ -147,17 +155,17 @@ public partial class Figurehead : CharacterBody3D
 			if (CurrentPositionIndex == 0 || CurrentPositionIndex == 10 || CurrentPositionIndex == 20 || CurrentPositionIndex == 30)
 			{
 				var rotationY = -180;
-				if(CurrentPositionIndex == 10) rotationY = -270;
-				if(CurrentPositionIndex == 20) rotationY = 0;
-				if(CurrentPositionIndex == 30) rotationY = 90;
+				if (CurrentPositionIndex == 10) rotationY = -270;
+				if (CurrentPositionIndex == 20) rotationY = 0;
+				if (CurrentPositionIndex == 30) rotationY = 90;
 				var newRotation = new Vector3(0, rotationY, 0);
-				
+
 				tween.TweenProperty(this, "rotation_degrees", newRotation, 0.5f)
 					.SetTrans(Tween.TransitionType.Linear)
 					.SetEase(Tween.EaseType.InOut);
 			}
-			
-			
+
+
 			await ToSignal(tween, "finished");
 		}
 
@@ -364,10 +372,67 @@ public partial class Figurehead : CharacterBody3D
 			message = $"Zakończono wymianę z graczem {partnerName}";
 		}
 
-		notificationService.ShowNotification(message, NotificationService.NotificationType.Normal,4F);
+		notificationService.ShowNotification(message, NotificationService.NotificationType.Normal, 4F);
 	}
 	//Dziekanat
 	public bool IsInDeanOffice { get; set; } = false;
 	public int DeanOfficeRollsRemaining { get; set; } = 0;
+
+	//HOTFIX blokwoania pionków
+	private void ClearPawnFromField(Field field)
+	{
+		if (field == null || field.occupied == null) return;
+
+		for (int i = 0; i < field.occupied.Count; i++)
+		{
+			if (field.occupied[i])
+			{
+				// Sprawdź czy to jest pozycja tego pionka
+				if (field.positions.Count > i)
+				{
+					Vector3 fieldPos = field.positions[i];
+					float distance = GlobalPosition.DistanceTo(fieldPos);
+
+					// Jeśli pionek jest bardzo blisko tej pozycji, to prawdopodobnie to jego pozycja
+					if (distance < 0.5f) // Tolerancja 0.5 jednostki
+					{
+						field.occupied[i] = false;
+						GD.Print($"Wyczyszczono pozycję {i} na polu {field.FieldId} dla gracza {Name}");
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	
+	private int FindAndReserveFreePosition(Field field)
+	{
+		if (field == null || field.occupied == null || field.positions == null)
+		{
+			GD.PrintErr("Pole lub jego listy są null!");
+			return -1;
+		}
+		
+		// Upewnij się, że listy mają odpowiednią długość
+		while (field.occupied.Count < field.positions.Count)
+		{
+			field.occupied.Add(false);
+		}
+		
+		// Znajdź pierwszą wolną pozycję
+		for (int i = 0; i < field.occupied.Count && i < field.positions.Count; i++)
+		{
+			if (!field.occupied[i])
+			{
+				field.occupied[i] = true;
+				GD.Print($"Zarezerwowano pozycję {i} na polu {field.FieldId} dla gracza {Name}");
+				return i;
+			}
+		}
+		
+		GD.PrintErr($"Nie znaleziono wolnej pozycji na polu {field.FieldId}");
+		return -1;
+	}
 
 }
