@@ -147,6 +147,16 @@ public override void _Ready()
 	ConnectCameraSignals();
 	StartTurnTimer();
 	playerLabel.Text = GetCurrentPlayerName();
+	InitDoublesLabel();
+}
+
+private void InitDoublesLabel(){
+	doublesLabel = GetNodeOrNull<Label>(doublesLabelPath);
+	if (doublesLabel == null)
+	{
+		GD.Print("Doubles label nie znaleziony!");
+		return;
+	}
 }
 
 private void ConnectCameraSignals()
