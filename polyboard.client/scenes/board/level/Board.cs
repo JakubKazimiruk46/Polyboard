@@ -8,12 +8,11 @@ using Polyboard.Enums;
 
 public partial class Board : StaticBody3D
 {
+	private Label priceLabel;
 	private Vector3 targetPosition;
 	private List<Field> fields = new List<Field>();
 	private Sprite2D textureDisplay;
 	private Sprite2D randomCard;
-	private Label ownerNickname;
-	private Label mortgageInfo;
 	private Sprite2D step_on_card;
 	private Button endTurnButton;
 	private TextureButton tradeButton;
@@ -72,8 +71,6 @@ public partial class Board : StaticBody3D
 		step_on_card = GetNodeOrNull<Sprite2D>("/root/Level/BuyCard/HBoxContainer/FieldView/TextureRect/FieldToBuy");
 		randomCard = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/RandomCard");
 		textureDisplay = GetNodeOrNull<Sprite2D>("/root/Level/CanvasLayer/TextureRect2/FieldCard");
-		ownerNickname = GetNodeOrNull<Label>("/root/Level/CanvasLayer/OwnerNickname/VBoxContainer/owner_nickname");
-		mortgageInfo = GetNodeOrNull<Label>("/root/Level/CanvasLayer/OwnerNickname/VBoxContainer/mortgage_info");
 		cardView = GetNodeOrNull<TextureRect>("/root/Level/BuyCard/HBoxContainer/FieldView/TextureRect");
 		buyTime = GetNodeOrNull<Timer>("/root/Level/BuyCard/Timer");
 		endTurnButton = GetNodeOrNull<Button>("/root/Level/UI/ZakończTure");
@@ -83,6 +80,7 @@ public partial class Board : StaticBody3D
 		ownerNicknameView = GetNodeOrNull<PanelContainer>("/root/Level/CanvasLayer/OwnerNickname");
 		deanOfficeSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/DeanOfficeSound");
 		lostECTSSoundPlayer = GetNodeOrNull<AudioStreamPlayer3D>("/root/Level/Board/LostECTSSound");
+		priceLabel = GetNodeOrNull<Label>("/root/Level/BuyCard/HBoxContainer/VBoxContainer/BuyPanel/VBoxContainer/Price");
 		
 		if (textureDisplay == null || step_on_card == null)
 		{
@@ -484,16 +482,17 @@ private void TrySellProperty(Field field, Figurehead player)
 	
 	if (field.owned && playerOwnsAccordingToArray)
 	{
-		// Calculate sell value (half of purchase price)
-		int sellValue = field.fieldCost / 2;
-		
-		// GD.Print($"Selling field: {field.Name} for {sellValue} ECTS");
-		
-		field.RemoveOwner(player, field);
-		
-		ShowPopupNotification($"Sold {field.Name} for {sellValue} ECTS", 3.0f);
-		
-		gameManager.UpdateECTSUI(currentPlayerIndex);
+		if(field.mortgage)
+		{
+			ShowPopupNotification($"Field {field.Name} is on mortgage and you can't sell it", 3.0f);
+		}
+		else
+		{
+			int sellValue = field.fieldCost / 2;
+			field.RemoveOwner(player, field);
+			ShowPopupNotification($"Sold {field.Name} for {sellValue} ECTS", 3.0f);
+			gameManager.UpdateECTSUI(currentPlayerIndex);
+		}
 	}
 	else
 	{
@@ -1132,6 +1131,8 @@ private void ShowPopupError(string message, float duration = 4.0f)
 
 			step_on_card.Scale = scale;
 			cardView.Scale = scale;
+			var field = GetFieldById(fieldId);
+			priceLabel.Text = $"{field.fieldCost} ECTS";
 			BuyCard.Visible = true;
 		}
 	}
@@ -1179,45 +1180,34 @@ private void ShowPopupError(string message, float duration = 4.0f)
 
 public async void ShowFieldTexture(int fieldId)
 	{
-		randomCard.Visible = false;
-		textureDisplay.Visible = false;
-
-		string textureName = $"Field{fieldId}";
-		Texture2D fieldTexture = ResourceLoader.Load<Texture2D>($"res://scenes/board/level/textures/{textureName}.png");
-
-		if (fieldTexture != null)
+		if(textureDisplay.Visible == true)
+			HideFieldTexture();
+		else
 		{
-			textureDisplay.Texture = fieldTexture;
-			textureDisplay.Position = new Vector2(400, 0);
-			Vector2 viewportSize = GetViewport().GetVisibleRect().Size;
-			float scaleFactorX = viewportSize.X / 3000f;
-			float scaleFactorY = viewportSize.Y / 1250f;
-			float scaleFactor = Math.Min(scaleFactorX, scaleFactorY);
-			Vector2 scale = new Vector2(scaleFactor, scaleFactor);
-			field = gameManager.getCurrentField(fieldId);
-			if(field.owned == true)
-			{
-				string nickname = field.GetUserNickname(field);
-				ownerNickname.Text = $"właściciel:{nickname}";
-				if(field.mortgage)
-					mortgageInfo.Text = "Pole jest aktualnie oddane pod zastaw.";
-			}
-			else
-			{
-				ownerNickname.Text = "Pole nie ma właściciela";
-			}
-			ownerNickname.Visible = true;
-			ownerNicknameView.Visible = true;
-			ownerNicknameView.Position = new Vector2(890, 280);
-			textureDisplay.Scale = new Vector2(0, 0);
-			textureDisplay.Visible = true;
+			randomCard.Visible = false;
+			textureDisplay.Visible = false;
 
-			Tween tween = CreateTween();
-			tween.TweenProperty(textureDisplay, "scale", scale, 0.15f)
-				.SetTrans(Tween.TransitionType.Linear)
-				.SetEase(Tween.EaseType.InOut);
+			string textureName = $"Field{fieldId}";
+			Texture2D fieldTexture = ResourceLoader.Load<Texture2D>($"res://scenes/board/level/textures/{textureName}.png");
 
-			await ToSignal(tween, "finished");
+			if (fieldTexture != null)
+			{
+				textureDisplay.Texture = fieldTexture;
+				textureDisplay.Position = new Vector2(0, 150);
+				Vector2 viewportSize = GetViewport().GetVisibleRect().Size;
+				float scaleFactorX = viewportSize.X / 3000f;
+				float scaleFactorY = viewportSize.Y / 1250f;
+				float scaleFactor = Math.Min(scaleFactorX, scaleFactorY);
+				Vector2 scale = new Vector2(scaleFactor, scaleFactor);
+				field = gameManager.getCurrentField(fieldId);
+				textureDisplay.Scale = new Vector2(0, 0);
+				textureDisplay.Visible = true;
+				Tween tween = CreateTween();
+				tween.TweenProperty(textureDisplay, "scale", scale, 0.15f)
+					.SetTrans(Tween.TransitionType.Linear)
+					.SetEase(Tween.EaseType.InOut);
+				await ToSignal(tween, "finished");
+			}
 		}
 	}
 	
@@ -1228,8 +1218,6 @@ public async void ShowFieldTexture(int fieldId)
 		.SetTrans(Tween.TransitionType.Linear)
 		.SetEase(Tween.EaseType.InOut);
    
-	ownerNickname.Visible = false;
-	ownerNicknameView.Visible = false;
 	
 	tween.TweenCallback(Callable.From(() => {
 		textureDisplay.Visible = false;

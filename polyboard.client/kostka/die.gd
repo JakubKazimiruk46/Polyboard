@@ -27,7 +27,6 @@ func _roll():
 	angular_velocity = Vector3.ZERO
 	SwitchToDiceCamera()
 	textureDisplay.visible = false
-	ownerNickame.visible = false
 	randomCard.visible=false
 	# Randomowa rotacja
 	transform.basis = Basis(Vector3.RIGHT, randf_range(0, 2 * PI)) * transform.basis
