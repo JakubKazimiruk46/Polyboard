@@ -148,33 +148,7 @@ public override void _Ready()
 	playerLabel.Text = GetCurrentPlayerName();
 	doublesLabel = GetNode<Label>(doublesLabelPath);
 	UpdateDoublesLabel();
-	
-	/*if (!IsSignalConnected){
-		playerInitializer.Connect("game_started", new Callable(this, nameof(ResetState)));
-		IsSignalConnected = true;
-	}*/
-	
-
 }
-
-/*private void ResetState(){
-	Node playersContainer = GetNode(playersContainerPath);
-	
-	foreach (Node player in playersContainer.GetChildren())
-	{
-		player.QueueFree();
-	}
-	
-	players.Clear();
-	
-	InitPlayers();
-	InitPlayersUI();
-	InitSoundPlayers();
-	InitTurnTimer();
-	InitMoveHistory(); 
-	SetAllPlayersOnStart();
-	StartTurnTimer();
-}*/
 
 private void InitMoveHistory()
 {
