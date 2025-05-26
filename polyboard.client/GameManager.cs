@@ -143,12 +143,40 @@ public override void _Ready()
 	InitMoveHistory(); 
 	SetAllPlayersOnStart();
 	InitAchievementManager();
+	ConnectCameraSignals();
 	StartTurnTimer();
 	playerLabel.Text = GetCurrentPlayerName();
-	doublesLabel = GetNode<Label>(doublesLabelPath);
-	UpdateDoublesLabel();
 }
 
+private void ConnectCameraSignals()
+{
+	var ui = GetNodeOrNull<CanvasLayer>("/root/Level/UI");
+	if (ui != null)
+	{
+		ui.Connect("camera_switch_requested", new Callable(this, nameof(OnCameraSwitchRequested)));
+	}
+}
+
+private void OnCameraSwitchRequested(string cameraName)
+{
+	switch (cameraName)
+	{
+		case "master":
+			SwitchToMasterCamera();
+			break;
+		case "dice":
+			SwitchToDiceCamera();
+			break;
+		case "figure":
+			// If you have a figure camera, activate it here
+			var figureCamera = GetNodeOrNull<Camera3D>("/root/Level/FigureCamera");
+			if (figureCamera != null)
+			{
+				SetActiveCamera(figureCamera);
+			}
+			break;
+	}
+}
 
 private void InitMoveHistory()
 {
