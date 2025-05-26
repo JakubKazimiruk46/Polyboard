@@ -17,6 +17,8 @@ public partial class Field : Node3D
 	public List<bool> buildOccupied=new List<bool>(5);
 	public Vector3 buildCameraPosition;
 	protected Sprite3D _border;
+	protected Label3D PriceLabel;
+	protected Label3D OwnerLabel;
 	protected Area3D _area;
 	protected Sprite3D _ownerBorder;
 	protected static int nextId = 0;
@@ -245,12 +247,16 @@ public partial class Field : Node3D
 	{
 		fieldMeshInstance = GetNode<MeshInstance3D>("MeshInstance3D");
 		_border = GetNode<Sprite3D>("Border");
+		PriceLabel = GetNode<Label3D>("FieldPrice");
+		OwnerLabel = GetNode<Label3D>("OwnerLabel");
 		_area = GetNode<Area3D>("Area3D");
 		_ownerBorder = GetNodeOrNull<Sprite3D>("OwnerBorder");
 		if (_border == null || _area == null || _ownerBorder == null)
 		{
 			GD.PrintErr("Nie znaleziono obiektów do wyświetlania krawędzi pola.");
 		}
+		PriceLabel.Visible = false;
+		OwnerLabel.Visible = false;
 		_border.Visible = false;
 		_ownerBorder.Visible = false;
 
@@ -328,6 +334,7 @@ public partial class Field : Node3D
 
 	protected void OnInputEvent(Node camera, InputEvent @event, Vector3 position, Vector3 normal, int shape_idx)
 	{
+		var parent = GetParent() as Board;
 		if (!isMouseEventEnabled) return;
 		switch (@event)
 		{
@@ -335,19 +342,38 @@ public partial class Field : Node3D
 			{
 				if (mouseButton.Pressed && mouseButton.ButtonIndex == MouseButton.Left)
 				{
-					var parent = GetParent() as Board;
 					parent?.ShowFieldTexture(FieldId);
 				}
 				break;
 			}
 			case InputEventMouseMotion:
+			{
+				var Field = parent?.GetFieldById(FieldId);
 				ShowDetailsDialog();
+				PriceLabel.Text = $"Koszt pola: {Field.fieldCost}ECTS";
+				if(Field.owned == true)
+				{
+					string nickname = GetUserNickname(Field);
+					if(Field.mortgage)
+						OwnerLabel.Text = $"właściciel:{nickname}\nPole jest aktualnie oddane pod zastaw.";
+					else
+						OwnerLabel.Text = $"właściciel:{nickname}";
+				}
+				else
+				{
+					OwnerLabel.Text = "Pole nie ma właściciela";
+				}
+				PriceLabel.Visible = true;
+				OwnerLabel.Visible = true;
 				_border.Visible = true;
 				break;
+			}
 			default:
 			{
 				if (@event is InputEventMouseButton)
 				{
+					PriceLabel.Visible = false;
+					OwnerLabel.Visible = false;
 					_border.Visible = false;
 				}
 				break;
@@ -616,6 +642,8 @@ public partial class Field : Node3D
 	{
 		if (!isMouseEventEnabled) return;
 		_border.Visible = false;
+		PriceLabel.Visible = false;
+		OwnerLabel.Visible = false;
 		viewDetailsDialog.Visible = false;
 	}
 
