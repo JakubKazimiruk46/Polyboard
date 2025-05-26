@@ -363,12 +363,6 @@ player_id = 3
 [node name="card_button" parent="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer" index="0"]
 tooltip_text = "Kliknij, aby zobaczyć swoje nieruchomości"
 
-[node name="trade_button" parent="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer2" index="0"]
-tooltip_text = "Kliknij, aby dokonać wymiany z innym graczem"
-
-[node name="build_button" parent="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3" index="0"]
-tooltip_text = "Kliknij, aby zbudować domek lub hotel"
-
 [node name="mortgage_button" parent="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer4" index="0"]
 tooltip_text = "Kliknij, aby zastawić daną nieruchomość. Otrzymasz natychmiast pieniądze, ale nie będziesz miał możliwości pobierać czynszu od graczy "
 
@@ -818,8 +812,6 @@ script = ExtResource("23_dakaj")
 GameManagerPath = NodePath("../GameManager")
 
 [node name="MoveHistory" parent="." instance=ExtResource("29_pxos0")]
-
-[connection signal="pressed" from="UI/HBoxContainer/PanelContainer/MarginContainer/Buttons/VBoxContainer3/build_button" to="UI" method="on_build_button_pressed"]
 
 [editable path="NotificationLayer"]
 [editable path="UI"]
