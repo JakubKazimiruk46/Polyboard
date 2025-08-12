@@ -116,14 +116,14 @@ This project is licensed under the MIT License.
 ## Authors
 
 - Team PZ2024  
-  Jakub Kazimiruk
-  Łukasz Kotowski
-  Łukasz Halicki
-  Dawid Davtyan
-  Jakub Krzewski
-  Kacper Sawicki
-  Jakub Kondrat
-  Patryk Zadykowicz
+  Jakub Kazimiruk  
+  Łukasz Kotowski  
+  Łukasz Halicki  
+  Dawid Davtyan  
+  Jakub Krzewski  
+  Kacper Sawicki  
+  Jakub Kondrat  
+  Patryk Zadykowicz  
 ---
 
 ## Acknowledgements
